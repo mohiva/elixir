@@ -1,0 +1,27 @@
+h1. Mohiva Elixir "!http://travis-ci.org/mohiva/elixir.png!":http://travis-ci.org/mohiva/elixir
+
+The Mohiva Elixir project is an dynamic XML template language.
+
+h2. Installation
+
+As first you must clone the repository.
+
+<pre lang="sh">
+git clone git://github.com/mohiva/elixir.git
+</pre>
+
+Then you must fetch the dependencies.
+
+<pre lang="sh">
+cd elixir
+git submodule init
+git submodule update
+</pre>
+
+h2. Requirements
+
+Mohiva Elixir needs PHP 5.4 to work.
+
+h2. License
+
+This project is Open Source and released under the terms of the New BSD License.

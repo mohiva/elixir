@@ -1,0 +1,17 @@
+{
+    "name": "mohiva/elixir",
+    "type": "library",
+    "description": "Elixir is an dynamic XML template language",
+    "keywords": ["language", "dynamic", "xml", "template"],
+    "homepage": "https://github.com/mohiva/elixir",
+    "license": "New BSD",
+    "authors": [
+        {"name": "Christian Kaps", "email": "christian.kaps@mohiva.com"}
+    ],
+    "require": {
+        "php": ">=5.4",
+        "mohiva/common": "master",
+        "mohiva/manitou": "master",
+        "mohiva/pyramid": "master"
+    }
+}
