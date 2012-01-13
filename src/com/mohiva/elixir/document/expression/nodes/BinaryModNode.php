@@ -35,7 +35,7 @@ class BinaryModNode extends BinaryOperatorNode {
 	/**
 	 * Evaluates the node.
 	 * 
-	 * @return number The result of the evaluation.
+	 * @return string The result of the evaluation.
 	 */
 	public function evaluate() {
 		
