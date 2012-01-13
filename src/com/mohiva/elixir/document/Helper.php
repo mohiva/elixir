@@ -10,43 +10,46 @@
  * https://github.com/mohiva/pyramid/blob/master/LICENSE.textile
  *
  * @category  Mohiva/Elixir
- * @package   Mohiva/Elixir/Test
+ * @package   Mohiva/Elixir/Document
  * @author    Christian Kaps <christian.kaps@mohiva.com>
  * @copyright Copyright (c) 2007-2012 Christian Kaps (http://www.mohiva.com)
  * @license   https://github.com/mohiva/elixir/blob/master/LICENSE.textile New BSD License
  * @link      https://github.com/mohiva/elixir
  */
-namespace com\mohiva\test\elixir;
+namespace com\mohiva\elixir\document;
+
+use com\mohiva\elixir\document\expression\Container as ExpressionContainer;
 
 /**
- * Test suite for the Mohiva Elixir project.
+ * Document helper interface.
  * 
  * @category  Mohiva/Elixir
- * @package   Mohiva/Elixir/Test
+ * @package   Mohiva/Elixir/Document
  * @author    Christian Kaps <christian.kaps@mohiva.com>
  * @copyright Copyright (c) 2007-2012 Christian Kaps (http://www.mohiva.com)
  * @license   https://github.com/mohiva/elixir/blob/master/LICENSE.textile New BSD License
  * @link      https://github.com/mohiva/elixir
  */
-class AllTests extends \PHPUnit_Framework_TestSuite {
+interface Helper extends ExpressionContainer {
 	
 	/**
-	 * Constructs the test suite handler.
-	 */
-	public function __construct() {
-		
-		$this->setName(__CLASS__);
-		$this->addTest(document\AllTests::suite());
-		$this->addTest(io\AllTests::suite());
-	}
-	
-	/**
-	 * Creates the suite.
+	 * Gets the id of the helper.
 	 * 
-	 * @return AllTests The test suite.
+	 * @return string The id of the helper.
 	 */
-	public static function suite() {
-		
-		return new self();
-	}
+	public function getId();
+	
+	/**
+	 * Gets the line number of the source file in which the helper is located.
+	 * 
+	 * @return int The line number of the source file in which the helper is located.
+	 */
+	public function getLine();
+	
+	/**
+	 * Gets the path to this helper in the source file.
+	 * 
+	 * @return string The path to this helper in the source file.
+	 */
+	public function getPath();
 }

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root xmlns:test="urn:test">
+	
+	<node test:Helper="">
+		<div>The node content.</div>
+	</node>
+	
+	<test:Helper>
+		<div>The node content.</div>
+	</test:Helper>
+	
+	<div>The root content.</div>
+</root>

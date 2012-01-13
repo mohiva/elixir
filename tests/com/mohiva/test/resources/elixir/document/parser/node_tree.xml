@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="iso-8859-15" ?>
+<root xmlns:test="urn:com.mohiva.test.resources.elixir.document.helpers">
+	
+	<test:Node>
+		
+		<test:Node />
+		<test:Node>
+			
+			<test:Node/>
+			<test:Node/>
+			
+		</test:Node>
+		<test:Node />
+		
+	</test:Node>
+	
+	<test:Node>
+		
+		<test:Node/>
+		
+	</test:Node>
+	
+</root>

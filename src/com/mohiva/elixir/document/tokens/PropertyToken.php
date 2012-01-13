@@ -10,43 +10,71 @@
  * https://github.com/mohiva/pyramid/blob/master/LICENSE.textile
  *
  * @category  Mohiva/Elixir
- * @package   Mohiva/Elixir/Test
+ * @package   Mohiva/Elixir/Document/Tokens
  * @author    Christian Kaps <christian.kaps@mohiva.com>
  * @copyright Copyright (c) 2007-2012 Christian Kaps (http://www.mohiva.com)
  * @license   https://github.com/mohiva/elixir/blob/master/LICENSE.textile New BSD License
  * @link      https://github.com/mohiva/elixir
  */
-namespace com\mohiva\test\elixir;
+namespace com\mohiva\elixir\document\tokens;
+
+use com\mohiva\common\parser\Token;
 
 /**
- * Test suite for the Mohiva Elixir project.
+ * Class which represents a document property token.
  * 
  * @category  Mohiva/Elixir
- * @package   Mohiva/Elixir/Test
+ * @package   Mohiva/Elixir/Document/Tokens
  * @author    Christian Kaps <christian.kaps@mohiva.com>
  * @copyright Copyright (c) 2007-2012 Christian Kaps (http://www.mohiva.com)
  * @license   https://github.com/mohiva/elixir/blob/master/LICENSE.textile New BSD License
  * @link      https://github.com/mohiva/elixir
  */
-class AllTests extends \PHPUnit_Framework_TestSuite {
+class PropertyToken implements Token {
 	
 	/**
-	 * Constructs the test suite handler.
+	 * The token code.
+	 * 
+	 * @var int
 	 */
-	public function __construct() {
+	private $code = null;
+	
+	/**
+	 * The token value.
+	 * 
+	 * @var string
+	 */
+	private $value = null;
+	
+	/**
+	 * The class constructor.
+	 * 
+	 * @param int $code The token code.
+	 * @param string $value The token offset.
+	 */
+	public function __construct($code, $value) {
 		
-		$this->setName(__CLASS__);
-		$this->addTest(document\AllTests::suite());
-		$this->addTest(io\AllTests::suite());
+		$this->code = $code;
+		$this->value = $value;
 	}
 	
 	/**
-	 * Creates the suite.
+	 * Returns the token code.
 	 * 
-	 * @return AllTests The test suite.
+	 * @return int The token code.
 	 */
-	public static function suite() {
+	public function getCode() {
 		
-		return new self();
+		return $this->code;
+	}
+	
+	/**
+	 * Returns the token value.
+	 * 
+	 * @return string The token value.
+	 */
+	public function getValue() {
+		
+		return $this->value;
 	}
 }

@@ -10,43 +10,22 @@
  * https://github.com/mohiva/pyramid/blob/master/LICENSE.textile
  *
  * @category  Mohiva/Elixir
- * @package   Mohiva/Elixir/Test
+ * @package   Mohiva/Elixir/Document/Expression
  * @author    Christian Kaps <christian.kaps@mohiva.com>
  * @copyright Copyright (c) 2007-2012 Christian Kaps (http://www.mohiva.com)
  * @license   https://github.com/mohiva/elixir/blob/master/LICENSE.textile New BSD License
  * @link      https://github.com/mohiva/elixir
  */
-namespace com\mohiva\test\elixir;
+namespace com\mohiva\elixir\document\exceptions;
 
 /**
- * Test suite for the Mohiva Elixir project.
+ * Signals that a namespace is missing or not registered. 
  * 
  * @category  Mohiva/Elixir
- * @package   Mohiva/Elixir/Test
+ * @package   Mohiva/Elixir/Document/Expression
  * @author    Christian Kaps <christian.kaps@mohiva.com>
  * @copyright Copyright (c) 2007-2012 Christian Kaps (http://www.mohiva.com)
  * @license   https://github.com/mohiva/elixir/blob/master/LICENSE.textile New BSD License
  * @link      https://github.com/mohiva/elixir
  */
-class AllTests extends \PHPUnit_Framework_TestSuite {
-	
-	/**
-	 * Constructs the test suite handler.
-	 */
-	public function __construct() {
-		
-		$this->setName(__CLASS__);
-		$this->addTest(document\AllTests::suite());
-		$this->addTest(io\AllTests::suite());
-	}
-	
-	/**
-	 * Creates the suite.
-	 * 
-	 * @return AllTests The test suite.
-	 */
-	public static function suite() {
-		
-		return new self();
-	}
-}
+class MissingNamespaceException extends \Exception {}

@@ -16,7 +16,7 @@
  * @license   https://github.com/mohiva/elixir/blob/master/LICENSE.textile New BSD License
  * @link      https://github.com/mohiva/elixir
  */
-namespace com\mohiva\test\elixir;
+namespace com\mohiva\test\elixir\document\expression;
 
 /**
  * Test suite for the Mohiva Elixir project.
@@ -36,8 +36,9 @@ class AllTests extends \PHPUnit_Framework_TestSuite {
 	public function __construct() {
 		
 		$this->setName(__CLASS__);
-		$this->addTest(document\AllTests::suite());
-		$this->addTest(io\AllTests::suite());
+		$this->addTest(nodes\AllTests::suite());
+		$this->addTest(operands\AllTests::suite());
+		$this->addTestSuite(__NAMESPACE__ . '\LexerTest');
 	}
 	
 	/**

@@ -16,10 +16,16 @@
  * @license   https://github.com/mohiva/elixir/blob/master/LICENSE.textile New BSD License
  * @link      https://github.com/mohiva/elixir
  */
-namespace com\mohiva\test\elixir;
+namespace com\mohiva\test\elixir\document\expression\operands;
+
+use com\mohiva\pyramid\Grammar;
+use com\mohiva\pyramid\Token;
+use com\mohiva\common\parser\TokenStream;
+use com\mohiva\elixir\document\expression\Lexer;
+use com\mohiva\elixir\document\expression\operands\ScalarValueOperand;
 
 /**
- * Test suite for the Mohiva Elixir project.
+ * Unit test case for the Mohiva Elixir project.
  * 
  * @category  Mohiva/Elixir
  * @package   Mohiva/Elixir/Test
@@ -28,25 +34,22 @@ namespace com\mohiva\test\elixir;
  * @license   https://github.com/mohiva/elixir/blob/master/LICENSE.textile New BSD License
  * @link      https://github.com/mohiva/elixir
  */
-class AllTests extends \PHPUnit_Framework_TestSuite {
+class ScalarValueOperandTest extends \PHPUnit_Framework_TestCase {
 	
 	/**
-	 * Constructs the test suite handler.
+	 * Test if the parse method returns the `OperandNode` with the correct number.
 	 */
-	public function __construct() {
+	public function testParseReturnsNodeWithCorrectNumber() {
 		
-		$this->setName(__CLASS__);
-		$this->addTest(document\AllTests::suite());
-		$this->addTest(io\AllTests::suite());
-	}
-	
-	/**
-	 * Creates the suite.
-	 * 
-	 * @return AllTests The test suite.
-	 */
-	public static function suite() {
+		$number = (string) mt_rand(1, 100);
 		
-		return new self();
+		$tokenStream = new TokenStream();
+		$tokenStream->push(new Token(Lexer::T_VALUE, $number, 1));
+		$tokenStream->rewind();
+		
+		$operand = new ScalarValueOperand();
+		$node = $operand->parse(new Grammar, $tokenStream);
+		
+		$this->assertSame($number, $node->evaluate());
 	}
 }

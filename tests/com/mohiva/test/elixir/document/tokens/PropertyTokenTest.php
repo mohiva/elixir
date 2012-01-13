@@ -16,10 +16,12 @@
  * @license   https://github.com/mohiva/elixir/blob/master/LICENSE.textile New BSD License
  * @link      https://github.com/mohiva/elixir
  */
-namespace com\mohiva\test\elixir;
+namespace com\mohiva\test\elixir\document\tokens;
+
+use com\mohiva\elixir\document\tokens\PropertyToken;
 
 /**
- * Test suite for the Mohiva Elixir project.
+ * Unit test case for the Mohiva Elixir project.
  * 
  * @category  Mohiva/Elixir
  * @package   Mohiva/Elixir/Test
@@ -28,25 +30,21 @@ namespace com\mohiva\test\elixir;
  * @license   https://github.com/mohiva/elixir/blob/master/LICENSE.textile New BSD License
  * @link      https://github.com/mohiva/elixir
  */
-class AllTests extends \PHPUnit_Framework_TestSuite {
+class PropertyTokenTest extends \PHPUnit_Framework_TestCase {
 	
 	/**
-	 * Constructs the test suite handler.
+	 * Test all getters for the values set with the constructor.
 	 */
-	public function __construct() {
+	public function testConstructorAccessors() {
 		
-		$this->setName(__CLASS__);
-		$this->addTest(document\AllTests::suite());
-		$this->addTest(io\AllTests::suite());
-	}
-	
-	/**
-	 * Creates the suite.
-	 * 
-	 * @return AllTests The test suite.
-	 */
-	public static function suite() {
+		$code = mt_rand(1, 30);
+		$value = sha1(microtime(true));
+		$token = new PropertyToken(
+			$code,
+			$value
+		);
 		
-		return new self();
+		$this->assertSame($code, $token->getCode());
+		$this->assertSame($value, $token->getValue());
 	}
 }

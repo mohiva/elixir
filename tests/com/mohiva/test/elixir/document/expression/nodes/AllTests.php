@@ -16,7 +16,7 @@
  * @license   https://github.com/mohiva/elixir/blob/master/LICENSE.textile New BSD License
  * @link      https://github.com/mohiva/elixir
  */
-namespace com\mohiva\test\elixir;
+namespace com\mohiva\test\elixir\document\expression\nodes;
 
 /**
  * Test suite for the Mohiva Elixir project.
@@ -36,8 +36,15 @@ class AllTests extends \PHPUnit_Framework_TestSuite {
 	public function __construct() {
 		
 		$this->setName(__CLASS__);
-		$this->addTest(document\AllTests::suite());
-		$this->addTest(io\AllTests::suite());
+		$this->addTestSuite(__NAMESPACE__ . '\OperandNodeTest');
+		$this->addTestSuite(__NAMESPACE__ . '\BinaryAddNodeTest');
+		$this->addTestSuite(__NAMESPACE__ . '\BinaryDivNodeTest');
+		$this->addTestSuite(__NAMESPACE__ . '\BinaryModNodeTest');
+		$this->addTestSuite(__NAMESPACE__ . '\BinaryMulNodeTest');
+		$this->addTestSuite(__NAMESPACE__ . '\BinaryPowerNodeTest');
+		$this->addTestSuite(__NAMESPACE__ . '\BinarySubNodeTest');
+		$this->addTestSuite(__NAMESPACE__ . '\UnaryNegNodeTest');
+		$this->addTestSuite(__NAMESPACE__ . '\UnaryPosNodeTest');
 	}
 	
 	/**

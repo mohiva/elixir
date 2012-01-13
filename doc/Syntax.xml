@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mx:Block xmlns:mx="http://elixir.mohiva.com">
+	
+	<mx:If expr="{{ my.object.var.round(2) == 2.5 }}" />
+	<mx:ElseIf expr="{{ my.object.var.round(2) == 2.5 }}" />
+	<mx:Else />
+	
+	<!-- {{ A Elixir comment, it should be removed }} -->
+	<!-- A normal comment, it should be preserved -->
+	
+	<mx:Set name="var1"><inner /></mx:Set>
+	<mx:Set name="var2" value="{{ [3 * index.toInt() => 1, 2, 3 * 4 + (1 + 2)] }}" />
+	<mx:Set name="var2" value="all scalar values can be passed without an expression" />
+	
+	<mx:For var="user" in="{{ users }}">
+		<mx:Set name="name" value="{{ user.name ?: 'Jon Doe' }}" />
+		
+		{{ name = user.name ?: 'Jon Doe' }}
+		
+		{{ index }}
+		{{ odd }}
+		{{ even }}
+		{{ first }}
+		{{ last }}
+		
+	</mx:For>
+	
+	<mx:Foreach key="key" value="value" in="{{ users }}">
+		{{ key }} {{ value }}
+	</mx:Foreach>
+	
+	<mx:Foreach in="{{ users }}">
+		{{ key }} {{ value }}
+	</mx:Foreach>
+	
+</mx:Block>
+
+<!--
+
+Variables
+=============
+my
+my.object
+my.object.round(2)
+my.object.round(2).isNotNull()
+my.object.arrayVar.merge(my.object.otherArrayVar.keys())
+
+Constants (Only class constants are allowed)
+==============
+Class::CONSTANT
+namespace.Class::CONSTANT.split('/')
+
+Values
+==============
+1234
+0.1234
+-0.1234
++0.1234
+true
+false
+null
+[1, 2, 3 => 5]
+"a string"
+
+Helpers(ExpressionHelper)
+===============
+[mx:Date()]
+
+Operators
+===============
+
+unary
+=====
+! NOT (prefix notation)
+- NEGATIVE (prefix notation)
++ POSITIVE (prefix notation)
+(string) STRING_CAST (prefix notation)
+(int) INT_CAST (prefix notation)
+(float) FLOAT_CAST (prefix notation)
+(bool) BOOL_CAST (prefix notation)
+(xml) XML_CAST (prefix notation)
+
+binary
+======
+=  ASSIGN
+== EQUAL
+!= NOT_EQUAL
+<  LESS
+<= LESS_EQUAL
+>  GREATER
+>= GREATER_EQUAL
++  ADDITION
+-  SUBTRACTION
+/  DIVISION
+*  MULTIPLICATION
+%  MODULO
+^  POWER
+|| OR
+&& AND
+
+Every value is passed to an value object(autoboxing). this object contains methods like isNull(), isNotNull(), isOdd(), 
+isEven() ... by default. Values are passed to specific objects by the type of the value:
+array  => ArrayValue
+object => ObjectValue
+scalar => ScalarValue
+
+Values should only be autoboxed if an explicit method call follows after the value.
+
+Autoboxed:
+var.methodCall()
+
+Not autoboxed:
+var
+
+
+Every object has specific methods to work with the value:
+ArrayValue: join, merge, length, sort, keys, values, contains
+ScalarValue: split, replace, format, upper, lower, reverse, length
+
+This object must contain the following five methods:
+toInt()
+toFloat()
+toString()
+toBool()
+toXML()
+
+A cast forces the call to one of this methods.
+(string) => toString()
+(int) => toInt()
+(float) => toFloat()
+(bool) => toBool()
+(xml) => toXML()
+
+It should be possible to register own value classes.
+Interfaces:
+ArrayValue
+ScalarValue
+
+And then the users can register its own implementations:
+class CustomArrayValue implements ArrayValue {
+
+}
+
+class CustomValueFactory extends ValueFactory {
+	
+    public function createArrayValue($value) {
+    	
+        return new CustomArrayValue($value);
+    }
+}
+
+MFXDocument::registerValueFactory(new CustomValueFactory());
+
+-->
+

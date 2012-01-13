@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root xmlns:test1="urn:test1">
+
+	<child xmlns:test2="urn:test2" />
+	
+	<test3:Helper xmlns:test3="urn:test3" />
+
+	<child test4:Helper="" xmlns:test4="urn:test4" />
+
+</root>

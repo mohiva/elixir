@@ -10,43 +10,39 @@
  * https://github.com/mohiva/pyramid/blob/master/LICENSE.textile
  *
  * @category  Mohiva/Elixir
- * @package   Mohiva/Elixir/Test
+ * @package   Mohiva/Elixir/Document/Expression
  * @author    Christian Kaps <christian.kaps@mohiva.com>
  * @copyright Copyright (c) 2007-2012 Christian Kaps (http://www.mohiva.com)
  * @license   https://github.com/mohiva/elixir/blob/master/LICENSE.textile New BSD License
  * @link      https://github.com/mohiva/elixir
  */
-namespace com\mohiva\test\elixir;
+namespace com\mohiva\elixir\document\expression;
+
+use com\mohiva\pyramid\Node;
 
 /**
- * Test suite for the Mohiva Elixir project.
+ * Interface for containers which can contain expressions.
  * 
  * @category  Mohiva/Elixir
- * @package   Mohiva/Elixir/Test
+ * @package   Mohiva/Elixir/Document/Expression
  * @author    Christian Kaps <christian.kaps@mohiva.com>
  * @copyright Copyright (c) 2007-2012 Christian Kaps (http://www.mohiva.com)
  * @license   https://github.com/mohiva/elixir/blob/master/LICENSE.textile New BSD License
  * @link      https://github.com/mohiva/elixir
  */
-class AllTests extends \PHPUnit_Framework_TestSuite {
+interface Container {
 	
 	/**
-	 * Constructs the test suite handler.
-	 */
-	public function __construct() {
-		
-		$this->setName(__CLASS__);
-		$this->addTest(document\AllTests::suite());
-		$this->addTest(io\AllTests::suite());
-	}
-	
-	/**
-	 * Creates the suite.
+	 * Adds an expression.
 	 * 
-	 * @return AllTests The test suite.
+	 * @param \com\mohiva\pyramid\Node $expression The expression to add.
 	 */
-	public static function suite() {
-		
-		return new self();
-	}
+	public function addExpression(Node $expression);
+	
+	/**
+	 * Gets the expressions contained in the content of this node.
+	 * 
+	 * @return array The expressions contained in the content of this node.
+	 */
+	public function getExpressions();
 }

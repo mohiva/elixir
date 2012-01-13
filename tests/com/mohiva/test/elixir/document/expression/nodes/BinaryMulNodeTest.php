@@ -16,10 +16,13 @@
  * @license   https://github.com/mohiva/elixir/blob/master/LICENSE.textile New BSD License
  * @link      https://github.com/mohiva/elixir
  */
-namespace com\mohiva\test\elixir;
+namespace com\mohiva\test\elixir\document\expression\nodes;
+
+use com\mohiva\elixir\document\expression\nodes\OperandNode;
+use com\mohiva\elixir\document\expression\nodes\BinaryMulNode;
 
 /**
- * Test suite for the Mohiva Elixir project.
+ * Unit test case for the Mohiva Elixir project.
  * 
  * @category  Mohiva/Elixir
  * @package   Mohiva/Elixir/Test
@@ -28,25 +31,17 @@ namespace com\mohiva\test\elixir;
  * @license   https://github.com/mohiva/elixir/blob/master/LICENSE.textile New BSD License
  * @link      https://github.com/mohiva/elixir
  */
-class AllTests extends \PHPUnit_Framework_TestSuite {
+class BinaryMulNodeTest extends \PHPUnit_Framework_TestCase {
 	
 	/**
-	 * Constructs the test suite handler.
+	 * Test if the `evaluate` method returns the correct value for the operation.
 	 */
-	public function __construct() {
+	public function testEvaluate() {
 		
-		$this->setName(__CLASS__);
-		$this->addTest(document\AllTests::suite());
-		$this->addTest(io\AllTests::suite());
-	}
-	
-	/**
-	 * Creates the suite.
-	 * 
-	 * @return AllTests The test suite.
-	 */
-	public static function suite() {
+		$left = mt_rand(1, 100);
+		$right = mt_rand(1, 100);
+		$node = new BinaryMulNode(new OperandNode($left), new OperandNode($right));
 		
-		return new self();
+		$this->assertSame($left . ' * ' . $right, $node->evaluate());
 	}
 }

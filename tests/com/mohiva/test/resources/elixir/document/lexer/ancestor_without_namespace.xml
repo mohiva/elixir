@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root xmlns:test="urn:com.mohiva.test.resources.elixir.helpers">
+	<test:Node />
+</root>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root xmlns:test="urn:test">
+	<test:element1 />
+	<test:element2 />
+	<test:element3 />
+</root>

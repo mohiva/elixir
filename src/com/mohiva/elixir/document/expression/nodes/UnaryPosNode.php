@@ -10,43 +10,35 @@
  * https://github.com/mohiva/pyramid/blob/master/LICENSE.textile
  *
  * @category  Mohiva/Elixir
- * @package   Mohiva/Elixir/Test
+ * @package   Mohiva/Elixir/Document/Expression/Nodes
  * @author    Christian Kaps <christian.kaps@mohiva.com>
  * @copyright Copyright (c) 2007-2012 Christian Kaps (http://www.mohiva.com)
  * @license   https://github.com/mohiva/elixir/blob/master/LICENSE.textile New BSD License
  * @link      https://github.com/mohiva/elixir
  */
-namespace com\mohiva\test\elixir;
+namespace com\mohiva\elixir\document\expression\nodes;
+
+use com\mohiva\pyramid\nodes\UnaryOperatorNode;
 
 /**
- * Test suite for the Mohiva Elixir project.
+ * Represents an unary positive expression.
  * 
  * @category  Mohiva/Elixir
- * @package   Mohiva/Elixir/Test
+ * @package   Mohiva/Elixir/Document/Expression/Nodes
  * @author    Christian Kaps <christian.kaps@mohiva.com>
  * @copyright Copyright (c) 2007-2012 Christian Kaps (http://www.mohiva.com)
  * @license   https://github.com/mohiva/elixir/blob/master/LICENSE.textile New BSD License
  * @link      https://github.com/mohiva/elixir
  */
-class AllTests extends \PHPUnit_Framework_TestSuite {
+class UnaryPosNode extends UnaryOperatorNode {
 	
 	/**
-	 * Constructs the test suite handler.
-	 */
-	public function __construct() {
-		
-		$this->setName(__CLASS__);
-		$this->addTest(document\AllTests::suite());
-		$this->addTest(io\AllTests::suite());
-	}
-	
-	/**
-	 * Creates the suite.
+	 * Evaluates the node.
 	 * 
-	 * @return AllTests The test suite.
+	 * @return number The result of the evaluation.
 	 */
-	public static function suite() {
+	public function evaluate() {
 		
-		return new self();
+		return '+' . $this->node->evaluate();
 	}
 }
