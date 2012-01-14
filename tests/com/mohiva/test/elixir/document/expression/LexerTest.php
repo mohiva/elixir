@@ -357,6 +357,23 @@ class LexerTest extends \PHPUnit_Framework_TestCase {
 	}
 	
 	/**
+	 * Test the concat token.
+	 */
+	public function testConcatToken() {
+		
+		$lexer = new Lexer(new TokenStream());
+		$lexer->scan(' "string" _ 1 ');
+		
+		$actual = $this->buildActualTokens($lexer->getStream());
+		$expected = array(
+			array(Lexer::T_VALUE => '"string"'),
+			array(Lexer::T_CONCAT => '_'),
+			array(Lexer::T_VALUE => '1')
+		);
+		$this->assertSame($expected, $actual);
+	}
+	
+	/**
 	 * Test the none token.
 	 */
 	public function testNoneToken() {

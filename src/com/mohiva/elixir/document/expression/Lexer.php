@@ -61,19 +61,20 @@ class Lexer {
 	const T_MOD               = 206;  // %
 	const T_POWER             = 207;  // ^
 	const T_ASSIGN            = 208;  // =
-	const T_EQUAL             = 209;  // ==
-	const T_NOT_EQUAL         = 210;  // !=
-	const T_LESS              = 211;  // <
-	const T_LESS_EQUAL        = 212;  // <=
-	const T_GREATER           = 213;  // >
-	const T_GREATER_EQUAL     = 214;  // >=
-	const T_OR                = 215;  // ||
-	const T_AND               = 216;  // &&
-	const T_STRING_CAST       = 217;  // (string)
-	const T_INT_CAST          = 218;  // (int)
-	const T_FLOAT_CAST        = 219;  // (float)
-	const T_BOOL_CAST         = 220;  // (bool)
-	const T_XML_CAST          = 221;  // (xml)
+	const T_CONCAT            = 209;  // _
+	const T_EQUAL             = 210;  // ==
+	const T_NOT_EQUAL         = 211;  // !=
+	const T_LESS              = 212;  // <
+	const T_LESS_EQUAL        = 213;  // <=
+	const T_GREATER           = 214;  // >
+	const T_GREATER_EQUAL     = 215;  // >=
+	const T_OR                = 216;  // ||
+	const T_AND               = 217;  // &&
+	const T_STRING_CAST       = 218;  // (string)
+	const T_INT_CAST          = 219;  // (int)
+	const T_FLOAT_CAST        = 220;  // (float)
+	const T_BOOL_CAST         = 221;  // (bool)
+	const T_XML_CAST          = 222;  // (xml)
 	
 	/**
 	 * The lexemes to find the tokens.
@@ -116,6 +117,7 @@ class Lexer {
 		'%'         => self::T_MOD,
 		'^'         => self::T_POWER,
 		'='         => self::T_ASSIGN,
+		'_'         => self::T_CONCAT,
 		'=='        => self::T_EQUAL,
 		'!='        => self::T_NOT_EQUAL,
 		'<'         => self::T_LESS,

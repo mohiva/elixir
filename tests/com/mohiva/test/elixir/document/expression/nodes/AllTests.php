@@ -39,6 +39,7 @@ class AllTests extends \PHPUnit_Framework_TestSuite {
 		$this->addTestSuite(__NAMESPACE__ . '\OperandNodeTest');
 		$this->addTestSuite(__NAMESPACE__ . '\BinaryAddNodeTest');
 		$this->addTestSuite(__NAMESPACE__ . '\BinaryAndNodeTest');
+		$this->addTestSuite(__NAMESPACE__ . '\BinaryConcatNodeTest');
 		$this->addTestSuite(__NAMESPACE__ . '\BinaryDivNodeTest');
 		$this->addTestSuite(__NAMESPACE__ . '\BinaryEqualNodeTest');
 		$this->addTestSuite(__NAMESPACE__ . '\BinaryGreaterEqualNodeTest');

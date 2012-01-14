@@ -34,6 +34,7 @@ use com\mohiva\elixir\document\expression\nodes\BinaryGreaterNode;
 use com\mohiva\elixir\document\expression\nodes\BinaryGreaterEqualNode;
 use com\mohiva\elixir\document\expression\nodes\BinaryAddNode;
 use com\mohiva\elixir\document\expression\nodes\BinarySubNode;
+use com\mohiva\elixir\document\expression\nodes\BinaryConcatNode;
 use com\mohiva\elixir\document\expression\nodes\BinaryMulNode;
 use com\mohiva\elixir\document\expression\nodes\BinaryDivNode;
 use com\mohiva\elixir\document\expression\nodes\BinaryModNode;
@@ -48,32 +49,33 @@ use com\mohiva\elixir\document\expression\operands\ScalarValueOperand;
  *
  * Unary
  * ================================
- * Lexer::O_NOT,           60
+ * Lexer::O_NOT,           70
  * Lexer::O_PLUS,          150
  * Lexer::O_MINUS,         150
- * Lexer::O_STRING_CAST,   70
- * Lexer::O_INT_CAST,      70
- * Lexer::O_FLOAT_CAST,    70
- * Lexer::O_BOOL_CAST,     70
- * Lexer::O_XML_CAST,      70
+ * Lexer::O_STRING_CAST,   80
+ * Lexer::O_INT_CAST,      80
+ * Lexer::O_FLOAT_CAST,    80
+ * Lexer::O_BOOL_CAST,     80
+ * Lexer::O_XML_CAST,      80
  * 
  * Binary
  * ================================
- * Lexer::O_OR,            10, LEFT
- * Lexer::O_AND,           20, LEFT
- * Lexer::O_ASSIGN,        30, LEFT
- * Lexer::O_EQUAL,         40, LEFT
- * Lexer::O_NOT_EQUAL,     40, LEFT
- * Lexer::O_LESS,          40, LEFT
- * Lexer::O_LESS_EQUAL,    40, LEFT
- * Lexer::O_GREATER,       40, LEFT
- * Lexer::O_GREATER_EQUAL, 40, LEFT
- * Lexer::O_PLUS,          50, LEFT
- * Lexer::O_MINUS,         50, LEFT
- * Lexer::O_MUL,           80, LEFT
- * Lexer::O_DIV,           80, LEFT
- * Lexer::O_MOD,           80, LEFT
- * Lexer::O_POWER,         90, RIGHT
+ * Lexer::O_OR,            10,  LEFT
+ * Lexer::O_AND,           20,  LEFT
+ * Lexer::O_ASSIGN,        30,  LEFT
+ * Lexer::O_EQUAL,         40,  LEFT
+ * Lexer::O_NOT_EQUAL,     40,  LEFT
+ * Lexer::O_LESS,          40,  LEFT
+ * Lexer::O_LESS_EQUAL,    40,  LEFT
+ * Lexer::O_GREATER,       40,  LEFT
+ * Lexer::O_GREATER_EQUAL, 40,  LEFT
+ * Lexer::O_PLUS,          50,  LEFT
+ * Lexer::O_MINUS,         50,  LEFT
+ * Lexer::O_CONCAT         60,  LEFT
+ * Lexer::O_MUL,           90,  LEFT
+ * Lexer::O_DIV,           90,  LEFT
+ * Lexer::O_MOD,           90,  LEFT
+ * Lexer::O_POWER,         100, RIGHT
  * 
  * Note: unary +/- operators must have higher precedence as all binary operators
  * http://www.antlr.org/pipermail/antlr-dev/2009-April/002255.html
@@ -94,7 +96,7 @@ class Grammar extends ParserGrammar {
 		
 		parent::__construct();
 		
-		$this->addOperator(new UnaryOperator(Lexer::T_NOT, 60,
+		$this->addOperator(new UnaryOperator(Lexer::T_NOT, 70,
 			function($node) { return new UnaryNotNode($node); }
 		));
 		$this->addOperator(new UnaryOperator(Lexer::T_PLUS, 150,
@@ -133,16 +135,19 @@ class Grammar extends ParserGrammar {
 		$this->addOperator(new BinaryOperator(Lexer::T_MINUS, 50, BinaryOperator::LEFT,
 			function($left, $right) { return new BinarySubNode($left, $right); }
 		));
-		$this->addOperator(new BinaryOperator(Lexer::T_MUL, 80, BinaryOperator::LEFT,
+		$this->addOperator(new BinaryOperator(Lexer::T_CONCAT, 60, BinaryOperator::LEFT,
+			function($left, $right) { return new BinaryConcatNode($left, $right); }
+		));
+		$this->addOperator(new BinaryOperator(Lexer::T_MUL, 90, BinaryOperator::LEFT,
 			function($left, $right) { return new BinaryMulNode($left, $right); }
 		));
-		$this->addOperator(new BinaryOperator(Lexer::T_DIV, 80, BinaryOperator::LEFT,
+		$this->addOperator(new BinaryOperator(Lexer::T_DIV, 90, BinaryOperator::LEFT,
 			function($left, $right) { return new BinaryDivNode($left, $right); }
 		));
-		$this->addOperator(new BinaryOperator(Lexer::T_MOD, 80, BinaryOperator::LEFT,
+		$this->addOperator(new BinaryOperator(Lexer::T_MOD, 90, BinaryOperator::LEFT,
 			function($left, $right) { return new BinaryModNode($left, $right); }
 		));
-		$this->addOperator(new BinaryOperator(Lexer::T_POWER, 90, BinaryOperator::RIGHT,
+		$this->addOperator(new BinaryOperator(Lexer::T_POWER, 100, BinaryOperator::RIGHT,
 			function($left, $right) { return new BinaryPowerNode($left, $right); }
 		));
 		
