@@ -19,7 +19,7 @@
 namespace com\mohiva\elixir\document\expression\operands;
 
 use com\mohiva\elixir\document\expression\Lexer;
-use com\mohiva\common\parser\exceptions\SyntaxErrorException;
+use com\mohiva\common\exceptions\SyntaxErrorException;
 use com\mohiva\common\parser\TokenStream;
 use com\mohiva\pyramid\Token;
 use com\mohiva\pyramid\Parser;
