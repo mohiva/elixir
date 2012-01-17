@@ -18,6 +18,8 @@
  */
 namespace com\mohiva\elixir\io\exceptions;
 
+use com\mohiva\common\exceptions\MohivaException;
+
 /**
  * Signals that an unsupported access mode was given for the stream wrapper.
  * 
@@ -28,4 +30,4 @@ namespace com\mohiva\elixir\io\exceptions;
  * @license   https://github.com/mohiva/elixir/blob/master/LICENSE.textile New BSD License
  * @link      https://github.com/mohiva/elixir
  */
-class UnsupportedAccessModeException extends \Exception {}
+class UnsupportedAccessModeException extends \Exception implements MohivaException {}

@@ -18,6 +18,8 @@
  */
 namespace com\mohiva\elixir\document\exceptions;
 
+use com\mohiva\common\exceptions\MohivaException;
+
 /**
  * Signals that a helper class isn't derived from correct type.
  * 
@@ -28,4 +30,4 @@ namespace com\mohiva\elixir\document\exceptions;
  * @license   https://github.com/mohiva/elixir/blob/master/LICENSE.textile New BSD License
  * @link      https://github.com/mohiva/elixir
  */
-class UnexpectedHelperTypeException extends \Exception {}
+class UnexpectedHelperTypeException extends \Exception implements MohivaException {}

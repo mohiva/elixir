@@ -18,6 +18,8 @@
  */
 namespace com\mohiva\elixir\io\exceptions;
 
+use com\mohiva\common\exceptions\MohivaException;
+
 /**
  * Signals that an error occurs on registering or unregistering a stream wrapper.
  * 
@@ -28,4 +30,4 @@ namespace com\mohiva\elixir\io\exceptions;
  * @license   https://github.com/mohiva/elixir/blob/master/LICENSE.textile New BSD License
  * @link      https://github.com/mohiva/elixir
  */
-class StreamWrapperRegisterException extends \Exception {}
+class StreamWrapperRegisterException extends \Exception implements MohivaException {}
