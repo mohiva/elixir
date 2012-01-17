@@ -15,7 +15,7 @@
 	<mx:For var="user" in="{{ users }}">
 		<mx:Set name="name" value="{{ user.name ?: 'Jon Doe' }}" />
 		
-		{{ name = user.name ?: 'Jon Doe' }}
+		{{ name = user.name ?: 'Jon' _ 'Doe'.toLower() }}
 		
 		{{ index }}
 		{{ odd }}
@@ -82,6 +82,7 @@ unary
 
 binary
 ======
+_  CONCAT
 =  ASSIGN
 == EQUAL
 != NOT_EQUAL
@@ -98,8 +99,9 @@ binary
 || OR
 && AND
 
-Every value is passed to an value object(autoboxing). this object contains methods like isNull(), isNotNull(), isOdd(), 
-isEven() ... by default. Values are passed to specific objects by the type of the value:
+Every value is passed to an value object(autoboxing). this object contains methods like isNull(), 
+toInt(), toFloat(), toString(), toBool(), toXML(), ... by default. Values are passed to specific 
+objects by the type of the value:
 array  => ArrayValue
 object => ObjectValue
 scalar => ScalarValue
@@ -112,17 +114,9 @@ var.methodCall()
 Not autoboxed:
 var
 
-
 Every object has specific methods to work with the value:
 ArrayValue: join, merge, length, sort, keys, values, contains
 ScalarValue: split, replace, format, upper, lower, reverse, length
-
-This object must contain the following five methods:
-toInt()
-toFloat()
-toString()
-toBool()
-toXML()
 
 A cast forces the call to one of this methods.
 (string) => toString()
@@ -149,7 +143,8 @@ class CustomValueFactory extends ValueFactory {
     }
 }
 
-MFXDocument::registerValueFactory(new CustomValueFactory());
+$document = new Document();
+$document->registerValueFactory(new CustomValueFactory());
 
 -->
 
