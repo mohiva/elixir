@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="iso-8859-15" ?>
 <test:Root xmlns:test="http://elixir.mohiva.com/test">
-	
+
 	<test1:Inner xmlns:test1="https://elixir.mohiva.com/test" />
 	<test2:Inner xmlns:test2="urn:com.mohiva.test.resources.elixir.document.helpers" />
-	
+
 </test:Root>

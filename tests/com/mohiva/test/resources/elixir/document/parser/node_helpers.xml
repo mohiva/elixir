@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="iso-8859-15" ?>
 <root xmlns:test="urn:com.mohiva.test.resources.elixir.document.helpers">
-	
+
 	<test:Node test:Locale="de_DE">
-		
+
 		<test:Node test:Locale="de_DE" test:Scope="local" />
 		<test:Node>
-			
+
 			<test:Node test:Locale="de_DE"/>
 			<test:Node test:Scope="local" />
-			
+
 		</test:Node>
 		<test:Node test:Locale="de_DE"/>
-		
+
 	</test:Node>
-	
+
 	<test:Node test:Scope="local">
-		
+
 		<test:Node test:Locale="de_DE" />
-		
+
 	</test:Node>
-	
+
 </root>

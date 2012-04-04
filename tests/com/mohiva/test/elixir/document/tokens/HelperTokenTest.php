@@ -22,7 +22,7 @@ use com\mohiva\elixir\document\tokens\HelperToken;
 
 /**
  * Unit test case for the Mohiva Elixir project.
- * 
+ *
  * @category  Mohiva/Elixir
  * @package   Mohiva/Elixir/Test
  * @author    Christian Kaps <christian.kaps@mohiva.com>
@@ -31,12 +31,12 @@ use com\mohiva\elixir\document\tokens\HelperToken;
  * @link      https://github.com/mohiva/elixir
  */
 class HelperTokenTest extends \PHPUnit_Framework_TestCase {
-	
+
 	/**
 	 * Test all getters for the values set with the constructor.
 	 */
 	public function testConstructorAccessors() {
-		
+
 		$code = mt_rand(1, 30);
 		$id = sha1(microtime(true));
 		$path = sha1(microtime(true));
@@ -51,7 +51,7 @@ class HelperTokenTest extends \PHPUnit_Framework_TestCase {
 			$name,
 			$namespace
 		);
-		
+
 		$this->assertSame($code, $token->getCode());
 		$this->assertSame($id, $token->getId());
 		$this->assertSame($path, $token->getPath());
@@ -59,30 +59,30 @@ class HelperTokenTest extends \PHPUnit_Framework_TestCase {
 		$this->assertSame($name, $token->getName());
 		$this->assertSame($namespace, $token->getNamespace());
 	}
-	
+
 	/**
 	 * Test the `setAttributes` and `getAttributes` accessors.
 	 */
 	public function testAttributeAccessors() {
-		
+
 		$attributes = array(sha1(microtime(true)));
-		
+
 		$token = new HelperToken(0, null, null, 0, null, null, array());
 		$token->setAttributes($attributes);
-		
+
 		$this->assertSame($attributes, $token->getAttributes());
 	}
-	
+
 	/**
 	 * Test the `setValue` and `getValue` accessors.
 	 */
 	public function testValueAccessors() {
-		
+
 		$value = sha1(microtime(true));
-		
+
 		$token = new HelperToken(0, null, null, 0, null, null, array());
 		$token->setValue($value);
-		
+
 		$this->assertSame($value, $token->getValue());
 	}
 }

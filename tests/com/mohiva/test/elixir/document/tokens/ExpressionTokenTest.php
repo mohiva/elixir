@@ -23,7 +23,7 @@ use com\mohiva\elixir\document\tokens\ExpressionToken;
 
 /**
  * Unit test case for the Mohiva Elixir project.
- * 
+ *
  * @category  Mohiva/Elixir
  * @package   Mohiva/Elixir/Test
  * @author    Christian Kaps <christian.kaps@mohiva.com>
@@ -32,12 +32,12 @@ use com\mohiva\elixir\document\tokens\ExpressionToken;
  * @link      https://github.com/mohiva/elixir
  */
 class ExpressionTokenTest extends \PHPUnit_Framework_TestCase {
-	
+
 	/**
 	 * Test all getters for the values set with the constructor.
 	 */
 	public function testConstructorAccessors() {
-		
+
 		$code = mt_rand(1, 30);
 		$id = sha1(microtime(true));
 		$path = sha1(microtime(true));
@@ -54,7 +54,7 @@ class ExpressionTokenTest extends \PHPUnit_Framework_TestCase {
 			$attribute,
 			$stream
 		);
-		
+
 		$this->assertSame($code, $token->getCode());
 		$this->assertSame($id, $token->getId());
 		$this->assertSame($path, $token->getPath());

@@ -23,7 +23,7 @@ use com\mohiva\elixir\document\expression\nodes\BinaryGreaterEqualNode;
 
 /**
  * Unit test case for the Mohiva Elixir project.
- * 
+ *
  * @category  Mohiva/Elixir
  * @package   Mohiva/Elixir/Test
  * @author    Christian Kaps <christian.kaps@mohiva.com>
@@ -32,16 +32,16 @@ use com\mohiva\elixir\document\expression\nodes\BinaryGreaterEqualNode;
  * @link      https://github.com/mohiva/elixir
  */
 class BinaryGreaterEqualNodeTest extends \PHPUnit_Framework_TestCase {
-	
+
 	/**
 	 * Test if the `evaluate` method returns the correct value for the operation.
 	 */
 	public function testEvaluate() {
-		
+
 		$left = mt_rand(1, 100);
 		$right = mt_rand(1, 100);
 		$node = new BinaryGreaterEqualNode(new OperandNode($left), new OperandNode($right));
-		
+
 		$this->assertSame($left . ' >= ' . $right, $node->evaluate());
 	}
 }

@@ -21,8 +21,8 @@ namespace com\mohiva\elixir\document\exceptions;
 use com\mohiva\common\exceptions\MohivaException;
 
 /**
- * Signals that a token is unexpected. 
- * 
+ * Signals that a token is unexpected.
+ *
  * @category  Mohiva/Elixir
  * @package   Mohiva/Elixir/Document/Expression
  * @author    Christian Kaps <christian.kaps@mohiva.com>

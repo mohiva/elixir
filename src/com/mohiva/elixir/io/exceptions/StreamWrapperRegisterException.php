@@ -22,7 +22,7 @@ use com\mohiva\common\exceptions\MohivaException;
 
 /**
  * Signals that an error occurs on registering or unregistering a stream wrapper.
- * 
+ *
  * @category  Mohiva/Elixir
  * @package   Mohiva/Elixir/IO/Exceptions
  * @author    Christian Kaps <christian.kaps@mohiva.com>

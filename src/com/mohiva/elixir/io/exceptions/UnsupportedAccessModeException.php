@@ -22,7 +22,7 @@ use com\mohiva\common\exceptions\MohivaException;
 
 /**
  * Signals that an unsupported access mode was given for the stream wrapper.
- * 
+ *
  * @category  Mohiva/Elixir
  * @package   Mohiva/Elixir/IO/Exceptions
  * @author    Christian Kaps <christian.kaps@mohiva.com>

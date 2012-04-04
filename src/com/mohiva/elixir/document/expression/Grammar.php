@@ -44,7 +44,7 @@ use com\mohiva\elixir\document\expression\operands\ScalarValueOperand;
 
 /**
  * The parser grammar for the Elixir expressions.
- * 
+ *
  * Precedence Table
  *
  * Unary
@@ -57,7 +57,7 @@ use com\mohiva\elixir\document\expression\operands\ScalarValueOperand;
  * Lexer::O_FLOAT_CAST,    80
  * Lexer::O_BOOL_CAST,     80
  * Lexer::O_XML_CAST,      80
- * 
+ *
  * Binary
  * ================================
  * Lexer::O_OR,            10,  LEFT
@@ -76,10 +76,10 @@ use com\mohiva\elixir\document\expression\operands\ScalarValueOperand;
  * Lexer::O_DIV,           90,  LEFT
  * Lexer::O_MOD,           90,  LEFT
  * Lexer::O_POWER,         100, RIGHT
- * 
+ *
  * Note: unary +/- operators must have higher precedence as all binary operators
  * http://www.antlr.org/pipermail/antlr-dev/2009-April/002255.html
- * 
+ *
  * @category  Mohiva/Elixir
  * @package   Mohiva/Elixir/Document/Expression
  * @author    Christian Kaps <christian.kaps@mohiva.com>
@@ -88,14 +88,14 @@ use com\mohiva\elixir\document\expression\operands\ScalarValueOperand;
  * @link      https://github.com/mohiva/elixir
  */
 class Grammar extends ParserGrammar {
-	
+
 	/**
 	 * Creates the grammar.
 	 */
 	public function __construct() {
-		
+
 		parent::__construct();
-		
+
 		$this->addOperator(new UnaryOperator(Lexer::T_NOT, 70,
 			function($node) { return new UnaryNotNode($node); }
 		));
@@ -126,7 +126,7 @@ class Grammar extends ParserGrammar {
 		$this->addOperator(new BinaryOperator(Lexer::T_GREATER, 40, BinaryOperator::LEFT,
 			function($left, $right) { return new BinaryGreaterNode($left, $right); }
 		));
-		$this->addOperator(new BinaryOperator(Lexer::T_GREATER_EQUAL, 40, BinaryOperator::LEFT, 
+		$this->addOperator(new BinaryOperator(Lexer::T_GREATER_EQUAL, 40, BinaryOperator::LEFT,
 			function($left, $right) { return new BinaryGreaterEqualNode($left, $right); }
 		));
 		$this->addOperator(new BinaryOperator(Lexer::T_PLUS, 50, BinaryOperator::LEFT,
@@ -150,7 +150,7 @@ class Grammar extends ParserGrammar {
 		$this->addOperator(new BinaryOperator(Lexer::T_POWER, 100, BinaryOperator::RIGHT,
 			function($left, $right) { return new BinaryPowerNode($left, $right); }
 		));
-		
+
 		$this->addOperand(new ParenthesesOperand());
 		$this->addOperand(new ScalarValueOperand());
 	}

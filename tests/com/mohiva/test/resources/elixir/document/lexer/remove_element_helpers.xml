@@ -2,5 +2,5 @@
 <test:Helper1 xmlns:test="urn:test">
 
 	<test:Helper2 />
-	
+
 </test:Helper1>

@@ -23,7 +23,7 @@ use com\mohiva\pyramid\Token;
 
 /**
  * Tokenize a document expression.
- * 
+ *
  * @category  Mohiva/Elixir
  * @package   Mohiva/Elixir/Document/Expression
  * @author    Christian Kaps <christian.kaps@mohiva.com>
@@ -32,14 +32,14 @@ use com\mohiva\pyramid\Token;
  * @link      https://github.com/mohiva/elixir
  */
 class Lexer {
-	
+
 	/**
 	 * Expression tokens.
-	 * 
+	 *
 	 * @var int
 	 */
 	const T_NONE              = 0;
-	
+
 	const T_OPEN_PARENTHESIS  = 101;  // (
 	const T_CLOSE_PARENTHESIS = 102;  // )
 	const T_OPEN_ARRAY        = 103;  // [
@@ -52,7 +52,7 @@ class Lexer {
 	const T_NS_SEPARATOR      = 110;  // \
 	const T_VALUE             = 111;  // "",'',1,0.1,true,false,null
 	const T_NAME              = 112;  // [a-zA-Z0-9_]
-	
+
 	const T_NOT               = 201;  // !
 	const T_PLUS              = 202;  // +
 	const T_MINUS             = 203;  // -
@@ -75,10 +75,10 @@ class Lexer {
 	const T_FLOAT_CAST        = 220;  // (float)
 	const T_BOOL_CAST         = 221;  // (bool)
 	const T_XML_CAST          = 222;  // (xml)
-	
+
 	/**
 	 * The lexemes to find the tokens.
-	 * 
+	 *
 	 * @var array
 	 */
 	private $lexemes = array(
@@ -92,10 +92,10 @@ class Lexer {
 		'(\(string\)|\(int\)|\(float\)|\(bool\)|\(xml\))',
 		'(.)'
 	);
-	
+
 	/**
 	 * Map the constant values with its token type.
-	 * 
+	 *
 	 * @var int[]
 	 */
 	private $constTokenMap = array(
@@ -132,62 +132,62 @@ class Lexer {
 		'(bool)'    => self::T_BOOL_CAST,
 		'(xml)'     => self::T_XML_CAST
 	);
-	
+
 	/**
 	 * The token stream.
-	 * 
-	 * @var \com\mohiva\framework\util\TokenStream
+	 *
+	 * @var TokenStream
 	 */
 	private $stream = null;
-	
+
 	/**
 	 * The class constructor.
 	 *
-	 * @param \com\mohiva\common\parser\TokenStream $stream The token stream to use for this lexer.
+	 * @param TokenStream $stream The token stream to use for this lexer.
 	 */
 	public function __construct(TokenStream $stream) {
-		
+
 		$this->stream = $stream;
 	}
-	
+
 	/**
 	 * Return the token stream instance.
-	 * 
-	 * @return \com\mohiva\common\parser\TokenStream The token stream to use for this lexer.
+	 *
+	 * @return TokenStream The token stream to use for this lexer.
 	 */
 	public function getStream() {
-		
+
 		return $this->stream;
 	}
-	
+
 	/**
 	 * Tokenize the given input string and return the resulting token stream.
-	 * 
+	 *
 	 * @param string $input The string input to scan.
-	 * @return \com\mohiva\common\parser\TokenStream The resulting token stream.
+	 * @return TokenStream The resulting token stream.
 	 */
 	public function scan($input) {
-		
+
 		$this->stream->flush();
 		$this->stream->setSource($input);
 		$this->tokenize($input);
 		$this->stream->rewind();
-		
+
 		return $this->stream;
 	}
-	
+
 	/**
 	 * Transform the input string into a token stream.
-	 * 
+	 *
 	 * @param string $input The string input to tokenize.
 	 */
 	private function tokenize($input) {
-		
+
 		$pattern = '/' . implode('|', $this->lexemes) . '/';
 		$flags = PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_OFFSET_CAPTURE;
 		$matches = preg_split($pattern, $input, -1, $flags);
 		foreach ($matches as $match) {
-			
+
 			$value = strtolower($match[0]);
 			if ($value[0] == "'" ||
 				$value[0] == '"' ||
@@ -195,7 +195,7 @@ class Lexer {
 				$value == 'false' ||
 				$value == 'null' ||
 				is_numeric($value)) {
-				
+
 				$code = self::T_VALUE;
 			} else if (isset($this->constTokenMap[$value])) {
 				$code = $this->constTokenMap[$value];
@@ -206,7 +206,7 @@ class Lexer {
 			} else {
 				$code = self::T_NONE;
 			}
-			
+
 			$this->stream->push(new Token(
 				$code,
 				$match[0],

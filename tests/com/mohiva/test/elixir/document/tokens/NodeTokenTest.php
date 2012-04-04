@@ -22,7 +22,7 @@ use com\mohiva\elixir\document\tokens\NodeToken;
 
 /**
  * Unit test case for the Mohiva Elixir project.
- * 
+ *
  * @category  Mohiva/Elixir
  * @package   Mohiva/Elixir/Test
  * @author    Christian Kaps <christian.kaps@mohiva.com>
@@ -31,12 +31,12 @@ use com\mohiva\elixir\document\tokens\NodeToken;
  * @link      https://github.com/mohiva/elixir
  */
 class NodeTokenTest extends \PHPUnit_Framework_TestCase {
-	
+
 	/**
 	 * Test all getters for the values set with the constructor.
 	 */
 	public function testConstructorAccessors() {
-		
+
 		$code = mt_rand(1, 30);
 		$id = sha1(microtime(true));
 		$path = sha1(microtime(true));
@@ -53,7 +53,7 @@ class NodeTokenTest extends \PHPUnit_Framework_TestCase {
 			$content,
 			$children
 		);
-		
+
 		$this->assertSame($code, $token->getCode());
 		$this->assertSame($id, $token->getId());
 		$this->assertSame($path, $token->getPath());

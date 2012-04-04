@@ -27,7 +27,7 @@ use com\mohiva\elixir\io\CacheContainer;
 
 /**
  * Unit test case for the Mohiva Elixir project.
- * 
+ *
  * @category  Mohiva/Elixir
  * @package   Mohiva/Elixir/Test
  * @author    Christian Kaps <christian.kaps@mohiva.com>
@@ -36,57 +36,57 @@ use com\mohiva\elixir\io\CacheContainer;
  * @link      https://github.com/mohiva/elixir
  */
 class CacheContainerTest extends \PHPUnit_Framework_TestCase {
-	
+
 	/**
 	 * Test if can store PHP code.
 	 */
 	public function testStorePHPCode() {
-		
+
 		$key = new HashKey(Hash::ALGO_SHA1, 'php://temp');
 		$adapter = new ResourceAdapter(new TempResourceContainer(TempFileResource::TYPE));
 		$container = new CacheContainer($adapter, $key);
 		$container->store('/path/to/doc.xml', '<?php class Test {}');
-		
+
 		$this->assertTrue($adapter->exists($key));
 	}
-	
+
 	/**
 	 * Test if previous stored PHP code exists.
 	 */
 	public function testPHPCodeExists() {
-		
+
 		$key = new HashKey(Hash::ALGO_SHA1, 'php://temp');
 		$adapter = new ResourceAdapter(new TempResourceContainer(TempFileResource::TYPE));
 		$container = new CacheContainer($adapter, $key);
 		$container->store('/path/to/doc.xml', '<?php class Test {}');
-		
+
 		$this->assertTrue($container->exists('/path/to/doc.xml'));
 	}
-	
+
 	/**
 	 * Test if can fetch previous stored PHP code.
 	 */
 	public function testFetchAnnotationList() {
-		
+
 		$key = new HashKey(Hash::ALGO_SHA1, 'php://temp');
 		$adapter = new ResourceAdapter(new TempResourceContainer(TempFileResource::TYPE));
 		$container = new CacheContainer($adapter, $key);
 		$container->store('/path/to/doc.xml', '<?php class Test {}');
-		
+
 		$this->assertEquals($container->fetch('/path/to/doc.xml'), '<?php class Test {}');
 	}
-	
+
 	/**
 	 * Test if can remove previous stored PHP code.
 	 */
 	public function testRemoveAnnotationList() {
-		
+
 		$key = new HashKey(Hash::ALGO_SHA1, 'php://temp');
 		$adapter = new ResourceAdapter(new TempResourceContainer(TempFileResource::TYPE));
 		$container = new CacheContainer($adapter, $key);
 		$container->store('/path/to/doc.xml', '<?php class Test {}');
 		$container->remove('/path/to/doc.xml');
-		
+
 		$this->assertFalse($container->exists('/path/to/doc.xml'));
 	}
 }

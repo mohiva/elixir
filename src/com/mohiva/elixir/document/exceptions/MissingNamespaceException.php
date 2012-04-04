@@ -21,8 +21,8 @@ namespace com\mohiva\elixir\document\exceptions;
 use com\mohiva\common\exceptions\MohivaException;
 
 /**
- * Signals that a namespace is missing or not registered. 
- * 
+ * Signals that a namespace is missing or not registered.
+ *
  * @category  Mohiva/Elixir
  * @package   Mohiva/Elixir/Document/Expression
  * @author    Christian Kaps <christian.kaps@mohiva.com>

@@ -22,7 +22,7 @@ use com\mohiva\elixir\document\tokens\PropertyToken;
 
 /**
  * Unit test case for the Mohiva Elixir project.
- * 
+ *
  * @category  Mohiva/Elixir
  * @package   Mohiva/Elixir/Test
  * @author    Christian Kaps <christian.kaps@mohiva.com>
@@ -31,19 +31,19 @@ use com\mohiva\elixir\document\tokens\PropertyToken;
  * @link      https://github.com/mohiva/elixir
  */
 class PropertyTokenTest extends \PHPUnit_Framework_TestCase {
-	
+
 	/**
 	 * Test all getters for the values set with the constructor.
 	 */
 	public function testConstructorAccessors() {
-		
+
 		$code = mt_rand(1, 30);
 		$value = sha1(microtime(true));
 		$token = new PropertyToken(
 			$code,
 			$value
 		);
-		
+
 		$this->assertSame($code, $token->getCode());
 		$this->assertSame($value, $token->getValue());
 	}

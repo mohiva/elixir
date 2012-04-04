@@ -20,7 +20,7 @@ namespace com\mohiva\test\elixir\document;
 
 /**
  * Test suite for the Mohiva Elixir project.
- * 
+ *
  * @category  Mohiva/Elixir
  * @package   Mohiva/Elixir/Test
  * @author    Christian Kaps <christian.kaps@mohiva.com>
@@ -29,12 +29,12 @@ namespace com\mohiva\test\elixir\document;
  * @link      https://github.com/mohiva/elixir
  */
 class AllTests extends \PHPUnit_Framework_TestSuite {
-	
+
 	/**
 	 * Constructs the test suite handler.
 	 */
 	public function __construct() {
-		
+
 		$this->setName(__CLASS__);
 		$this->addTest(expression\AllTests::suite());
 		$this->addTest(helpers\AllTests::suite());
@@ -44,14 +44,14 @@ class AllTests extends \PHPUnit_Framework_TestSuite {
 		$this->addTestSuite(__NAMESPACE__ . '\NodeTreeTest');
 		$this->addTestSuite(__NAMESPACE__ . '\ParserTest');
 	}
-	
+
 	/**
 	 * Creates the suite.
-	 * 
+	 *
 	 * @return AllTests The test suite.
 	 */
 	public static function suite() {
-		
+
 		return new self();
 	}
 }

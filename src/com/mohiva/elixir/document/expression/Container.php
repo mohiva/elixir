@@ -22,7 +22,7 @@ use com\mohiva\pyramid\Node;
 
 /**
  * Interface for containers which can contain expressions.
- * 
+ *
  * @category  Mohiva/Elixir
  * @package   Mohiva/Elixir/Document/Expression
  * @author    Christian Kaps <christian.kaps@mohiva.com>
@@ -31,17 +31,17 @@ use com\mohiva\pyramid\Node;
  * @link      https://github.com/mohiva/elixir
  */
 interface Container {
-	
+
 	/**
 	 * Adds an expression.
-	 * 
-	 * @param \com\mohiva\pyramid\Node $expression The expression to add.
+	 *
+	 * @param Node $expression The expression to add.
 	 */
 	public function addExpression(Node $expression);
-	
+
 	/**
 	 * Gets the expressions contained in the content of this node.
-	 * 
+	 *
 	 * @return array The expressions contained in the content of this node.
 	 */
 	public function getExpressions();

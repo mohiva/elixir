@@ -22,7 +22,7 @@ use com\mohiva\common\exceptions\MohivaException;
 
 /**
  * Signals that a cache container is missing.
- * 
+ *
  * @category  Mohiva/Elixir
  * @package   Mohiva/Elixir/IO/Exceptions
  * @author    Christian Kaps <christian.kaps@mohiva.com>

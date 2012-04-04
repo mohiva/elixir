@@ -22,7 +22,7 @@ use com\mohiva\pyramid\nodes\UnaryOperatorNode;
 
 /**
  * Represents an unary not expression.
- * 
+ *
  * @category  Mohiva/Elixir
  * @package   Mohiva/Elixir/Document/Expression/Nodes
  * @author    Christian Kaps <christian.kaps@mohiva.com>
@@ -31,14 +31,14 @@ use com\mohiva\pyramid\nodes\UnaryOperatorNode;
  * @link      https://github.com/mohiva/elixir
  */
 class UnaryNotNode extends UnaryOperatorNode {
-	
+
 	/**
 	 * Evaluates the node.
-	 * 
+	 *
 	 * @return string The result of the evaluation.
 	 */
 	public function evaluate() {
-		
+
 		return '!' . $this->node->evaluate();
 	}
 }

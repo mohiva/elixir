@@ -23,7 +23,7 @@ use com\mohiva\elixir\document\expression\nodes\UnaryNotNode;
 
 /**
  * Unit test case for the Mohiva Elixir project.
- * 
+ *
  * @category  Mohiva/Elixir
  * @package   Mohiva/Elixir/Test
  * @author    Christian Kaps <christian.kaps@mohiva.com>
@@ -32,15 +32,15 @@ use com\mohiva\elixir\document\expression\nodes\UnaryNotNode;
  * @link      https://github.com/mohiva/elixir
  */
 class UnaryNotNodeTest extends \PHPUnit_Framework_TestCase {
-	
+
 	/**
 	 * Test if the `evaluate` method returns the correct value for the operation.
 	 */
 	public function testEvaluate() {
-		
+
 		$left = mt_rand(1, 100);
 		$node = new UnaryNotNode(new OperandNode($left));
-		
+
 		$this->assertSame('!' . $left, $node->evaluate());
 	}
 }

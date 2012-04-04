@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--  -->
 <div xmlns:test="urn:test" var1="{{ test }}">
-	
+
 	<div var2="{{ test }}" test:Locale="de_DE" var3="{{ test }}" />
-	
+
 </div>

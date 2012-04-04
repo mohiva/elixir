@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <root xmlns:test="urn:test" test:Helper1="value">
-	
+
 	<node test:Helper2="value" />
 
 </root>

@@ -20,7 +20,7 @@ namespace com\mohiva\test\elixir\document\expression\operands;
 
 /**
  * Test suite for the Mohiva Elixir project.
- * 
+ *
  * @category  Mohiva/Elixir
  * @package   Mohiva/Elixir/Test
  * @author    Christian Kaps <christian.kaps@mohiva.com>
@@ -29,24 +29,24 @@ namespace com\mohiva\test\elixir\document\expression\operands;
  * @link      https://github.com/mohiva/elixir
  */
 class AllTests extends \PHPUnit_Framework_TestSuite {
-	
+
 	/**
 	 * Constructs the test suite handler.
 	 */
 	public function __construct() {
-		
+
 		$this->setName(__CLASS__);
 		$this->addTestSuite(__NAMESPACE__ . '\ParenthesesOperandTest');
 		$this->addTestSuite(__NAMESPACE__ . '\ScalarValueOperandTest');
 	}
-	
+
 	/**
 	 * Creates the suite.
-	 * 
+	 *
 	 * @return AllTests The test suite.
 	 */
 	public static function suite() {
-		
+
 		return new self();
 	}
 }

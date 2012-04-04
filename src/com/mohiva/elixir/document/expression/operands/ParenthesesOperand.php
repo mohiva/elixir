@@ -25,10 +25,11 @@ use com\mohiva\pyramid\Token;
 use com\mohiva\pyramid\Parser;
 use com\mohiva\pyramid\Grammar;
 use com\mohiva\pyramid\Operand;
+use com\mohiva\pyramid\Node;
 
 /**
  * Operand which parses expressions between parentheses.
- * 
+ *
  * @category  Mohiva/Elixir
  * @package   Mohiva/Elixir/Document/Expression/Operands
  * @author    Christian Kaps <christian.kaps@mohiva.com>
@@ -37,44 +38,45 @@ use com\mohiva\pyramid\Operand;
  * @link      https://github.com/mohiva/elixir
  */
 class ParenthesesOperand implements Operand {
-	
+
 	/**
 	 * Returns the identifiers for this operand.
 	 *
 	 * @return array The identifiers for this operand.
 	 */
 	public function getIdentifiers() {
-		
+
 		return array(Lexer::T_OPEN_PARENTHESIS);
 	}
-	
+
 	/**
 	 * Parse the operand.
-	 * 
-	 * This example shows how you should parse sub expressions. You must only create a 
+	 *
+	 * This example shows how you should parse sub expressions. You must only create a
 	 * new parser with the passed grammar and token stream.
 	 *
-	 * @param \com\mohiva\pyramid\Grammar $grammar The grammar of the parser.
-	 * @param \com\mohiva\common\parser\TokenStream $stream The token stream to parse.
-	 * @return \com\mohiva\pyramid\Node The node between the parentheses.
+	 * @param Grammar $grammar The grammar of the parser.
+	 * @param TokenStream $stream The token stream to parse.
+	 * @return Node The node between the parentheses.
+	 * @throws \com\mohiva\common\exceptions\SyntaxErrorException if an unexpected token will be found.
 	 */
 	public function parse(Grammar $grammar, TokenStream $stream) {
-		
+
 		$stream->next();
-		
+
 		$parser = new Parser($grammar);
 		$node = $parser->parse($stream);
-		
+
 		$stream->expect(array(Lexer::T_CLOSE_PARENTHESIS), function(Token $current = null) {
 			if ($current) {
 				$message = "Expected `)`; got `{$current->getValue()}`";
 			} else {
 				$message = "Expected `)` but end of stream reached";
 			}
-			
+
 			throw new SyntaxErrorException($message);
 		});
-		
+
 		return $node;
 	}
 }

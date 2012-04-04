@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="iso-8859-15" ?>
 <test:Root xmlns:test="test.mohiva.com">
-	
+
 	<test:Inner />
-	
+
 </test:Root>

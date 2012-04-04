@@ -20,7 +20,7 @@ namespace com\mohiva\test\elixir\document\helpers;
 
 /**
  * Unit test case for the Mohiva Elixir project.
- * 
+ *
  * @category  Mohiva
  * @package   Mohiva/Test
  * @author    Christian Kaps <akkie@framework.mohiva.com>
@@ -29,17 +29,17 @@ namespace com\mohiva\test\elixir\document\helpers;
  * @link      http://framework.mohiva.com
  */
 class AttributeHelperTest extends \PHPUnit_Framework_TestCase {
-	
+
 	/**
 	 * Test all getters for the values set with the constructor.
 	 */
 	public function testConstructorAccessors() {
-		
+
 		$id = sha1(microtime(true));
 		$value = sha1(microtime(true));
 		$line = mt_rand(1, 100);
 		$path = sha1(microtime(true));
-		
+
 		/* @var \com\mohiva\elixir\document\helpers\AttributeHelper $helper */
 		$helper = $this->getMockForAbstractClass('\com\mohiva\elixir\document\helpers\AttributeHelper', array(
 			$id,
@@ -47,28 +47,28 @@ class AttributeHelperTest extends \PHPUnit_Framework_TestCase {
 			$line,
 			$path
 		));
-		
+
 		$this->assertSame($id, $helper->getId());
 		$this->assertSame($value, $helper->getValue());
 		$this->assertSame($line, $helper->getLine());
 		$this->assertSame($path, $helper->getPath());
 	}
-	
+
 	/**
 	 * Test the `addExpression` and `setExpression` ancestors.
 	 */
 	public function testExpressionAncestors() {
-		
+
 		/* @var \com\mohiva\elixir\document\helpers\ElementHelper $helper */
 		$helper = $this->getMockForAbstractClass(
 			'\com\mohiva\elixir\document\helpers\ElementHelper', array(), '', false
 		);
-		
+
 		/* @var \com\mohiva\pyramid\Node $node */
 		$node = $this->getMock('\com\mohiva\pyramid\Node');
-		
+
 		$helper->addExpression($node);
-		
+
 		$this->assertSame(array($node), $helper->getExpressions());
 	}
 }

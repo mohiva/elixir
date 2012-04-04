@@ -20,7 +20,7 @@ namespace com\mohiva\test\elixir\document\expression\nodes;
 
 /**
  * Test suite for the Mohiva Elixir project.
- * 
+ *
  * @category  Mohiva/Elixir
  * @package   Mohiva/Elixir/Test
  * @author    Christian Kaps <christian.kaps@mohiva.com>
@@ -29,12 +29,12 @@ namespace com\mohiva\test\elixir\document\expression\nodes;
  * @link      https://github.com/mohiva/elixir
  */
 class AllTests extends \PHPUnit_Framework_TestSuite {
-	
+
 	/**
 	 * Constructs the test suite handler.
 	 */
 	public function __construct() {
-		
+
 		$this->setName(__CLASS__);
 		$this->addTestSuite(__NAMESPACE__ . '\OperandNodeTest');
 		$this->addTestSuite(__NAMESPACE__ . '\BinaryAddNodeTest');
@@ -56,14 +56,14 @@ class AllTests extends \PHPUnit_Framework_TestSuite {
 		$this->addTestSuite(__NAMESPACE__ . '\UnaryNotNodeTest');
 		$this->addTestSuite(__NAMESPACE__ . '\UnaryPosNodeTest');
 	}
-	
+
 	/**
 	 * Creates the suite.
-	 * 
+	 *
 	 * @return AllTests The test suite.
 	 */
 	public static function suite() {
-		
+
 		return new self();
 	}
 }

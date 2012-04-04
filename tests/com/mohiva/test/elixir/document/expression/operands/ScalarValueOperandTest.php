@@ -26,7 +26,7 @@ use com\mohiva\elixir\document\expression\operands\ScalarValueOperand;
 
 /**
  * Unit test case for the Mohiva Elixir project.
- * 
+ *
  * @category  Mohiva/Elixir
  * @package   Mohiva/Elixir/Test
  * @author    Christian Kaps <christian.kaps@mohiva.com>
@@ -35,21 +35,21 @@ use com\mohiva\elixir\document\expression\operands\ScalarValueOperand;
  * @link      https://github.com/mohiva/elixir
  */
 class ScalarValueOperandTest extends \PHPUnit_Framework_TestCase {
-	
+
 	/**
 	 * Test if the parse method returns the `OperandNode` with the correct number.
 	 */
 	public function testParseReturnsNodeWithCorrectNumber() {
-		
+
 		$number = (string) mt_rand(1, 100);
-		
+
 		$tokenStream = new TokenStream();
 		$tokenStream->push(new Token(Lexer::T_VALUE, $number, 1));
 		$tokenStream->rewind();
-		
+
 		$operand = new ScalarValueOperand();
 		$node = $operand->parse(new Grammar, $tokenStream);
-		
+
 		$this->assertSame($number, $node->evaluate());
 	}
 }

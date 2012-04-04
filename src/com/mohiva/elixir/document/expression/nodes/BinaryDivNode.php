@@ -22,7 +22,7 @@ use com\mohiva\pyramid\nodes\BinaryOperatorNode;
 
 /**
  * Represents an binary division.
- * 
+ *
  * @category  Mohiva/Elixir
  * @package   Mohiva/Elixir/Document/Expression/Nodes
  * @author    Christian Kaps <christian.kaps@mohiva.com>
@@ -31,14 +31,14 @@ use com\mohiva\pyramid\nodes\BinaryOperatorNode;
  * @link      https://github.com/mohiva/elixir
  */
 class BinaryDivNode extends BinaryOperatorNode {
-	
+
 	/**
 	 * Evaluates the node.
-	 * 
+	 *
 	 * @return string The result of the evaluation.
 	 */
 	public function evaluate() {
-		
+
 		return $this->left->evaluate() . ' / ' . $this->right->evaluate();
 	}
 }

@@ -23,7 +23,7 @@ use com\mohiva\common\parser\TokenStream;
 
 /**
  * Unit test case for the Mohiva Elixir project.
- * 
+ *
  * @category  Mohiva
  * @package   Mohiva/Test
  * @author    Christian Kaps <akkie@framework.mohiva.com>
@@ -32,15 +32,15 @@ use com\mohiva\common\parser\TokenStream;
  * @link      http://framework.mohiva.com
  */
 class LexerTest extends \PHPUnit_Framework_TestCase {
-	
+
 	/**
 	 * Test the syntax of a mathematical calculation.
 	 */
 	public function testCalculationSyntax() {
-		
+
 		$lexer = new Lexer(new TokenStream());
 		$lexer->scan(' 12+4-1/3 * +0.4 + (-12 + 5^3) ');
-		
+
 		$actual = $this->buildActualTokens($lexer->getStream());
 		$expected = array(
 			array(Lexer::T_VALUE => '12'),
@@ -63,18 +63,18 @@ class LexerTest extends \PHPUnit_Framework_TestCase {
 			array(Lexer::T_VALUE => '3'),
 			array(Lexer::T_CLOSE_PARENTHESIS => ')')
 		);
-		
+
 		$this->assertSame($expected, $actual);
 	}
-	
+
 	/**
 	 * Test the syntax of a logical expression.
 	 */
 	public function testLogicalSyntax() {
-		
+
 		$lexer = new Lexer(new TokenStream());
 		$lexer->scan(' 12 > 4 && 0 >= 5 || 34 < 5 && 56 <= 5 || 4 % 2 == 0 && 5 != 4');
-		
+
 		$actual = $this->buildActualTokens($lexer->getStream());
 		$expected = array(
 			array(Lexer::T_VALUE => '12'),
@@ -105,15 +105,15 @@ class LexerTest extends \PHPUnit_Framework_TestCase {
 		);
 		$this->assertSame($expected, $actual);
 	}
-	
+
 	/**
 	 * Test the syntax for an variable assignment.
 	 */
 	public function testAssignmentSyntax() {
-		
+
 		$lexer = new Lexer(new TokenStream());
 		$lexer->scan(" var = (value == 1) ? 1 : 2 ");
-		
+
 		$actual = $this->buildActualTokens($lexer->getStream());
 		$expected = array(
 			array(Lexer::T_NAME => 'var'),
@@ -130,45 +130,45 @@ class LexerTest extends \PHPUnit_Framework_TestCase {
 		);
 		$this->assertSame($expected, $actual);
 	}
-	
+
 	/**
 	 * Test the syntax for single quoted strings.
 	 */
 	public function testSingleQuotedStringSyntax() {
-		
+
 		$lexer = new Lexer(new TokenStream());
 		$lexer->scan(" '\\'key\\\\':va\\'l\\'ue\\'' ");
-		
+
 		$actual = $this->buildActualTokens($lexer->getStream());
 		$expected = array(
 			array(Lexer::T_VALUE => "'\\'key\\\\':va\\'l\\'ue\\''")
 		);
 		$this->assertSame($expected, $actual);
 	}
-	
+
 	/**
 	 * Test the syntax for double quoted strings.
 	 */
 	public function testDoubleQuotedStringSyntax() {
-		
+
 		$lexer = new Lexer(new TokenStream());
 		$lexer->scan(' "\"key\":va\"l\"ue\"" ');
-		
+
 		$actual = $this->buildActualTokens($lexer->getStream());
 		$expected = array(
 			array(Lexer::T_VALUE => '"\"key\":va\"l\"ue\""')
 		);
 		$this->assertSame($expected, $actual);
 	}
-	
+
 	/**
 	 * Test the syntax for an array definition.
 	 */
 	public function testArraySyntax() {
-		
+
 		$lexer = new Lexer(new TokenStream());
 		$lexer->scan(' [key1:"val\"ue", 0 : 1, 1, [1,2]] ');
-		
+
 		$actual = $this->buildActualTokens($lexer->getStream());
 		$expected = array(
 			array(Lexer::T_OPEN_ARRAY => '['),
@@ -191,15 +191,15 @@ class LexerTest extends \PHPUnit_Framework_TestCase {
 		);
 		$this->assertSame($expected, $actual);
 	}
-	
+
 	/**
 	 * Test the syntax of a variable.
 	 */
 	public function testVariableSyntax() {
-		
+
 		$lexer = new Lexer(new TokenStream());
 		$lexer->scan(' my.var.methodCall(1, 2) ');
-		
+
 		$actual = $this->buildActualTokens($lexer->getStream());
 		$expected = array(
 			array(Lexer::T_NAME => 'my'),
@@ -215,15 +215,15 @@ class LexerTest extends \PHPUnit_Framework_TestCase {
 		);
 		$this->assertSame($expected, $actual);
 	}
-	
+
 	/**
 	 * Test the syntax of a class constant.
 	 */
 	public function testClassConstantSyntax() {
-		
+
 		$lexer = new Lexer(new TokenStream());
 		$lexer->scan(' \my\namespace\Class::CONSTANT.methodCall(1, 2) ');
-		
+
 		$actual = $this->buildActualTokens($lexer->getStream());
 		$expected = array(
 			array(Lexer::T_NS_SEPARATOR => '\\'),
@@ -244,15 +244,15 @@ class LexerTest extends \PHPUnit_Framework_TestCase {
 		);
 		$this->assertSame($expected, $actual);
 	}
-	
+
 	/**
 	 * Test the syntax for string type cast.
 	 */
 	public function testStringCastSyntax() {
-		
+
 		$lexer = new Lexer(new TokenStream());
 		$lexer->scan(' (string) my.var ');
-		
+
 		$actual = $this->buildActualTokens($lexer->getStream());
 		$expected = array(
 			array(Lexer::T_STRING_CAST => '(string)'),
@@ -262,15 +262,15 @@ class LexerTest extends \PHPUnit_Framework_TestCase {
 		);
 		$this->assertSame($expected, $actual);
 	}
-    
+
 	/**
 	 * Test the syntax for int type cast.
 	 */
 	public function testIntCastSyntax() {
-		
+
 		$lexer = new Lexer(new TokenStream());
 		$lexer->scan(' (int) my.var ');
-		
+
 		$actual = $this->buildActualTokens($lexer->getStream());
 		$expected = array(
 			array(Lexer::T_INT_CAST => '(int)'),
@@ -280,15 +280,15 @@ class LexerTest extends \PHPUnit_Framework_TestCase {
 		);
 		$this->assertSame($expected, $actual);
 	}
-	
+
 	/**
 	 * Test the syntax for float type cast.
 	 */
 	public function testFloatCastSyntax() {
-		
+
 		$lexer = new Lexer(new TokenStream());
 		$lexer->scan(' (float) my.var ');
-		
+
 		$actual = $this->buildActualTokens($lexer->getStream());
 		$expected = array(
 			array(Lexer::T_FLOAT_CAST => '(float)'),
@@ -298,15 +298,15 @@ class LexerTest extends \PHPUnit_Framework_TestCase {
 		);
 		$this->assertSame($expected, $actual);
 	}
-	
+
 	/**
 	 * Test the syntax for bool type cast.
 	 */
 	public function testBoolCastSyntax() {
-		
+
 		$lexer = new Lexer(new TokenStream());
 		$lexer->scan(' (bool) my.var ');
-		
+
 		$actual = $this->buildActualTokens($lexer->getStream());
 		$expected = array(
 			array(Lexer::T_BOOL_CAST => '(bool)'),
@@ -316,15 +316,15 @@ class LexerTest extends \PHPUnit_Framework_TestCase {
 		);
 		$this->assertSame($expected, $actual);
 	}
-	
+
 	/**
 	 * Test the syntax for xml type cast.
 	 */
 	public function testXmlCastSyntax() {
-		
+
 		$lexer = new Lexer(new TokenStream());
 		$lexer->scan(' (xml) my.var ');
-		
+
 		$actual = $this->buildActualTokens($lexer->getStream());
 		$expected = array(
 			array(Lexer::T_XML_CAST => '(xml)'),
@@ -334,15 +334,15 @@ class LexerTest extends \PHPUnit_Framework_TestCase {
 		);
 		$this->assertSame($expected, $actual);
 	}
-	
+
 	/**
 	 * Test the syntax for the ternary operator.
 	 */
 	public function testTernarySyntax() {
-		
+
 		$lexer = new Lexer(new TokenStream());
 		$lexer->scan(' my.var ? "1" : "2" ');
-		
+
 		$actual = $this->buildActualTokens($lexer->getStream());
 		$expected = array(
 			array(Lexer::T_NAME => 'my'),
@@ -355,15 +355,15 @@ class LexerTest extends \PHPUnit_Framework_TestCase {
 		);
 		$this->assertSame($expected, $actual);
 	}
-	
+
 	/**
 	 * Test the concat token.
 	 */
 	public function testConcatToken() {
-		
+
 		$lexer = new Lexer(new TokenStream());
 		$lexer->scan(' "string" _ 1 ');
-		
+
 		$actual = $this->buildActualTokens($lexer->getStream());
 		$expected = array(
 			array(Lexer::T_VALUE => '"string"'),
@@ -372,30 +372,30 @@ class LexerTest extends \PHPUnit_Framework_TestCase {
 		);
 		$this->assertSame($expected, $actual);
 	}
-	
+
 	/**
 	 * Test the none token.
 	 */
 	public function testNoneToken() {
-		
+
 		$lexer = new Lexer(new TokenStream());
 		$lexer->scan(' # ');
-		
+
 		$actual = $this->buildActualTokens($lexer->getStream());
 		$expected = array(
 			array(Lexer::T_NONE => '#'),
 		);
 		$this->assertSame($expected, $actual);
 	}
-	
+
 	/**
 	 * Create an array from the token stream which contains only the tokens and the operators/values.
-	 * 
+	 *
 	 * @param \com\mohiva\common\parser\TokenStream $stream The stream containing the lexer tokens.
 	 * @return array The actual list with tokens and operators/values.
 	 */
 	private function buildActualTokens(TokenStream $stream) {
-		
+
 		$actual = array();
 		while ($stream->valid()) {
 			/* @var \com\mohiva\pyramid\Token $current */
@@ -403,7 +403,7 @@ class LexerTest extends \PHPUnit_Framework_TestCase {
 			$stream->next();
 			$actual[] = array($current->getCode() => $current->getValue());
 		}
-		
+
 		return $actual;
 	}
 }

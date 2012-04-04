@@ -5,19 +5,19 @@
 	xmlns:m="http://www.w3.org/1999/Math/MathML"
 	xmlns:svg="http://www.w3.org/2000/svg"
 	xmlns:xlink="http://www.w3.org/1999/xlink">
-	
+
 	<xi:iclude xlink:href="index.xml#root" />
-	
+
 	<xsl:choose>
 		<xsl:when test="...">...</xsl:when>
 		<xsl:when test="...">...</xsl:when>
 		<xsl:when test="...">...</xsl:when>
 		<xsl:otherwise>...</xsl:otherwise>
 	</xsl:choose>
-	
+
 	<m:mi>x</m:mi><m:mo>=</m:mo><m:mn>2</m:mn>
-	
+
 	<svg:circle svg:cx="10" svg:cy="10" svg:r="5" svg:fill="red" />
-	
+
 	<div />
 </html>

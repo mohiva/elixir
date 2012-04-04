@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <root xmlns:test="urn:test">
-	
+
 	<div>
 		<test:child />
 		<test:child />
@@ -10,7 +10,7 @@
 			</div>
 		</test:child>
 	</div>
-	
+
 	<test:child />
 
 </root>

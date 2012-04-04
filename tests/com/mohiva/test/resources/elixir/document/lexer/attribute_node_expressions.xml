@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <root xmlns:test="urn:test">
-	
+
 	<div attr="{{ test }}" />
 	<div attr="surrounding {{ test }} text" />
-	
+
 	<test:Helper attr="{{ test }}" />
 	<test:Helper attr="surrounding {{ test }} text" />
-	
+
 </root>
