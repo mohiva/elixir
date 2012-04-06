@@ -58,7 +58,7 @@ class Lexer {
 	 *
 	 * @var string
 	 */
-	const EXPRESSION_PATTERN = "contains(., '{{') and contains(., '}}')";
+	const EXPRESSION_PATTERN = "contains(., '{%') and contains(., '%}')";
 
 	/**
 	 * Contains namespaces that can be defined in XML documents, but which
@@ -102,13 +102,6 @@ class Lexer {
 	private $elAtNsQuery = '';
 
 	/**
-	 * The token stream object.
-	 *
-	 * @var TokenStream
-	 */
-	private $stream = null;
-
-	/**
 	 * The expression lexer object to create the token stream from the found expressions.
 	 *
 	 * @var ExpressionLexer
@@ -118,24 +111,12 @@ class Lexer {
 	/**
 	 * The class constructor.
 	 *
-	 * @param TokenStream $stream The token stream to use for this lexer.
 	 * @param ExpressionLexer $expressionLexer The expression lexer object to
 	 * create the token stream from the found expressions.
 	 */
-	public function __construct(TokenStream $stream, ExpressionLexer $expressionLexer) {
+	public function __construct(ExpressionLexer $expressionLexer) {
 
-		$this->stream = $stream;
 		$this->expressionLexer = $expressionLexer;
-	}
-
-	/**
-	 * Return the token stream instance.
-	 *
-	 * @return TokenStream The token stream to use for this lexer.
-	 */
-	public function getStream() {
-
-		return $this->stream;
 	}
 
 	/**
@@ -154,23 +135,25 @@ class Lexer {
 		$this->elNsQuery = $this->buildNSQuery($this->namespaces, array('.'));
 		$this->elAtNsQuery = $this->buildNSQuery($this->namespaces, array('.', '@*'));
 
-		$this->stream->flush();
-		// The lexer tokenize the XML content from the inside-out,
-		// so we iterate in reverse order to start from the root node.
-		$this->stream->setIteratorMode(TokenStream::IT_MODE_LIFO);
-		$this->stream->setSource($doc->saveXML());
-		$this->tokenize($doc);
-		$this->stream->rewind();
+		$stream = $this->tokenize($doc);
+		$stream->rewind();
 
-		return $this->stream;
+		return $stream;
 	}
 
 	/**
 	 * Tokenize the given XML document.
 	 *
 	 * @param XMLDocument $doc The document to tokenize.
+	 * @return TokenStream The resulting token stream.
 	 */
 	private function tokenize(XMLDocument $doc) {
+
+		// The lexer tokenize the XML content from the inside-out,
+		// so we iterate in reverse order to start from the root node.
+		$stream = new TokenStream;
+		$stream->setIteratorMode(TokenStream::IT_MODE_LIFO);
+		$stream->setSource($doc->saveXML());
 
 		// For attribute expressions in the content of a node
 		$expressionQuery  = "descendant::*//@*[" . self::EXPRESSION_PATTERN . "]";
@@ -190,9 +173,9 @@ class Lexer {
 
 			// NOTE: This order shouldn't be changed, otherwise the parser cannot
 			// resolve the Parent/Child relationship
-			$this->tokenizeAttributeHelpers($node);
-			$this->tokenizeElementHelper($node);
-			$this->tokenizeExpressions($node, $expressionQuery);
+			$this->tokenizeAttributeHelpers($stream, $node);
+			$this->tokenizeElementHelper($stream, $node);
+			$this->tokenizeExpressions($stream, $node, $expressionQuery);
 
 			$path = $node->getNodePath();
 			$id = sha1($path);
@@ -208,28 +191,31 @@ class Lexer {
 
 			$placeholder = $doc->createElement('__node__', $id);
 			$node->parentNode->replaceChild($placeholder, $node);
-			$this->stream->push($token);
+			$stream->push($token);
 		}
 
 		// Iterator mode is set to LIFO, so this are the the first tokens
-		$this->stream->push(new PropertyToken(self::T_XML_ENCODING, $doc->xmlEncoding));
-		$this->stream->push(new PropertyToken(self::T_XML_VERSION, $doc->xmlVersion));
+		$stream->push(new PropertyToken(self::T_XML_ENCODING, $doc->xmlEncoding));
+		$stream->push(new PropertyToken(self::T_XML_VERSION, $doc->xmlVersion));
+
+		return $stream;
 	}
 
 	/**
 	 * Check if the given element is an element helper. If it's a helper then extract
 	 * all helper relevant data and push it to the stream.
 	 *
+	 * @param TokenStream $stream The stream in which the tokens should be written.
 	 * @param XMLElement $element The current processed XML element object.
 	 */
-	private function tokenizeElementHelper(XMLElement $element) {
+	private function tokenizeElementHelper(TokenStream $stream, XMLElement $element) {
 
 		if (!in_array($element->namespaceURI, $this->namespaces)) {
 			return;
 		}
 
 		$query = "@*[not({$this->elNsQuery}) and " . self::EXPRESSION_PATTERN . "]";
-		$this->tokenizeExpressions($element, $query);
+		$this->tokenizeExpressions($stream, $element, $query);
 		$token = new HelperToken(
 			self::T_ELEMENT_HELPER,
 			sha1($element->getNodePath()),
@@ -240,7 +226,7 @@ class Lexer {
 		);
 
 		$token->setAttributes($this->getHelperAttributes($element));
-		$this->stream->push($token);
+		$stream->push($token);
 	}
 
 	/**
@@ -248,9 +234,10 @@ class Lexer {
 	 * helpers then extract all helper relevant data and push it to the stream.
 	 * This method will also remove the found helper from element.
 	 *
+	 * @param TokenStream $stream The stream in which the tokens should be written.
 	 * @param XMLElement $element The current processed XML element object.
 	 */
-	private function tokenizeAttributeHelpers(XMLElement $element) {
+	private function tokenizeAttributeHelpers(TokenStream $stream, XMLElement $element) {
 
 		if (!$this->namespaces) {
 			return;
@@ -262,7 +249,7 @@ class Lexer {
 			/* @var \DOMAttr $attribute */
 			$attribute = $nodes->item($i);
 			$query = "attribute::*[local-name() = '{$attribute->localName}' and " . self::EXPRESSION_PATTERN . "]";
-			$this->tokenizeExpressions($element, $query);
+			$this->tokenizeExpressions($stream, $element, $query);
 			$token = new HelperToken(
 				self::T_ATTRIBUTE_HELPER,
 				sha1($attribute->getNodePath()),
@@ -272,7 +259,7 @@ class Lexer {
 				$attribute->namespaceURI
 			);
 			$token->setValue($attribute->value);
-			$this->stream->push($token);
+			$stream->push($token);
 
 			$attribute->parentNode->removeAttributeNode($attribute);
 		}
@@ -282,17 +269,18 @@ class Lexer {
 	 * Get all expressions from the given element based on the given XPATH query and push
 	 * it to the stream.
 	 *
+	 * @param TokenStream $stream The stream in which the tokens should be written.
 	 * @param XMLElement $element The current processed element.
 	 * @param string $query The query to get the expressions from element.
 	 */
-	private function tokenizeExpressions(XMLElement $element, $query) {
+	private function tokenizeExpressions(TokenStream $stream, XMLElement $element, $query) {
 
 		/* @var \DomNodeList $nodes */
 		$nodes = $element($query);
 		for ($i = $nodes->length - 1; $i >= 0; $i--) {
 			/* @var \DOMNode $node */
 			$node = $nodes->item($i);
-			if (preg_match_all('/\{\{(.*)\}\}/', $node->nodeValue, $matches, PREG_SET_ORDER)) {
+			if (preg_match_all('/\{%(.*)%\}/Ums', $node->nodeValue, $matches, PREG_SET_ORDER)) {
 				$matches = array_reverse($matches);
 				foreach ($matches as $match) {
 					$token = new ExpressionToken(
@@ -302,9 +290,9 @@ class Lexer {
 						$element->getLineNo(),
 						$match[0],
 						$node->nodeType == XML_ATTRIBUTE_NODE ? /* @var \DOMAttr $node */ $node->name : null,
-						$this->expressionLexer->scan($match[1])
+						clone $this->expressionLexer->scan($match[1])
 					);
-					$this->stream->push($token);
+					$stream->push($token);
 				}
 			}
 		}

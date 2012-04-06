@@ -37,17 +37,6 @@ use com\mohiva\common\xml\XMLDocument;
 class LexerTest extends \PHPUnit_Framework_TestCase {
 
 	/**
-	 * Test if the `getStream` method returns the stream instance.
-	 */
-	public function testGetStream() {
-
-		$stream = new TokenStream();
-		$lexer = new DocumentLexer($stream, new ExpressionLexer(new TokenStream()));
-
-		$this->assertSame($stream, $lexer->getStream());
-	}
-
-	/**
 	 * Test a file with a defined XML version.
 	 */
 	public function testXMLVersion() {
@@ -57,7 +46,7 @@ class LexerTest extends \PHPUnit_Framework_TestCase {
 		$doc = new XMLDocument();
 		$doc->load($xmlFile);
 
-		$lexer = new DocumentLexer(new TokenStream(), new ExpressionLexer(new TokenStream()));
+		$lexer = new DocumentLexer(new ExpressionLexer());
 		$stream = $lexer->scan($doc);
 
 		/* @var \com\mohiva\elixir\document\tokens\PropertyToken $token */
@@ -76,7 +65,7 @@ class LexerTest extends \PHPUnit_Framework_TestCase {
 		$doc = new XMLDocument();
 		$doc->load($xmlFile);
 
-		$lexer = new DocumentLexer(new TokenStream(), new ExpressionLexer(new TokenStream()));
+		$lexer = new DocumentLexer(new ExpressionLexer());
 		$stream = $lexer->scan($doc);
 
 		/* @var \com\mohiva\elixir\document\tokens\PropertyToken $token */
@@ -96,7 +85,7 @@ class LexerTest extends \PHPUnit_Framework_TestCase {
 		$doc = new XMLDocument();
 		$doc->load($xmlFile);
 
-		$lexer = new DocumentLexer(new TokenStream(), new ExpressionLexer(new TokenStream()));
+		$lexer = new DocumentLexer(new ExpressionLexer());
 		$stream = $lexer->scan($doc);
 
 		$this->assertNull($stream->getLookahead(3));
@@ -112,7 +101,7 @@ class LexerTest extends \PHPUnit_Framework_TestCase {
 		$doc = new XMLDocument();
 		$doc->load($xmlFile);
 
-		$lexer = new DocumentLexer(new TokenStream(), new ExpressionLexer(new TokenStream()));
+		$lexer = new DocumentLexer(new ExpressionLexer());
 		$stream = $lexer->scan($doc);
 
 		$this->assertEquals(DocumentLexer::T_ROOT_NODE, $stream->getLookahead(2)->getCode());
@@ -128,7 +117,7 @@ class LexerTest extends \PHPUnit_Framework_TestCase {
 		$doc = new XMLDocument();
 		$doc->load($xmlFile);
 
-		$lexer = new DocumentLexer(new TokenStream(), new ExpressionLexer(new TokenStream()));
+		$lexer = new DocumentLexer(new ExpressionLexer());
 		$stream = $lexer->scan($doc);
 
 		/* @var \com\mohiva\elixir\document\tokens\NodeToken $token */
@@ -147,7 +136,7 @@ class LexerTest extends \PHPUnit_Framework_TestCase {
 		$doc = new XMLDocument();
 		$doc->load($xmlFile);
 
-		$lexer = new DocumentLexer(new TokenStream(), new ExpressionLexer(new TokenStream()));
+		$lexer = new DocumentLexer(new ExpressionLexer());
 		$stream = $lexer->scan($doc);
 
 		$this->assertEquals(DocumentLexer::T_ELEMENT_NODE, $stream->getLookahead(3)->getCode());
@@ -165,7 +154,7 @@ class LexerTest extends \PHPUnit_Framework_TestCase {
 		$doc = new XMLDocument();
 		$doc->load($xmlFile);
 
-		$lexer = new DocumentLexer(new TokenStream(), new ExpressionLexer(new TokenStream()));
+		$lexer = new DocumentLexer(new ExpressionLexer());
 		$stream = $lexer->scan($doc);
 
 		/* @var \com\mohiva\elixir\document\tokens\HelperToken $token */
@@ -190,7 +179,7 @@ class LexerTest extends \PHPUnit_Framework_TestCase {
 		$doc = new XMLDocument();
 		$doc->load($xmlFile);
 
-		$lexer = new DocumentLexer(new TokenStream(), new ExpressionLexer(new TokenStream()));
+		$lexer = new DocumentLexer(new ExpressionLexer());
 		$stream = $lexer->scan($doc);
 
 		/* @var \com\mohiva\elixir\document\tokens\HelperToken $token */
@@ -215,7 +204,7 @@ class LexerTest extends \PHPUnit_Framework_TestCase {
 		$doc = new XMLDocument();
 		$doc->load($xmlFile);
 
-		$lexer = new DocumentLexer(new TokenStream(), new ExpressionLexer(new TokenStream()));
+		$lexer = new DocumentLexer(new ExpressionLexer());
 		$stream = $lexer->scan($doc);
 
 		$this->assertEquals(DocumentLexer::T_EXPRESSION, $stream->getLookahead(3)->getCode());
@@ -231,7 +220,7 @@ class LexerTest extends \PHPUnit_Framework_TestCase {
 		$doc = new XMLDocument();
 		$doc->load($xmlFile);
 
-		$lexer = new DocumentLexer(new TokenStream(), new ExpressionLexer(new TokenStream()));
+		$lexer = new DocumentLexer(new ExpressionLexer());
 		$stream = $lexer->scan($doc);
 
 		// Must found two expressions in the content
@@ -253,7 +242,7 @@ class LexerTest extends \PHPUnit_Framework_TestCase {
 		$doc = new XMLDocument();
 		$doc->load($xmlFile);
 
-		$lexer = new DocumentLexer(new TokenStream(), new ExpressionLexer(new TokenStream()));
+		$lexer = new DocumentLexer(new ExpressionLexer());
 		$stream = $lexer->scan($doc);
 
 		// Must found two expressions in the content
@@ -275,7 +264,7 @@ class LexerTest extends \PHPUnit_Framework_TestCase {
 		$doc = new XMLDocument();
 		$doc->load($xmlFile);
 
-		$lexer = new DocumentLexer(new TokenStream(), new ExpressionLexer(new TokenStream()));
+		$lexer = new DocumentLexer(new ExpressionLexer());
 		$stream = $lexer->scan($doc);
 
 		$this->assertEquals(DocumentLexer::T_EXPRESSION, $stream->getLookahead(3)->getCode());
@@ -293,7 +282,7 @@ class LexerTest extends \PHPUnit_Framework_TestCase {
 		$doc = new XMLDocument();
 		$doc->load($xmlFile);
 
-		$lexer = new DocumentLexer(new TokenStream(), new ExpressionLexer(new TokenStream()));
+		$lexer = new DocumentLexer(new ExpressionLexer());
 		$stream = $lexer->scan($doc);
 
 		$this->assertNull($stream->getLookahead(3));
@@ -309,7 +298,7 @@ class LexerTest extends \PHPUnit_Framework_TestCase {
 		$doc = new XMLDocument();
 		$doc->load($xmlFile);
 
-		$lexer = new DocumentLexer(new TokenStream(), new ExpressionLexer(new TokenStream()));
+		$lexer = new DocumentLexer(new ExpressionLexer());
 		$stream = $lexer->scan($doc);
 
 		/* @var \com\mohiva\elixir\document\tokens\NodeToken $token */
@@ -328,7 +317,7 @@ class LexerTest extends \PHPUnit_Framework_TestCase {
 		$doc = new XMLDocument();
 		$doc->load($xmlFile);
 
-		$lexer = new DocumentLexer(new TokenStream(), new ExpressionLexer(new TokenStream()));
+		$lexer = new DocumentLexer(new ExpressionLexer());
 		$stream = $lexer->scan($doc);
 
 		/* @var \com\mohiva\elixir\document\tokens\NodeToken $token */
@@ -355,7 +344,7 @@ class LexerTest extends \PHPUnit_Framework_TestCase {
 		$doc = new XMLDocument();
 		$doc->load($xmlFile);
 
-		$lexer = new DocumentLexer(new TokenStream(), new ExpressionLexer(new TokenStream()));
+		$lexer = new DocumentLexer(new ExpressionLexer());
 		$stream = $lexer->scan($doc);
 
 		/* @var \com\mohiva\elixir\document\tokens\NodeToken $token */
@@ -389,7 +378,7 @@ class LexerTest extends \PHPUnit_Framework_TestCase {
 		$doc->preserveWhiteSpace = false;
 		$doc->load($xmlFile);
 
-		$lexer = new DocumentLexer(new TokenStream(), new ExpressionLexer(new TokenStream()));
+		$lexer = new DocumentLexer(new ExpressionLexer());
 		$stream = $lexer->scan($doc);
 
 		$firstContent  = '<root>';
@@ -419,7 +408,7 @@ class LexerTest extends \PHPUnit_Framework_TestCase {
 		$doc = new XMLDocument();
 		$doc->load($xmlFile);
 
-		$lexer = new DocumentLexer(new TokenStream(), new ExpressionLexer(new TokenStream()));
+		$lexer = new DocumentLexer(new ExpressionLexer());
 		$stream = $lexer->scan($doc);
 
 		/* @var \com\mohiva\elixir\document\tokens\NodeToken $token */
@@ -442,7 +431,7 @@ class LexerTest extends \PHPUnit_Framework_TestCase {
 		$doc = new XMLDocument();
 		$doc->load($xmlFile);
 
-		$lexer = new DocumentLexer(new TokenStream(), new ExpressionLexer(new TokenStream()));
+		$lexer = new DocumentLexer(new ExpressionLexer());
 		$stream = $lexer->scan($doc);
 
 		foreach ($stream as $token) {
@@ -467,7 +456,7 @@ class LexerTest extends \PHPUnit_Framework_TestCase {
 		$doc = new XMLDocument();
 		$doc->load($xmlFile);
 
-		$lexer = new DocumentLexer(new TokenStream(), new ExpressionLexer(new TokenStream()));
+		$lexer = new DocumentLexer(new ExpressionLexer());
 		$stream = $lexer->scan($doc);
 
 		foreach ($stream as $token) {
@@ -492,7 +481,7 @@ class LexerTest extends \PHPUnit_Framework_TestCase {
 		$doc = new XMLDocument();
 		$doc->load($xmlFile);
 
-		$lexer = new DocumentLexer(new TokenStream(), new ExpressionLexer(new TokenStream()));
+		$lexer = new DocumentLexer(new ExpressionLexer());
 		$stream = $lexer->scan($doc);
 
 		foreach ($stream as $token) {
@@ -517,7 +506,7 @@ class LexerTest extends \PHPUnit_Framework_TestCase {
 		$doc = new XMLDocument();
 		$doc->load($xmlFile);
 
-		$lexer = new DocumentLexer(new TokenStream(), new ExpressionLexer(new TokenStream()));
+		$lexer = new DocumentLexer(new ExpressionLexer());
 		$stream = $lexer->scan($doc);
 
 		$this->assertInstanceOf('\com\mohiva\elixir\document\tokens\HelperToken', $stream->getLookahead(3));

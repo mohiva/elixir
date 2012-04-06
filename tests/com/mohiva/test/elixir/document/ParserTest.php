@@ -48,7 +48,7 @@ class ParserTest extends \PHPUnit_Framework_TestCase {
 		$doc = new XMLDocument();
 		$doc->load(Bootstrap::$resourceDir . '/elixir/document/parser/properties.xml');
 
-		$lexer = new DocumentLexer(new TokenStream(), new ExpressionLexer(new TokenStream()));
+		$lexer = new DocumentLexer(new ExpressionLexer());
 		$stream = $lexer->scan($doc);
 
 		$parser = new DocumentParser(new ExpressionParser(new ExpressionGrammar));
@@ -65,7 +65,7 @@ class ParserTest extends \PHPUnit_Framework_TestCase {
 		$doc = new XMLDocument();
 		$doc->load(Bootstrap::$resourceDir . '/elixir/document/parser/properties.xml');
 
-		$lexer = new DocumentLexer(new TokenStream(), new ExpressionLexer(new TokenStream()));
+		$lexer = new DocumentLexer(new ExpressionLexer());
 		$stream = $lexer->scan($doc);
 
 		$parser = new DocumentParser(new ExpressionParser(new ExpressionGrammar));
@@ -82,7 +82,7 @@ class ParserTest extends \PHPUnit_Framework_TestCase {
 		$doc = new XMLDocument();
 		$doc->load(Bootstrap::$resourceDir . '/elixir/document/parser/root_node.xml');
 
-		$lexer = new DocumentLexer(new TokenStream(), new ExpressionLexer(new TokenStream()));
+		$lexer = new DocumentLexer(new ExpressionLexer());
 		$stream = $lexer->scan($doc);
 
 		$parser = new DocumentParser(new ExpressionParser(new ExpressionGrammar));
@@ -100,7 +100,7 @@ class ParserTest extends \PHPUnit_Framework_TestCase {
 		$doc = new XMLDocument();
 		$doc->load(Bootstrap::$resourceDir . '/elixir/document/parser/node_tree.xml');
 
-		$lexer = new DocumentLexer(new TokenStream(), new ExpressionLexer(new TokenStream()));
+		$lexer = new DocumentLexer(new ExpressionLexer());
 		$stream = $lexer->scan($doc);
 
 		$parser = new DocumentParser(new ExpressionParser(new ExpressionGrammar));
@@ -130,7 +130,7 @@ class ParserTest extends \PHPUnit_Framework_TestCase {
 		$doc = new XMLDocument();
 		$doc->load(Bootstrap::$resourceDir . '/elixir/document/parser/node_helpers.xml');
 
-		$lexer = new DocumentLexer(new TokenStream(), new ExpressionLexer(new TokenStream()));
+		$lexer = new DocumentLexer(new ExpressionLexer());
 		$stream = $lexer->scan($doc);
 
 		$parser = new DocumentParser(new ExpressionParser(new ExpressionGrammar));
@@ -176,7 +176,7 @@ class ParserTest extends \PHPUnit_Framework_TestCase {
 		$doc = new XMLDocument();
 		$doc->load(Bootstrap::$resourceDir . '/elixir/document/parser/node_data.xml');
 
-		$lexer = new DocumentLexer(new TokenStream(), new ExpressionLexer(new TokenStream()));
+		$lexer = new DocumentLexer(new ExpressionLexer());
 		$stream = $lexer->scan($doc);
 		/* @var \com\mohiva\elixir\document\tokens\NodeToken $token */
 		$token = $stream->getLookahead(2);
@@ -200,7 +200,7 @@ class ParserTest extends \PHPUnit_Framework_TestCase {
 		$doc = new XMLDocument();
 		$doc->load(Bootstrap::$resourceDir . '/elixir/document/parser/default.xml');
 
-		$lexer = new DocumentLexer(new TokenStream(), new ExpressionLexer(new TokenStream()));
+		$lexer = new DocumentLexer(new ExpressionLexer());
 		$stream = $lexer->scan($doc);
 
 		$parser = new DocumentParser(new ExpressionParser(new ExpressionGrammar));
@@ -219,7 +219,7 @@ class ParserTest extends \PHPUnit_Framework_TestCase {
 		$doc = new XMLDocument();
 		$doc->load(Bootstrap::$resourceDir . '/elixir/document/parser/default.xml');
 
-		$lexer = new DocumentLexer(new TokenStream(), new ExpressionLexer(new TokenStream()));
+		$lexer = new DocumentLexer(new ExpressionLexer());
 		$stream = $lexer->scan($doc);
 
 		$parser = new DocumentParser(new ExpressionParser(new ExpressionGrammar));
@@ -232,6 +232,7 @@ class ParserTest extends \PHPUnit_Framework_TestCase {
 
 	/**
 	 * Test if the parser sets the correct node expression.
+	 * TODO Implement test
 	 */
 	public function testParserSetsCorrectNodeExpression() {
 
@@ -240,6 +241,7 @@ class ParserTest extends \PHPUnit_Framework_TestCase {
 
 	/**
 	 * Test if the parser sets the correct attribute helper expression.
+	 * TODO Implement test
 	 */
 	public function testParserSetsCorrectAttributeHelperExpression() {
 
@@ -248,6 +250,7 @@ class ParserTest extends \PHPUnit_Framework_TestCase {
 
 	/**
 	 * Test if the parser sets the correct element helper expression.
+	 * TODO Implement test
 	 */
 	public function testParserSetsCorrectElementHelperExpression() {
 
@@ -262,7 +265,7 @@ class ParserTest extends \PHPUnit_Framework_TestCase {
 		$doc = new XMLDocument();
 		$doc->load(Bootstrap::$resourceDir . '/elixir/document/parser/with_url_namespace.xml');
 
-		$lexer = new DocumentLexer(new TokenStream(), new ExpressionLexer(new TokenStream()));
+		$lexer = new DocumentLexer(new ExpressionLexer());
 		$stream = $lexer->scan($doc);
 
 		$parser = new DocumentParser(new ExpressionParser(new ExpressionGrammar));
@@ -282,7 +285,7 @@ class ParserTest extends \PHPUnit_Framework_TestCase {
 		$doc = new XMLDocument();
 		$doc->load(Bootstrap::$resourceDir . '/elixir/document/parser/with_url_namespace.xml');
 
-		$lexer = new DocumentLexer(new TokenStream(), new ExpressionLexer(new TokenStream()));
+		$lexer = new DocumentLexer(new ExpressionLexer());
 		$stream = $lexer->scan($doc);
 
 		$parser = new DocumentParser(new ExpressionParser(new ExpressionGrammar));
@@ -304,7 +307,7 @@ class ParserTest extends \PHPUnit_Framework_TestCase {
 		$doc = new XMLDocument();
 		$doc->load(Bootstrap::$resourceDir . '/elixir/document/parser/with_url_namespace.xml');
 
-		$lexer = new DocumentLexer(new TokenStream(), new ExpressionLexer(new TokenStream()));
+		$lexer = new DocumentLexer(new ExpressionLexer());
 		$stream = $lexer->scan($doc);
 
 		$parser = new DocumentParser(new ExpressionParser(new ExpressionGrammar));
@@ -321,7 +324,7 @@ class ParserTest extends \PHPUnit_Framework_TestCase {
 		$doc = new XMLDocument();
 		$doc->load(Bootstrap::$resourceDir . '/elixir/document/parser/invalid_namespace.xml');
 
-		$lexer = new DocumentLexer(new TokenStream(), new ExpressionLexer(new TokenStream()));
+		$lexer = new DocumentLexer(new ExpressionLexer());
 		$stream = $lexer->scan($doc);
 
 		$parser = new DocumentParser(new ExpressionParser(new ExpressionGrammar));
@@ -336,7 +339,7 @@ class ParserTest extends \PHPUnit_Framework_TestCase {
 		$doc = new XMLDocument();
 		$doc->load(Bootstrap::$resourceDir . '/elixir/document/parser/valid_namespaces.xml');
 
-		$lexer = new DocumentLexer(new TokenStream(), new ExpressionLexer(new TokenStream()));
+		$lexer = new DocumentLexer(new ExpressionLexer());
 		$stream = $lexer->scan($doc);
 
 		$parser = new DocumentParser(new ExpressionParser(new ExpressionGrammar));
@@ -358,7 +361,7 @@ class ParserTest extends \PHPUnit_Framework_TestCase {
 		$doc = new XMLDocument();
 		$doc->load(Bootstrap::$resourceDir . '/elixir/document/parser/valid_element_helper.xml');
 
-		$lexer = new DocumentLexer(new TokenStream(), new ExpressionLexer(new TokenStream()));
+		$lexer = new DocumentLexer(new ExpressionLexer());
 		$stream = $lexer->scan($doc);
 
 		$parser = new DocumentParser(new ExpressionParser(new ExpressionGrammar));
@@ -379,7 +382,7 @@ class ParserTest extends \PHPUnit_Framework_TestCase {
 		$doc = new XMLDocument();
 		$doc->load(Bootstrap::$resourceDir . '/elixir/document/parser/valid_attribute_helper.xml');
 
-		$lexer = new DocumentLexer(new TokenStream(), new ExpressionLexer(new TokenStream()));
+		$lexer = new DocumentLexer(new ExpressionLexer());
 		$stream = $lexer->scan($doc);
 
 		$parser = new DocumentParser(new ExpressionParser(new ExpressionGrammar));
@@ -422,7 +425,7 @@ class ParserTest extends \PHPUnit_Framework_TestCase {
 		$doc = new XMLDocument();
 		$doc->load(Bootstrap::$resourceDir . '/elixir/document/parser/invalid_element_helper.xml');
 
-		$lexer = new DocumentLexer(new TokenStream(), new ExpressionLexer(new TokenStream()));
+		$lexer = new DocumentLexer(new ExpressionLexer());
 		$stream = $lexer->scan($doc);
 
 		$parser = new DocumentParser(new ExpressionParser(new ExpressionGrammar));
@@ -439,7 +442,7 @@ class ParserTest extends \PHPUnit_Framework_TestCase {
 		$doc = new XMLDocument();
 		$doc->load(Bootstrap::$resourceDir . '/elixir/document/parser/invalid_attribute_helper.xml');
 
-		$lexer = new DocumentLexer(new TokenStream(), new ExpressionLexer(new TokenStream()));
+		$lexer = new DocumentLexer(new ExpressionLexer());
 		$stream = $lexer->scan($doc);
 
 		$parser = new DocumentParser(new ExpressionParser(new ExpressionGrammar));

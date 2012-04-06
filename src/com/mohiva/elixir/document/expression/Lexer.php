@@ -134,33 +134,6 @@ class Lexer {
 	);
 
 	/**
-	 * The token stream.
-	 *
-	 * @var TokenStream
-	 */
-	private $stream = null;
-
-	/**
-	 * The class constructor.
-	 *
-	 * @param TokenStream $stream The token stream to use for this lexer.
-	 */
-	public function __construct(TokenStream $stream) {
-
-		$this->stream = $stream;
-	}
-
-	/**
-	 * Return the token stream instance.
-	 *
-	 * @return TokenStream The token stream to use for this lexer.
-	 */
-	public function getStream() {
-
-		return $this->stream;
-	}
-
-	/**
 	 * Tokenize the given input string and return the resulting token stream.
 	 *
 	 * @param string $input The string input to scan.
@@ -168,20 +141,22 @@ class Lexer {
 	 */
 	public function scan($input) {
 
-		$this->stream->flush();
-		$this->stream->setSource($input);
-		$this->tokenize($input);
-		$this->stream->rewind();
+		$stream = $this->tokenize($input);
+		$stream->rewind();
 
-		return $this->stream;
+		return $stream;
 	}
 
 	/**
 	 * Transform the input string into a token stream.
 	 *
 	 * @param string $input The string input to tokenize.
+	 * @return TokenStream The resulting token stream.
 	 */
 	private function tokenize($input) {
+
+		$stream = new TokenStream;
+		$stream->setSource($input);
 
 		$pattern = '/' . implode('|', $this->lexemes) . '/';
 		$flags = PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_OFFSET_CAPTURE;
@@ -207,11 +182,13 @@ class Lexer {
 				$code = self::T_NONE;
 			}
 
-			$this->stream->push(new Token(
+			$stream->push(new Token(
 				$code,
 				$match[0],
 				$match[1]
 			));
 		}
+
+		return $stream;
 	}
 }

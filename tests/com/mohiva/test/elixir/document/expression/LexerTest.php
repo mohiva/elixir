@@ -38,10 +38,10 @@ class LexerTest extends \PHPUnit_Framework_TestCase {
 	 */
 	public function testCalculationSyntax() {
 
-		$lexer = new Lexer(new TokenStream());
-		$lexer->scan(' 12+4-1/3 * +0.4 + (-12 + 5^3) ');
+		$lexer = new Lexer();
+		$stream = $lexer->scan(' 12+4-1/3 * +0.4 + (-12 + 5^3) ');
 
-		$actual = $this->buildActualTokens($lexer->getStream());
+		$actual = $this->buildActualTokens($stream);
 		$expected = array(
 			array(Lexer::T_VALUE => '12'),
 			array(Lexer::T_PLUS => '+'),
@@ -72,10 +72,10 @@ class LexerTest extends \PHPUnit_Framework_TestCase {
 	 */
 	public function testLogicalSyntax() {
 
-		$lexer = new Lexer(new TokenStream());
-		$lexer->scan(' 12 > 4 && 0 >= 5 || 34 < 5 && 56 <= 5 || 4 % 2 == 0 && 5 != 4');
+		$lexer = new Lexer();
+		$stream = $lexer->scan(' 12 > 4 && 0 >= 5 || 34 < 5 && 56 <= 5 || 4 % 2 == 0 && 5 != 4');
 
-		$actual = $this->buildActualTokens($lexer->getStream());
+		$actual = $this->buildActualTokens($stream);
 		$expected = array(
 			array(Lexer::T_VALUE => '12'),
 			array(Lexer::T_GREATER => '>'),
@@ -111,10 +111,10 @@ class LexerTest extends \PHPUnit_Framework_TestCase {
 	 */
 	public function testAssignmentSyntax() {
 
-		$lexer = new Lexer(new TokenStream());
-		$lexer->scan(" var = (value == 1) ? 1 : 2 ");
+		$lexer = new Lexer();
+		$stream = $lexer->scan(" var = (value == 1) ? 1 : 2 ");
 
-		$actual = $this->buildActualTokens($lexer->getStream());
+		$actual = $this->buildActualTokens($stream);
 		$expected = array(
 			array(Lexer::T_NAME => 'var'),
 			array(Lexer::T_ASSIGN => '='),
@@ -136,10 +136,10 @@ class LexerTest extends \PHPUnit_Framework_TestCase {
 	 */
 	public function testSingleQuotedStringSyntax() {
 
-		$lexer = new Lexer(new TokenStream());
-		$lexer->scan(" '\\'key\\\\':va\\'l\\'ue\\'' ");
+		$lexer = new Lexer();
+		$stream = $lexer->scan(" '\\'key\\\\':va\\'l\\'ue\\'' ");
 
-		$actual = $this->buildActualTokens($lexer->getStream());
+		$actual = $this->buildActualTokens($stream);
 		$expected = array(
 			array(Lexer::T_VALUE => "'\\'key\\\\':va\\'l\\'ue\\''")
 		);
@@ -151,10 +151,10 @@ class LexerTest extends \PHPUnit_Framework_TestCase {
 	 */
 	public function testDoubleQuotedStringSyntax() {
 
-		$lexer = new Lexer(new TokenStream());
-		$lexer->scan(' "\"key\":va\"l\"ue\"" ');
+		$lexer = new Lexer();
+		$stream = $lexer->scan(' "\"key\":va\"l\"ue\"" ');
 
-		$actual = $this->buildActualTokens($lexer->getStream());
+		$actual = $this->buildActualTokens($stream);
 		$expected = array(
 			array(Lexer::T_VALUE => '"\"key\":va\"l\"ue\""')
 		);
@@ -166,10 +166,10 @@ class LexerTest extends \PHPUnit_Framework_TestCase {
 	 */
 	public function testArraySyntax() {
 
-		$lexer = new Lexer(new TokenStream());
-		$lexer->scan(' [key1:"val\"ue", 0 : 1, 1, [1,2]] ');
+		$lexer = new Lexer();
+		$stream = $lexer->scan(' [key1:"val\"ue", 0 : 1, 1, [1,2]] ');
 
-		$actual = $this->buildActualTokens($lexer->getStream());
+		$actual = $this->buildActualTokens($stream);
 		$expected = array(
 			array(Lexer::T_OPEN_ARRAY => '['),
 			array(Lexer::T_NAME => 'key1'),
@@ -197,10 +197,10 @@ class LexerTest extends \PHPUnit_Framework_TestCase {
 	 */
 	public function testVariableSyntax() {
 
-		$lexer = new Lexer(new TokenStream());
-		$lexer->scan(' my.var.methodCall(1, 2) ');
+		$lexer = new Lexer();
+		$stream = $lexer->scan(' my.var.methodCall(1, 2) ');
 
-		$actual = $this->buildActualTokens($lexer->getStream());
+		$actual = $this->buildActualTokens($stream);
 		$expected = array(
 			array(Lexer::T_NAME => 'my'),
 			array(Lexer::T_POINT => '.'),
@@ -221,10 +221,10 @@ class LexerTest extends \PHPUnit_Framework_TestCase {
 	 */
 	public function testClassConstantSyntax() {
 
-		$lexer = new Lexer(new TokenStream());
-		$lexer->scan(' \my\namespace\Class::CONSTANT.methodCall(1, 2) ');
+		$lexer = new Lexer();
+		$stream = $lexer->scan(' \my\namespace\Class::CONSTANT.methodCall(1, 2) ');
 
-		$actual = $this->buildActualTokens($lexer->getStream());
+		$actual = $this->buildActualTokens($stream);
 		$expected = array(
 			array(Lexer::T_NS_SEPARATOR => '\\'),
 			array(Lexer::T_NAME => 'my'),
@@ -250,10 +250,10 @@ class LexerTest extends \PHPUnit_Framework_TestCase {
 	 */
 	public function testStringCastSyntax() {
 
-		$lexer = new Lexer(new TokenStream());
-		$lexer->scan(' (string) my.var ');
+		$lexer = new Lexer();
+		$stream = $lexer->scan(' (string) my.var ');
 
-		$actual = $this->buildActualTokens($lexer->getStream());
+		$actual = $this->buildActualTokens($stream);
 		$expected = array(
 			array(Lexer::T_STRING_CAST => '(string)'),
 			array(Lexer::T_NAME => 'my'),
@@ -268,10 +268,10 @@ class LexerTest extends \PHPUnit_Framework_TestCase {
 	 */
 	public function testIntCastSyntax() {
 
-		$lexer = new Lexer(new TokenStream());
-		$lexer->scan(' (int) my.var ');
+		$lexer = new Lexer();
+		$stream = $lexer->scan(' (int) my.var ');
 
-		$actual = $this->buildActualTokens($lexer->getStream());
+		$actual = $this->buildActualTokens($stream);
 		$expected = array(
 			array(Lexer::T_INT_CAST => '(int)'),
 			array(Lexer::T_NAME => 'my'),
@@ -286,10 +286,10 @@ class LexerTest extends \PHPUnit_Framework_TestCase {
 	 */
 	public function testFloatCastSyntax() {
 
-		$lexer = new Lexer(new TokenStream());
-		$lexer->scan(' (float) my.var ');
+		$lexer = new Lexer();
+		$stream = $lexer->scan(' (float) my.var ');
 
-		$actual = $this->buildActualTokens($lexer->getStream());
+		$actual = $this->buildActualTokens($stream);
 		$expected = array(
 			array(Lexer::T_FLOAT_CAST => '(float)'),
 			array(Lexer::T_NAME => 'my'),
@@ -304,10 +304,10 @@ class LexerTest extends \PHPUnit_Framework_TestCase {
 	 */
 	public function testBoolCastSyntax() {
 
-		$lexer = new Lexer(new TokenStream());
-		$lexer->scan(' (bool) my.var ');
+		$lexer = new Lexer();
+		$stream = $lexer->scan(' (bool) my.var ');
 
-		$actual = $this->buildActualTokens($lexer->getStream());
+		$actual = $this->buildActualTokens($stream);
 		$expected = array(
 			array(Lexer::T_BOOL_CAST => '(bool)'),
 			array(Lexer::T_NAME => 'my'),
@@ -322,10 +322,10 @@ class LexerTest extends \PHPUnit_Framework_TestCase {
 	 */
 	public function testXmlCastSyntax() {
 
-		$lexer = new Lexer(new TokenStream());
-		$lexer->scan(' (xml) my.var ');
+		$lexer = new Lexer();
+		$stream = $lexer->scan(' (xml) my.var ');
 
-		$actual = $this->buildActualTokens($lexer->getStream());
+		$actual = $this->buildActualTokens($stream);
 		$expected = array(
 			array(Lexer::T_XML_CAST => '(xml)'),
 			array(Lexer::T_NAME => 'my'),
@@ -340,10 +340,10 @@ class LexerTest extends \PHPUnit_Framework_TestCase {
 	 */
 	public function testTernarySyntax() {
 
-		$lexer = new Lexer(new TokenStream());
-		$lexer->scan(' my.var ? "1" : "2" ');
+		$lexer = new Lexer();
+		$stream = $lexer->scan(' my.var ? "1" : "2" ');
 
-		$actual = $this->buildActualTokens($lexer->getStream());
+		$actual = $this->buildActualTokens($stream);
 		$expected = array(
 			array(Lexer::T_NAME => 'my'),
 			array(Lexer::T_POINT => '.'),
@@ -361,10 +361,10 @@ class LexerTest extends \PHPUnit_Framework_TestCase {
 	 */
 	public function testConcatToken() {
 
-		$lexer = new Lexer(new TokenStream());
-		$lexer->scan(' "string" _ 1 ');
+		$lexer = new Lexer();
+		$stream = $lexer->scan(' "string" _ 1 ');
 
-		$actual = $this->buildActualTokens($lexer->getStream());
+		$actual = $this->buildActualTokens($stream);
 		$expected = array(
 			array(Lexer::T_VALUE => '"string"'),
 			array(Lexer::T_CONCAT => '_'),
@@ -378,10 +378,10 @@ class LexerTest extends \PHPUnit_Framework_TestCase {
 	 */
 	public function testNoneToken() {
 
-		$lexer = new Lexer(new TokenStream());
-		$lexer->scan(' # ');
+		$lexer = new Lexer();
+		$stream = $lexer->scan(' # ');
 
-		$actual = $this->buildActualTokens($lexer->getStream());
+		$actual = $this->buildActualTokens($stream);
 		$expected = array(
 			array(Lexer::T_NONE => '#'),
 		);
