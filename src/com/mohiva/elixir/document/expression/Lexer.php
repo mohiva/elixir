@@ -84,8 +84,6 @@ class Lexer {
 	private $lexemes = array(
 		"('(?:[^'\\\\]|\\\\['\"]|\\\\)*')",
 		'("(?:[^"\\\]|\\\["\']|\\\)*")',
-		//'("[^"\\\]*(?:\\\.[^"\\\]*)*)"',
-		//"('[^'\\\\]*(?:\\\\.[^'\\\\]*)*)'",
 		'([0-9]+\.?[0-9]*)',
 		'([A-Za-z0-9_]+)',
 		'(\:\:|==|!=|>=|<=|&&|\|\|)',
@@ -134,6 +132,29 @@ class Lexer {
 	);
 
 	/**
+	 * The pattern used to split the tokens.
+	 *
+	 * @var string
+	 */
+	private $pattern = null;
+
+	/**
+	 * The flags used to split the tokens.
+	 *
+	 * @var null
+	 */
+	private $flags = null;
+
+	/**
+	 * The class constructor.
+	 */
+	public function __construct() {
+
+		$this->pattern = '/' . implode('|', $this->lexemes) . '/';
+		$this->flags = PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_OFFSET_CAPTURE;
+	}
+
+	/**
 	 * Tokenize the given input string and return the resulting token stream.
 	 *
 	 * @param string $input The string input to scan.
@@ -158,17 +179,15 @@ class Lexer {
 		$stream = new TokenStream;
 		$stream->setSource($input);
 
-		$pattern = '/' . implode('|', $this->lexemes) . '/';
-		$flags = PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_OFFSET_CAPTURE;
-		$matches = preg_split($pattern, $input, -1, $flags);
+		$matches = preg_split($this->pattern, $input, -1, $this->flags);
 		foreach ($matches as $match) {
 
 			$value = strtolower($match[0]);
 			if ($value[0] == "'" ||
 				$value[0] == '"' ||
+				$value == 'null' ||
 				$value == 'true' ||
 				$value == 'false' ||
-				$value == 'null' ||
 				is_numeric($value)) {
 
 				$code = self::T_VALUE;
