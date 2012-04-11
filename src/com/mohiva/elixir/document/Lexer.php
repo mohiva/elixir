@@ -19,10 +19,10 @@
 namespace com\mohiva\elixir\document;
 
 use DOMAttr;
+use com\mohiva\pyramid\Token;
 use com\mohiva\common\xml\XMLDocument;
 use com\mohiva\common\xml\XMLElement;
 use com\mohiva\common\parser\TokenStream;
-use com\mohiva\elixir\document\expression\Lexer as ExpressionLexer;
 use com\mohiva\elixir\document\tokens\PropertyToken;
 use com\mohiva\elixir\document\tokens\NodeToken;
 use com\mohiva\elixir\document\tokens\HelperToken;
@@ -52,13 +52,42 @@ class Lexer {
 	const T_ELEMENT_HELPER   = 5;
 	const T_ATTRIBUTE_HELPER = 6;
 	const T_EXPRESSION       = 7;
+	const T_EXPRESSION_OPEN  = 8;  // {%
+	const T_EXPRESSION_CLOSE = 9;  // %}
+	const T_EXPRESSION_CHARS = 10; // .+
 
 	/**
 	 * The XPath pattern used to find the expressions inside the XML document.
 	 *
 	 * @var string
 	 */
-	const EXPRESSION_PATTERN = "contains(., '{%') and contains(., '%}')";
+	const EXPRESSION_PATTERN = "(contains(., '{%') or contains(., '%}'))";
+
+	/**
+	 * The lexemes to recognize the expressions.
+	 *
+	 * This approach is used to recognize if a string is escaped or not. Because the first both lexemes
+	 * detect all strings first, and thereafter all opening and closing tags. So the following syntax is
+	 * correctly recognized as a string expression: {% '{% user.name.toLower() %}' %} and not as an nested
+	 * expression.
+	 *
+	 * @var array
+	 */
+	private $lexemes = array(
+		"('(?:[^'\\\\]|\\\\['\"]|\\\\)*')",
+		'("(?:[^"\\\]|\\\["\']|\\\)*")',
+		'(\{%|%\})'
+	);
+
+	/**
+	 * Map the constant values with its token type.
+	 *
+	 * @var int[]
+	 */
+	private $constTokenMap = array(
+		'{%' => self::T_EXPRESSION_OPEN,
+		'%}' => self::T_EXPRESSION_CLOSE
+	);
 
 	/**
 	 * Contains namespaces that can be defined in XML documents, but which
@@ -102,21 +131,26 @@ class Lexer {
 	private $elAtNsQuery = '';
 
 	/**
-	 * The expression lexer object to create the token stream from the found expressions.
+	 * The pattern used to split the expression tokens.
 	 *
-	 * @var ExpressionLexer
+	 * @var string
 	 */
-	private $expressionLexer = null;
+	private $expressionPattern = null;
+
+	/**
+	 * The flags used to split the expression tokens.
+	 *
+	 * @var null
+	 */
+	private $expressionFlags = null;
 
 	/**
 	 * The class constructor.
-	 *
-	 * @param ExpressionLexer $expressionLexer The expression lexer object to
-	 * create the token stream from the found expressions.
 	 */
-	public function __construct(ExpressionLexer $expressionLexer) {
+	public function __construct() {
 
-		$this->expressionLexer = $expressionLexer;
+		$this->expressionPattern = '/' . implode('|', $this->lexemes) . '/';
+		$this->expressionFlags = PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_OFFSET_CAPTURE;
 	}
 
 	/**
@@ -160,7 +194,8 @@ class Lexer {
 
 		// For attribute expressions on the same node
 		$parentNSQuery = $this->buildNSQuery($this->namespaces, array('parent::*'));
-		$expressionQuery .= "|@*[not({$parentNSQuery}) and " . self::EXPRESSION_PATTERN . "]";
+		if ($parentNSQuery) $expressionQuery .= "|@*[not({$parentNSQuery}) and " . self::EXPRESSION_PATTERN . "]";
+		else $expressionQuery .= "|@*[" . self::EXPRESSION_PATTERN . "]";
 
 		// For expressions in the content of a node
 		$expressionQuery .= "|descendant-or-self::*//text()[" . self::EXPRESSION_PATTERN . "]";
@@ -280,22 +315,53 @@ class Lexer {
 		for ($i = $nodes->length - 1; $i >= 0; $i--) {
 			/* @var \DOMNode $node */
 			$node = $nodes->item($i);
-			if (preg_match_all('/\{%(.*)%\}/Ums', $node->nodeValue, $matches, PREG_SET_ORDER)) {
-				$matches = array_reverse($matches);
-				foreach ($matches as $match) {
-					$token = new ExpressionToken(
-						self::T_EXPRESSION,
-						sha1($element->getNodePath()),
-						$element->getNodePath(),
-						$element->getLineNo(),
-						$match[0],
-						$node->nodeType == XML_ATTRIBUTE_NODE ? /* @var \DOMAttr $node */ $node->name : null,
-						clone $this->expressionLexer->scan($match[1])
-					);
-					$stream->push($token);
-				}
-			}
+			$token = new ExpressionToken(
+				self::T_EXPRESSION,
+				sha1($node->getNodePath()),
+				$node->getNodePath(),
+				$node->getLineNo(),
+				$node->nodeValue,
+				$node->nodeType == XML_ATTRIBUTE_NODE ? /* @var \DOMAttr $node */ $node->name : null,
+				$this->tokenizeExpressionContent($node->nodeValue)
+			);
+			$stream->push($token);
 		}
+	}
+
+	/**
+	 * Tokenize the content of an expression.
+	 *
+	 * This method tokenize the complete node value and it splits the content only in three
+	 * tokens. The main task of this tokenize process is to find all non escaped start or
+	 * end tokens of an expression. The expression itself will then be parsed later by the
+	 * Pyramid library.
+	 *
+	 * @param string $content The content to tokenize.
+	 * @return TokenStream The resulting token stream.
+	 */
+	private function tokenizeExpressionContent($content) {
+
+		$matches = preg_split($this->expressionPattern, $content, -1, $this->expressionFlags);
+		$stream = new TokenStream;
+		foreach ($matches as $match) {
+			if (isset($this->constTokenMap[$match[0]])) {
+				$code = $this->constTokenMap[$match[0]];
+			} else if (ctype_space($match[0])) {
+				continue;
+			} else {
+				$code = self::T_EXPRESSION_CHARS;
+			}
+
+			$stream->push(new Token(
+				$code,
+				$match[0],
+				$match[1]
+			));
+		}
+
+		$stream->rewind();
+
+		return $stream;
 	}
 
 	/**
