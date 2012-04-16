@@ -189,17 +189,7 @@ class Lexer {
 		$stream->setIteratorMode(TokenStream::IT_MODE_LIFO);
 		$stream->setSource($doc->saveXML());
 
-		// For attribute expressions in the content of a node
-		$expressionQuery  = "descendant::*//@*[" . self::EXPRESSION_PATTERN . "]";
-
-		// For attribute expressions on the same node
-		$parentNSQuery = $this->buildNSQuery($this->namespaces, array('parent::*'));
-		if ($parentNSQuery) $expressionQuery .= "|@*[not({$parentNSQuery}) and " . self::EXPRESSION_PATTERN . "]";
-		else $expressionQuery .= "|@*[" . self::EXPRESSION_PATTERN . "]";
-
-		// For expressions in the content of a node
-		$expressionQuery .= "|descendant-or-self::*//text()[" . self::EXPRESSION_PATTERN . "]";
-
+		$expressionQuery = $this->buildNodeExpressionQuery();
 		$nodeQuery = $this->elNsQuery ? "//*[{$this->elNsQuery}]|//@*[{$this->elNsQuery}]/parent::*|/*" : '/*';
 		$nodes = $doc->xpath->query($nodeQuery);
 		for ($i = $nodes->length - 1; $i >= 0; $i--) {
@@ -513,6 +503,65 @@ class Lexer {
 				$node->parentNode->removeAttributeNS($node->nodeValue, $node->prefix);
 			}
 		}
+	}
+
+	/**
+	 * Gets the XPath query to find all expressions inside a node.
+	 *
+	 * Note: All expressions inside element or attribute helpers will be matched in the
+	 * `tokenizeElementHelper` or `tokenizeAttributeHelpers` methods.
+	 *
+	 * @return string The XPath query to find all expressions inside a node.
+	 */
+	private function buildNodeExpressionQuery() {
+
+		/**
+		 * This query prevents the node expression query to find expressions in attribute helpers. So
+		 * the query does not match the following snippet, because the expression is located inside
+		 * the ex:Locale attribute helper.
+		 *
+		 * <test ex:Locale="{% var %}"></test>
+		 */
+		$parentNSQuery = $this->buildNSQuery($this->namespaces, array('parent::*'));
+
+		/**
+		 * For attribute expressions in the content of a node.
+		 *
+		 * <root>
+		 *    <child test="{% var %}"></child>
+		 * </root>
+		 */
+		$query  = "descendant::*//@*[" . self::EXPRESSION_PATTERN . "]";
+
+		/**
+		 * For attribute expressions on the same node. This is typically a node which contains an other
+		 * attribute helper. In this example the child tag is a node, because it contains the ex:Locale
+		 * attribute helper. So this query matches only the expression in the test attribute. The expression
+		 * in the helper will be matched in the method `tokenizeAttributeHelpers()`.
+		 *
+		 * <root>
+		 *    <child test="{% var %}" ex:Locale="{% var %}" />
+		 * </root>
+		 */
+		if ($parentNSQuery) $query .= "|@*[not({$parentNSQuery}) and " . self::EXPRESSION_PATTERN . "]";
+
+		/**
+		 * Or for attribute expressions on the root node when it isn't a element helper.
+		 *
+		 * <root test="{% var %}"></root>
+		 */
+		else $query .= "|@*[" . self::EXPRESSION_PATTERN . "]";
+
+		/**
+		 * For text expressions in the content of a node.
+		 *
+		 * <root>
+		 *    {% var %}
+		 * </root>
+		 */
+		$query .= "|descendant-or-self::*//text()[" . self::EXPRESSION_PATTERN . "]";
+
+		return $query;
 	}
 
 	/**
