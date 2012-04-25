@@ -530,6 +530,48 @@ class LexerTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	/**
+	 * Test if the lexer find the expression opener even if the closer is missing.
+	 */
+	public function testExpressionOpener() {
+
+		$xmlFile = Bootstrap::$resourceDir . '/elixir/document/lexer/expression_opener.xml';
+
+		$doc = new XMLDocument();
+		$doc->load($xmlFile);
+
+		$lexer = new Lexer();
+		$stream = $lexer->scan($doc);
+
+		/* @var \com\mohiva\elixir\document\tokens\ExpressionToken $token */
+		$token = $stream->getLookahead(3);
+		$stream = $token->getStream();
+		$token = $stream->getLookahead(0);
+
+		$this->assertSame(Lexer::T_EXPRESSION_OPEN, $token->getCode());
+	}
+
+	/**
+	 * Test if the lexer find the expression closer even if the opener is missing.
+	 */
+	public function testExpressionCloser() {
+
+		$xmlFile = Bootstrap::$resourceDir . '/elixir/document/lexer/expression_closer.xml';
+
+		$doc = new XMLDocument();
+		$doc->load($xmlFile);
+
+		$lexer = new Lexer();
+		$stream = $lexer->scan($doc);
+
+		/* @var \com\mohiva\elixir\document\tokens\ExpressionToken $token */
+		$token = $stream->getLookahead(3);
+		$stream = $token->getStream();
+		$token = $stream->getLookahead(0);
+
+		$this->assertSame(Lexer::T_EXPRESSION_CLOSE, $token->getCode());
+	}
+
+	/**
 	 * Test if the lexer recognizes that an expression is escaped.
 	 */
 	public function testExpressionEscaping() {
