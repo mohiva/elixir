@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root xmlns:test="urn:test">
+
+	<!--%
+		<test:Helper />
+	%-->
+
+	<!--% test %-->
+
+	<test:Helper>
+		<div />
+		<!--%
+			<test:Helper />
+		%-->
+		<div />
+	</test:Helper>
+
+</root>
