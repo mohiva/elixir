@@ -61,7 +61,14 @@ class Lexer {
 	 *
 	 * @var string
 	 */
-	const EXPRESSION_PATTERN = "(contains(., '{%') or contains(., '%}'))";
+	const EXPRESSION_QUERY = "(contains(., '{%') or contains(., '%}'))";
+
+	/**
+	 * Prevent the lexer to tokenize anything inside the Raw tag of the core namespace.
+	 *
+	 * @var string
+	 */
+	const RAW_QUERY = "not(ancestor::*[namespace-uri()='http://elixir.mohiva.com' and local-name()='Raw'])";
 
 	/**
 	 * The lexemes to recognize the expressions.
@@ -119,7 +126,7 @@ class Lexer {
 	 *
 	 * @var string
 	 */
-	private $elNsQuery = '';
+	private $elNsQuery = null;
 
 	/**
 	 * Stores the namespace part of a XPATH query to get all elements or attributes
@@ -128,7 +135,7 @@ class Lexer {
 	 *
 	 * @var string
 	 */
-	private $elAtNsQuery = '';
+	private $elAtNsQuery = null;
 
 	/**
 	 * The pattern used to split the expression tokens.
@@ -190,7 +197,7 @@ class Lexer {
 		$stream->setSource($doc->saveXML());
 
 		$expressionQuery = $this->buildNodeExpressionQuery();
-		$nodeQuery = $this->elNsQuery ? "//*[{$this->elNsQuery}]|//@*[{$this->elNsQuery}]/parent::*|/*" : '/*';
+		$nodeQuery = $this->buildNodeQuery();
 		$nodes = $doc->xpath->query($nodeQuery);
 		for ($i = $nodes->length - 1; $i >= 0; $i--) {
 			/* @var XMLElement $node */
@@ -239,7 +246,7 @@ class Lexer {
 			return;
 		}
 
-		$query = "@*[not({$this->elNsQuery}) and " . self::EXPRESSION_PATTERN . "]";
+		$query = "@*[not({$this->elNsQuery}) and " . self::EXPRESSION_QUERY . "]";
 		$this->tokenizeExpressions($stream, $element, $query);
 		$token = new HelperToken(
 			self::T_ELEMENT_HELPER,
@@ -273,7 +280,7 @@ class Lexer {
 		for ($i = $nodes->length - 1; $i >= 0; $i--) {
 			/* @var \DOMAttr $attribute */
 			$attribute = $nodes->item($i);
-			$query = "attribute::*[local-name() = '{$attribute->localName}' and " . self::EXPRESSION_PATTERN . "]";
+			$query = "attribute::*[local-name() = '{$attribute->localName}' and " . self::EXPRESSION_QUERY . "]";
 			$this->tokenizeExpressions($stream, $element, $query);
 			$token = new HelperToken(
 				self::T_ATTRIBUTE_HELPER,
@@ -445,19 +452,6 @@ class Lexer {
 
 	/**
 	 * @param XMLElement $element The current processed element.
-	 * @return bool True if the element has a helper namespace.
-	 */
-	private function hasHelperNamespace(XMLElement $element) {
-
-		if (in_array($element->namespaceURI, $this->namespaces)) {
-			return true;
-		}
-
-		return false;
-	}
-
-	/**
-	 * @param XMLElement $element The current processed element.
 	 * @return string The string representation of the element.
 	 */
 	private function getCompleteNodeAsContent(XMLElement $element) {
@@ -490,13 +484,26 @@ class Lexer {
 	}
 
 	/**
+	 * @param XMLElement $element The current processed element.
+	 * @return bool True if the element has a helper namespace.
+	 */
+	private function hasHelperNamespace(XMLElement $element) {
+
+		if (in_array($element->namespaceURI, $this->namespaces)) {
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
 	 * Remove all helper namespaces from the given element and his descendants.
 	 *
 	 * @param XMLElement $element The current processed node.
 	 */
 	private function removeHelperNamespaces(XMLElement $element) {
 
-		$namespaces = $element('descendant-or-self::*/namespace::*');
+		$namespaces = $element('descendant-or-self::*/namespace::*[' . self::RAW_QUERY . ']');
 		foreach ($namespaces as $node) {
 			/* @var \DOMElement $node */
 			if (!in_array($node->nodeValue, $this->nonHelperNamespaces)) {
@@ -506,7 +513,7 @@ class Lexer {
 	}
 
 	/**
-	 * Gets the XPath query to find all expressions inside a node.
+	 * Builds the XPath query to find all expressions inside a node.
 	 *
 	 * Note: All expressions inside element or attribute helpers will be matched in the
 	 * `tokenizeElementHelper` or `tokenizeAttributeHelpers` methods.
@@ -514,6 +521,16 @@ class Lexer {
 	 * @return string The XPath query to find all expressions inside a node.
 	 */
 	private function buildNodeExpressionQuery() {
+
+		/**
+		 * Finds the expressions inside the selected node.
+		 */
+		$expQuery = self::EXPRESSION_QUERY;
+
+		/**
+		 * Prevents the lexer find an expression inside the Raw tag of the core namespace.
+		 */
+		$rawQuery = self::RAW_QUERY;
 
 		/**
 		 * This query prevents the node expression query to find expressions in attribute helpers. So
@@ -531,7 +548,7 @@ class Lexer {
 		 *    <child test="{% var %}"></child>
 		 * </root>
 		 */
-		$query  = "descendant::*//@*[" . self::EXPRESSION_PATTERN . "]";
+		$query = "descendant::*//@*[{$rawQuery} and {$expQuery}]";
 
 		/**
 		 * For attribute expressions on the same node. This is typically a node which contains an other
@@ -543,14 +560,14 @@ class Lexer {
 		 *    <child test="{% var %}" ex:Locale="{% var %}" />
 		 * </root>
 		 */
-		if ($parentNSQuery) $query .= "|@*[not({$parentNSQuery}) and " . self::EXPRESSION_PATTERN . "]";
+		if ($parentNSQuery) $query .= "|@*[not({$parentNSQuery}) and {$rawQuery} and {$expQuery}]";
 
 		/**
 		 * Or for attribute expressions on the root node when it isn't a element helper.
 		 *
 		 * <root test="{% var %}"></root>
 		 */
-		else $query .= "|@*[" . self::EXPRESSION_PATTERN . "]";
+		else $query .= "|@*[{$rawQuery} and {$expQuery}]";
 
 		/**
 		 * For text expressions in the content of a node.
@@ -559,7 +576,40 @@ class Lexer {
 		 *    {% var %}
 		 * </root>
 		 */
-		$query .= "|descendant-or-self::*//text()[" . self::EXPRESSION_PATTERN . "]";
+		$query .= "|descendant-or-self::*//text()[{$rawQuery} and {$expQuery}]";
+
+		return $query;
+	}
+
+	/**
+	 * Build the XPath query to find all nodes.
+	 *
+	 * Nodes are XML tags which contains at least one helper. An exception is the root node of a
+	 * document. This is always a node, even if no helper is located on it.
+	 *
+	 * @return string The XPath query to find all nodes.
+	 */
+	private function buildNodeQuery() {
+
+		/**
+		 * Prevents the lexer find a node inside the Raw tag of the core namespace.
+		 */
+		$rawQuery = self::RAW_QUERY;
+
+		/**
+		 * Finds the root node.
+		 */
+		$query = '/*';
+
+		/**
+		 * Finds all nodes which have at least one element helper and which are not inside a Raw tag.
+		 */
+		if ($this->elNsQuery) $query .= "|//*[{$this->elNsQuery} and {$rawQuery}]";
+
+		/**
+		 * Finds all nodes which have at least one attribute helper and which not are inside a Raw tag.
+		 */
+		if ($this->elNsQuery) $query .= "|//@*[{$this->elNsQuery} and {$rawQuery}]/parent::*";
 
 		return $query;
 	}

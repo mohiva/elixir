@@ -675,6 +675,60 @@ class LexerTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	/**
+	 * Test if the lexer recognizes all the content inside the raw helper as raw content if the helper
+	 * is on the root node of the document.
+	 */
+	public function testRawHelperAsRoot() {
+
+		$xmlFile = Bootstrap::$resourceDir . '/elixir/document/lexer/raw_helper_as_root.xml';
+
+		$doc = new XMLDocument();
+		$doc->load($xmlFile);
+
+		$lexer = new Lexer();
+		$stream = $lexer->scan($doc);
+
+		$this->assertSame(4, $stream->count());
+	}
+
+	/**
+	 * Test if the lexer recognizes all the content inside the raw helper as raw content if the helper
+	 * is child node of the document.
+	 */
+	public function testRawHelperAsChild() {
+
+		$xmlFile = Bootstrap::$resourceDir . '/elixir/document/lexer/raw_helper_as_child.xml';
+
+		$doc = new XMLDocument();
+		$doc->load($xmlFile);
+
+		$lexer = new Lexer();
+		$stream = $lexer->scan($doc);
+
+		$this->assertSame(5, $stream->count());
+	}
+
+	/**
+	 * Test if the lexer does not remove the helper namespaces on nodes inside the raw helper.
+	 */
+	public function testRawHelperKeepsNamespace() {
+
+		$xmlFile = Bootstrap::$resourceDir . '/elixir/document/lexer/raw_helper_keep_namespaces.xml';
+
+		$doc = new XMLDocument();
+		$doc->load($xmlFile);
+
+		$lexer = new Lexer();
+		$stream = $lexer->scan($doc);
+
+		/* @var \com\mohiva\elixir\document\tokens\NodeToken $token */
+		$token = $stream->getLookahead(2);
+		$content = $token->getContent();
+
+		$this->assertContains('xmlns:ex="http://elixir.mohiva.com"', $content);
+	}
+
+	/**
 	 * Create an array from the token stream which contains only the tokens and the operators/values.
 	 *
 	 * @param \com\mohiva\common\parser\TokenStream $stream The stream containing the lexer tokens.

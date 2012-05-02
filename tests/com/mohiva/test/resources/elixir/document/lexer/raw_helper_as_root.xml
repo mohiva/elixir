@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ex:Raw xmlns:ex="http://elixir.mohiva.com">
+
+	<ex:Root ex:Locale="de_DE" xmlns:ex="http://elixir.mohiva.com">
+
+		<ex:Foreach key="key" value="value" in="{% users %}">
+			<!-- This command should be preserved as is it -->
+			<ex:Raw>{% key %} {% value %}</ex:Raw>
+		</ex:Foreach>
+
+		{% 'an expression' %}
+
+	</ex:Root>
+
+</ex:Raw>
