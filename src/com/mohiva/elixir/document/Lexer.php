@@ -19,6 +19,7 @@
 namespace com\mohiva\elixir\document;
 
 use DOMAttr;
+use DOMComment;
 use com\mohiva\pyramid\Token;
 use com\mohiva\common\xml\XMLDocument;
 use com\mohiva\common\xml\XMLElement;
@@ -458,6 +459,16 @@ class Lexer {
 
 		$this->removeHelperNamespaces($element);
 
+		/* @var \DOMNodeList $comments */
+		$comments = $element('.//comment()');
+		for ($i = 0; $i < $comments->length; $i++) {
+			/* @var \DOMComment $comment*/
+			$comment = $comments->item($i);
+			if ($this->getComment($comment) == '') {
+				$comment->parentNode->removeChild($comment);
+			}
+		}
+
 		return $element->toXML();
 	}
 
@@ -474,13 +485,32 @@ class Lexer {
 				$this->removeHelperNamespaces($child);
 				$content .= $child->toXML();
 			} else if ($child->nodeType == XML_COMMENT_NODE) {
-				$content .= '<!--' . $child->nodeValue . '-->';
+				/* @var DOMComment $child */
+				$content .= $this->getComment($child);
 			} else {
 				$content .= $child->nodeValue;
 			}
 		}
 
 		return $content;
+	}
+
+	/**
+	 * Gets the comment as string.
+	 *
+	 * If a comment starts with <!--% and ends with %--> then it will be removed, otherwise
+	 * the comments will be preserved.
+	 *
+	 * @param \DOMComment $comment The comment node.
+	 * @return string The comment as string.
+	 */
+	private function getComment(DOMComment $comment) {
+
+		if (preg_match('/^%.*%$/ms', $comment->nodeValue)) {
+			return '';
+		}
+
+		return '<!--' . $comment->nodeValue . '-->';
 	}
 
 	/**

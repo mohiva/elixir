@@ -1,39 +1,58 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mx:Block xmlns:mx="http://elixir.mohiva.com">
-	
-	<mx:If expr="{{ my.object.var.round(2) == 2.5 }}" />
-	<mx:ElseIf expr="{{ my.object.var.round(2) == 2.5 }}" />
-	<mx:Else />
-	
-	<!-- {{ A Elixir comment, it should be removed }} -->
+<ex:Block xmlns:ex="http://elixir.mohiva.com">
+
+	<ex:If expr="{% my.object.var.round(2) == 2.5 %}" />
+	<ex:ElseIf expr="{% my.object.var.round(2) == 2.5 %}" />
+	<ex:Else />
+
+	<ex:Raw>
+
+	</ex:Raw>
+
+	<!--% A Elixir comment, it should be removed %-->
+
 	<!-- A normal comment, it should be preserved -->
-	
-	<mx:Set name="var1"><inner /></mx:Set>
-	<mx:Set name="var2" value="{{ [3 * index.toInt() => 1, 2, 3 * 4 + (1 + 2)] }}" />
-	<mx:Set name="var2" value="all scalar values can be passed without an expression" />
-	
-	<mx:For var="user" in="{{ users }}">
-		<mx:Set name="name" value="{{ user.name ?: 'Jon Doe' }}" />
-		
-		{{ name = user.name ?: 'Jon' _ 'Doe'.toLower() }}
-		
-		{{ index }}
-		{{ odd }}
-		{{ even }}
-		{{ first }}
-		{{ last }}
-		
-	</mx:For>
-	
-	<mx:Foreach key="key" value="value" in="{{ users }}">
-		{{ key }} {{ value }}
-	</mx:Foreach>
-	
-	<mx:Foreach in="{{ users }}">
-		{{ key }} {{ value }}
-	</mx:Foreach>
-	
-</mx:Block>
+
+	<ex:Set name="var1"><inner /></ex:Set>
+	<ex:Set name="var2" value="{% [(3 * index.toInt()) => 1, 2, (3 * 4 + (1 + 2))] %}" />
+	<ex:Set name="var2" value="all scalar values can be passed without an expression" />
+
+	<ex:For var="user" in="{% users %}">
+		<ex:Set name="name" value="{% user.name.default('Default value') ?: 'Jon Doe' %}" />
+
+		{%
+			name = user.name[index].split(' ').default('Default value'.toLower())
+				? 'Lucky Luke'
+				: 'Jon' _ 'Doe'.toLower()
+		%}
+
+		$this->setVar('name', (new ObjectValue($this->getVar('user')))
+			->getByProperty('name')
+			->getByKey($this->getVar('index'))
+			->toString() ?:  'Jon' . new StringValue('Doe')->toLower()
+		);
+
+		A raw '{% index %}'
+
+		{% 'test {% index %} test' %}
+		{% odd %}
+		{% even %}
+		{% first %}
+		{% last %}
+
+		You have {% numbers %} pieces of shit
+
+	</ex:For>
+
+	<ex:Foreach key="key" value="value" in="{% users %}">
+		{% key %} {% value %}
+	</ex:Foreach>
+
+	<ex:Foreach in="{% users %}">
+		{% key %} {% value %}
+	</ex:Foreach>
+
+</ex:Block>
 
 <!--
 
@@ -64,7 +83,7 @@ null
 
 Helpers(ExpressionHelper)
 ===============
-[mx:Date()]
+mx:Date()
 
 Operators
 ===============
@@ -99,8 +118,8 @@ _  CONCAT
 || OR
 && AND
 
-Every value is passed to an value object(autoboxing). this object contains methods like isNull(), 
-toInt(), toFloat(), toString(), toBool(), toXML(), ... by default. Values are passed to specific 
+Every value is passed to an value object(autoboxing). this object contains methods like isNull(),
+toInt(), toFloat(), toString(), toBool(), toXML(), ... by default. Values are passed to specific
 objects by the type of the value:
 array  => ArrayValue
 object => ObjectValue
@@ -136,9 +155,9 @@ class CustomArrayValue implements ArrayValue {
 }
 
 class CustomValueFactory extends ValueFactory {
-	
+
     public function createArrayValue($value) {
-    	
+
         return new CustomArrayValue($value);
     }
 }

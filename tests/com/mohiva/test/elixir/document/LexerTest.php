@@ -20,6 +20,7 @@ namespace com\mohiva\test\elixir\document;
 
 use com\mohiva\test\elixir\Bootstrap;
 use com\mohiva\elixir\document\Lexer;
+use com\mohiva\elixir\document\tokens\NodeToken;
 use com\mohiva\common\parser\TokenStream;
 use com\mohiva\common\xml\XMLDocument;
 
@@ -398,11 +399,11 @@ class LexerTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	/**
-	 * Test if the lexer preserves the comments in a document.
+	 * Test if the lexer preserves the xml comments in a document.
 	 */
-	public function testPreserveComments() {
+	public function testPreserveXMLComments() {
 
-		$xmlFile = Bootstrap::$resourceDir . '/elixir/document/lexer/preserve_comments.xml';
+		$xmlFile = Bootstrap::$resourceDir . '/elixir/document/lexer/preserve_xml_comments.xml';
 
 		$doc = new XMLDocument();
 		$doc->load($xmlFile);
@@ -410,14 +411,45 @@ class LexerTest extends \PHPUnit_Framework_TestCase {
 		$lexer = new Lexer();
 		$stream = $lexer->scan($doc);
 
-		/* @var \com\mohiva\elixir\document\tokens\NodeToken $token */
-		$token = $stream->getLookahead(3);
+		$found = 0;
+		foreach($stream as $token) {
+			if (!($token instanceof NodeToken)) {
+				continue;
+			}
 
-		// We add the root tag, because the resulting XML isn't valid without it.
-		$expected = '<root><div/><!-- <test:Helper /> --><div/></root>';
-		$actual = '<root>' . $token->getContent() . '</root>';
+			/* @var NodeToken $token */
+			$content = $token->getContent();
+			$found += substr_count($content, '<!--');
+		}
 
-		$this->assertXmlStringEqualsXmlString($expected, $actual);
+		$this->assertEquals(3, $found);
+	}
+
+	/**
+	 * Test if the lexer removes all elixir comments from document.
+	 */
+	public function testRemoveElixirComments() {
+
+		$xmlFile = Bootstrap::$resourceDir . '/elixir/document/lexer/remove_elixir_comments.xml';
+
+		$doc = new XMLDocument();
+		$doc->load($xmlFile);
+
+		$lexer = new Lexer();
+		$stream = $lexer->scan($doc);
+
+		$found = 0;
+		foreach($stream as $token) {
+			if (!($token instanceof NodeToken)) {
+				continue;
+			}
+
+			/* @var NodeToken $token */
+			$content = $token->getContent();
+			$found += substr_count($content, '<!--');
+		}
+
+		$this->assertEquals(0, $found);
 	}
 
 	/**
