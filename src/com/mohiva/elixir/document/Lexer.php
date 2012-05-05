@@ -558,7 +558,7 @@ class Lexer {
 		$expQuery = self::EXPRESSION_QUERY;
 
 		/**
-		 * Prevents the lexer find an expression inside the Raw tag of the core namespace.
+		 * Prevents the lexer to find an expression inside the Raw tag of the core namespace.
 		 */
 		$rawQuery = self::RAW_QUERY;
 
@@ -622,7 +622,7 @@ class Lexer {
 	private function buildNodeQuery() {
 
 		/**
-		 * Prevents the lexer find a node inside the Raw tag of the core namespace.
+		 * Prevents the lexer to find a node inside the Raw tag of the core namespace.
 		 */
 		$rawQuery = self::RAW_QUERY;
 
