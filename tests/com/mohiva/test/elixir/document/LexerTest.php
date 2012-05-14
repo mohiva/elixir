@@ -308,7 +308,7 @@ class LexerTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	/**
-	 * Test if the lexer finds the ancestors of a element.
+	 * Test if the lexer finds the ancestors of a node.
 	 */
 	public function testFindAncestors() {
 
@@ -332,6 +332,60 @@ class LexerTest extends \PHPUnit_Framework_TestCase {
 
 		$token = $stream->getLookahead(8);
 		$this->assertNotNull($token->getAncestor());
+	}
+
+	/**
+	 * Test if the lexer finds the previous sibling of a node.
+	 */
+	public function testFindPreviousSibling() {
+
+		$xmlFile = Bootstrap::$resourceDir . '/elixir/document/lexer/find_sibling.xml';
+
+		$doc = new XMLDocument();
+		$doc->load($xmlFile);
+
+		$lexer = new Lexer();
+		$stream = $lexer->scan($doc);
+
+		/* @var \com\mohiva\elixir\document\tokens\NodeToken $token */
+		$token = $stream->getLookahead(3);
+		$this->assertNull($token->getPreviousSibling());
+
+		$token = $stream->getLookahead(5);
+		$this->assertNotNull($token->getPreviousSibling());
+
+		$token = $stream->getLookahead(7);
+		$this->assertNull($token->getPreviousSibling());
+
+		$token = $stream->getLookahead(9);
+		$this->assertNotNull($token->getPreviousSibling());
+	}
+
+	/**
+	 * Test if the lexer finds the next sibling of a node.
+	 */
+	public function testFindNextSibling() {
+
+		$xmlFile = Bootstrap::$resourceDir . '/elixir/document/lexer/find_sibling.xml';
+
+		$doc = new XMLDocument();
+		$doc->load($xmlFile);
+
+		$lexer = new Lexer();
+		$stream = $lexer->scan($doc);
+
+		/* @var \com\mohiva\elixir\document\tokens\NodeToken $token */
+		$token = $stream->getLookahead(3);
+		$this->assertNotNull($token->getNextSibling());
+
+		$token = $stream->getLookahead(5);
+		$this->assertNull($token->getNextSibling());
+
+		$token = $stream->getLookahead(7);
+		$this->assertNotNull($token->getNextSibling());
+
+		$token = $stream->getLookahead(9);
+		$this->assertNull($token->getNextSibling());
 	}
 
 	/**
@@ -382,8 +436,8 @@ class LexerTest extends \PHPUnit_Framework_TestCase {
 		$stream = $lexer->scan($doc);
 
 		$firstContent  = '<root>';
-		$firstContent .= '<__node__>6a5d3ea5544a23b536835030b4d503db8fda53fc</__node__>';
-		$firstContent .= '<__node__>ab3325e2d97bb917a40d19c6d468082cde28866c</__node__>';
+		$firstContent .= '<' . Lexer::PLACEHOLDER . ' id="6a5d3ea5544a23b536835030b4d503db8fda53fc"/>';
+		$firstContent .= '<' . Lexer::PLACEHOLDER . ' id="ab3325e2d97bb917a40d19c6d468082cde28866c"/>';
 		$firstContent .= '<div>The root content.</div>';
 		$firstContent .= '</root>';
 

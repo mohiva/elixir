@@ -69,7 +69,14 @@ class Lexer {
 	 *
 	 * @var string
 	 */
-	const RAW_QUERY = "not(ancestor::*[namespace-uri()='http://elixir.mohiva.com' and local-name()='Raw'])";
+	const RAW_QUERY = "not(ancestor::*[namespace-uri() = 'http://elixir.mohiva.com' and local-name() = 'Raw'])";
+
+	/**
+	 * The placeholder node.
+	 *
+	 * @var string
+	 */
+	const PLACEHOLDER = '__N_-_O_-_D_-_E__';
 
 	/**
 	 * The lexemes to recognize the expressions.
@@ -148,7 +155,7 @@ class Lexer {
 	/**
 	 * The flags used to split the expression tokens.
 	 *
-	 * @var null
+	 * @var int
 	 */
 	private $expressionFlags = null;
 
@@ -218,11 +225,14 @@ class Lexer {
 				$path,
 				$node->getLineNo(),
 				$this->getAncestor($node),
+				$this->getPreviousSibling($node),
+				$this->getNextSibling($node),
 				$this->getContent($node),
 				$this->getChildren($node)
 			);
 
-			$placeholder = $doc->createElement('__node__', $id);
+			$placeholder = $doc->createElement(self::PLACEHOLDER);
+			$placeholder->setAttribute('id', $id);
 			$node->parentNode->replaceChild($placeholder, $node);
 			$stream->push($token);
 		}
@@ -395,10 +405,10 @@ class Lexer {
 	}
 
 	/**
-	 * Get the ancestor for the given element.
+	 * Get the ID of the ancestor node for the given element.
 	 *
 	 * @param XMLElement $element The current processed element.
-	 * @return string The ancestor id of the given element.
+	 * @return string The ID of the ancestor node for the given element.
 	 */
 	private function getAncestor(XMLElement $element) {
 
@@ -418,8 +428,65 @@ class Lexer {
 	}
 
 	/**
+	 * Get the ID of the previous sibling node for the given element.
+	 *
+	 * It returns only the ID if the previous sibling is a elixir node. If the previous
+	 * sibling is a non elixir element then this method returns null.
+	 *
+	 * @param XMLElement $element The current processed element.
+	 * @return string The ID of the previous sibling node for the given element.
+	 */
+	private function getPreviousSibling(XMLElement $element) {
+
+		if (!$this->namespaces || $element === $element->ownerDocument->documentElement) {
+			return null;
+		}
+
+		/* @var \DOMNodeList $siblings */
+		$siblings = $element("preceding-sibling::*");
+		if (!$siblings->length) {
+			return null;
+		}
+
+		$sibling = $siblings->item($siblings->length - 1);
+		if (!in_array($sibling->namespaceURI, $this->namespaces)) {
+			return null;
+		}
+
+		return sha1($sibling->getNodePath());
+	}
+
+	/**
+	 * Get the ID of the next sibling node for the given element.
+	 *
+	 * It returns only the ID if the next sibling is a elixir node. If the next
+	 * sibling is a non elixir element then this method returns null.
+	 *
+	 * The document will be tokenized from the inside out, so it isn't possible to get the
+	 * original following siblings, because the nodes are all replaced with the placeholder
+	 * node {@see self::PLACEHOLDER}. So we must look for this placeholder nodes.
+	 *
+	 * @param XMLElement $element The current processed element.
+	 * @return string The ID of the next sibling node for the given element.
+	 */
+	private function getNextSibling(XMLElement $element) {
+
+		if (!$this->namespaces || $element === $element->ownerDocument->documentElement) {
+			return null;
+		}
+
+		/* @var \DOMNode $sibling */
+		$sibling = $element("#following-sibling::*");
+		if (!$sibling || $sibling->localName != self::PLACEHOLDER) {
+			return null;
+		}
+
+		return $sibling['id']->toString();
+	}
+
+	/**
 	 * Get all children from the given element. The children are the previously
-	 * replaced helper tags in the form <__node__>[a-f0-9]{40}</__node__>.
+	 * replaced placeholder nodes. {@see self::PLACEHOLDER}
 	 *
 	 * @param XMLElement $element The current processed element.
 	 * @return array A list with child id's in ascending order.
@@ -427,9 +494,14 @@ class Lexer {
 	private function getChildren(XMLElement $element) {
 
 		$children = array();
-		preg_match_all('/\<__node__>([a-f0-9]{40})<\/__node__>/', $element->toXML(), $matches);
-		if ($matches) {
-			$children = $matches[1];
+		if (!$this->namespaces) {
+			return $children;
+		}
+
+		/* @var \DOMNodeList $nodes */
+		$nodes = $element("descendant-or-self::*[local-name() = '" . self::PLACEHOLDER . "']");
+		for ($i = 0; $i < $nodes->length; $i++) {
+			$children[] = $nodes->item($i)['id']->toString();
 		}
 
 		return $children;
@@ -534,8 +606,7 @@ class Lexer {
 	private function removeHelperNamespaces(XMLElement $element) {
 
 		$namespaces = $element('descendant-or-self::*/namespace::*[' . self::RAW_QUERY . ']');
-		foreach ($namespaces as $node) {
-			/* @var \DOMElement $node */
+		foreach ($namespaces as $node) { /* @var \DOMElement $node */
 			if (!in_array($node->nodeValue, $this->nonHelperNamespaces)) {
 				$node->parentNode->removeAttributeNS($node->nodeValue, $node->prefix);
 			}
@@ -657,11 +728,11 @@ class Lexer {
 		$uris = array();
 		foreach ($namespaces as $nsUri) {
 			foreach ($elements as $element) {
-				$uris[] = "namespace-uri({$element})='{$nsUri}'";
+				$uris[] = "namespace-uri({$element}) = '{$nsUri}'";
 			}
 		}
 
-		$nsString = $uris ? implode(' or ', $uris) : '';
+		$nsString = $uris ? "(" . implode(' or ', $uris) . ")" : '';
 
 		return $nsString;
 	}

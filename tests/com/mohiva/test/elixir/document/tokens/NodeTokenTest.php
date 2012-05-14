@@ -42,6 +42,8 @@ class NodeTokenTest extends \PHPUnit_Framework_TestCase {
 		$path = sha1(microtime(true));
 		$line = mt_rand(1, 100);
 		$ancestor = sha1(microtime(true));
+		$previousSibling = sha1(microtime(true));
+		$nextSibling = sha1(microtime(true));
 		$content = sha1(microtime(true));
 		$children = array(sha1(microtime(true)));
 		$token = new NodeToken(
@@ -50,6 +52,8 @@ class NodeTokenTest extends \PHPUnit_Framework_TestCase {
 			$path,
 			$line,
 			$ancestor,
+			$previousSibling,
+			$nextSibling,
 			$content,
 			$children
 		);
@@ -59,6 +63,8 @@ class NodeTokenTest extends \PHPUnit_Framework_TestCase {
 		$this->assertSame($path, $token->getPath());
 		$this->assertSame($line, $token->getLine());
 		$this->assertSame($ancestor, $token->getAncestor());
+		$this->assertSame($previousSibling, $token->getPreviousSibling());
+		$this->assertSame($nextSibling, $token->getNextSibling());
 		$this->assertSame($content, $token->getContent());
 		$this->assertSame($children, $token->getChildren());
 	}

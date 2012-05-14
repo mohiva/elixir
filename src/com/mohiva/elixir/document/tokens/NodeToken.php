@@ -68,6 +68,20 @@ class NodeToken implements Token {
 	private $ancestor = null;
 
 	/**
+	 * The ID of the node immediately preceding this node.
+	 *
+	 * @var string
+	 */
+	private $previousSibling = null;
+
+	/**
+	 * The ID of the node immediately following this node.
+	 *
+	 * @var string
+	 */
+	private $nextSibling = null;
+
+	/**
 	 * The content of the node.
 	 *
 	 * @var string
@@ -89,6 +103,8 @@ class NodeToken implements Token {
 	 * @param string $path The path to this node in the source file.
 	 * @param int $line The line number of the node in the source file.
 	 * @param string $ancestor The id of the ancestor node.
+	 * @param string $previousSibling The ID of the node immediately preceding this node.
+	 * @param string $nextSibling The ID of the node immediately following this node.
 	 * @param string $content The content of the node.
 	 * @param array $children The node children.
 	 */
@@ -98,6 +114,8 @@ class NodeToken implements Token {
 		$path,
 		$line,
 		$ancestor,
+		$previousSibling,
+		$nextSibling,
 		$content,
 		array $children) {
 
@@ -106,6 +124,8 @@ class NodeToken implements Token {
 		$this->path = $path;
 		$this->line = $line;
 		$this->ancestor = $ancestor;
+		$this->previousSibling = $previousSibling;
+		$this->nextSibling = $nextSibling;
 		$this->content = $content;
 		$this->children = $children;
 	}
@@ -158,6 +178,26 @@ class NodeToken implements Token {
 	public function getAncestor() {
 
 		return $this->ancestor;
+	}
+
+	/**
+	 * The ID of the node immediately preceding this node.
+	 *
+	 * @return string The Id of the node immediately preceding this node, or null ff there is no such node.
+	 */
+	public function getPreviousSibling() {
+
+		return $this->previousSibling;
+	}
+
+	/**
+	 * The ID of the node immediately following this node.
+	 *
+	 * @return string The Id of the node immediately following this node, or null ff there is no such node.
+	 */
+	public function getNextSibling() {
+
+		return $this->nextSibling;
 	}
 
 	/**
