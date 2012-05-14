@@ -183,7 +183,7 @@ class NodeToken implements Token {
 	/**
 	 * The ID of the node immediately preceding this node.
 	 *
-	 * @return string The Id of the node immediately preceding this node, or null ff there is no such node.
+	 * @return string The Id of the node immediately preceding this node, or null if there is no such node.
 	 */
 	public function getPreviousSibling() {
 
@@ -193,7 +193,7 @@ class NodeToken implements Token {
 	/**
 	 * The ID of the node immediately following this node.
 	 *
-	 * @return string The Id of the node immediately following this node, or null ff there is no such node.
+	 * @return string The Id of the node immediately following this node, or null if there is no such node.
 	 */
 	public function getNextSibling() {
 
