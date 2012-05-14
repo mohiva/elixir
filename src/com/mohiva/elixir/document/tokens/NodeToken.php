@@ -89,7 +89,7 @@ class NodeToken implements Token {
 	private $content = null;
 
 	/**
-	 * The node children.
+	 * A list with child nodes.
 	 *
 	 * @var array
 	 */
@@ -131,7 +131,7 @@ class NodeToken implements Token {
 	}
 
 	/**
-	 * Returns the token code.
+	 * Gets the token code.
 	 *
 	 * @return int The token code.
 	 */
@@ -141,7 +141,7 @@ class NodeToken implements Token {
 	}
 
 	/**
-	 * Returns the id of the node.
+	 * Gets the id of the node.
 	 *
 	 * @return string The id of the node.
 	 */
@@ -151,7 +151,7 @@ class NodeToken implements Token {
 	}
 
 	/**
-	 * Returns the path to this node in the source file.
+	 * Gets the path to this node in the source file.
 	 *
 	 * @return string The path to this node in the source file.
 	 */
@@ -161,7 +161,7 @@ class NodeToken implements Token {
 	}
 
 	/**
-	 * Returns the line number of the node in the source file.
+	 * Gets the line number of the node in the source file.
 	 *
 	 * @return int The line number of the node in the source file.
 	 */
@@ -171,7 +171,7 @@ class NodeToken implements Token {
 	}
 
 	/**
-	 * Returns the id of the ancestor node.
+	 * Gets the id of the ancestor node.
 	 *
 	 * @return string The id of the ancestor node.
 	 */
@@ -181,7 +181,7 @@ class NodeToken implements Token {
 	}
 
 	/**
-	 * The ID of the node immediately preceding this node.
+	 * Gets the ID of the node immediately preceding this node.
 	 *
 	 * @return string The Id of the node immediately preceding this node, or null if there is no such node.
 	 */
@@ -191,7 +191,7 @@ class NodeToken implements Token {
 	}
 
 	/**
-	 * The ID of the node immediately following this node.
+	 * Gets the ID of the node immediately following this node.
 	 *
 	 * @return string The Id of the node immediately following this node, or null if there is no such node.
 	 */
@@ -201,7 +201,7 @@ class NodeToken implements Token {
 	}
 
 	/**
-	 * Returns the content of the node.
+	 * Gets the content of the node.
 	 *
 	 * @return string The content of the node.
 	 */
@@ -211,9 +211,9 @@ class NodeToken implements Token {
 	}
 
 	/**
-	 * Returns the node children.
+	 * Gets a list with child nodes.
 	 *
-	 * @return array The node children.
+	 * @return array A list with child nodes.
 	 */
 	public function getChildren() {
 
