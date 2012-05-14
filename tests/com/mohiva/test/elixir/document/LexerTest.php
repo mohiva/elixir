@@ -339,7 +339,7 @@ class LexerTest extends \PHPUnit_Framework_TestCase {
 	 */
 	public function testFindPreviousSibling() {
 
-		$xmlFile = Bootstrap::$resourceDir . '/elixir/document/lexer/find_sibling.xml';
+		$xmlFile = Bootstrap::$resourceDir . '/elixir/document/lexer/find_siblings.xml';
 
 		$doc = new XMLDocument();
 		$doc->load($xmlFile);
@@ -366,7 +366,7 @@ class LexerTest extends \PHPUnit_Framework_TestCase {
 	 */
 	public function testFindNextSibling() {
 
-		$xmlFile = Bootstrap::$resourceDir . '/elixir/document/lexer/find_sibling.xml';
+		$xmlFile = Bootstrap::$resourceDir . '/elixir/document/lexer/find_siblings.xml';
 
 		$doc = new XMLDocument();
 		$doc->load($xmlFile);

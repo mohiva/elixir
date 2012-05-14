@@ -23,8 +23,8 @@ use com\mohiva\elixir\document\expression\Container as ExpressionContainer;
 
 /**
  * Represents a document node. A node can be the root node of a document
- * or a node which contains at least one element helper or many attribute
- * helpers.
+ * or a node which contains at least one element helper or at least one
+ * attribute helpers.
  *
  * @category  Mohiva/Elixir
  * @package   Mohiva/Elixir/Document
@@ -77,6 +77,20 @@ class Node implements ExpressionContainer {
 	 * @var Node
 	 */
 	private $ancestor = null;
+
+	/**
+	 * The node immediately preceding this node.
+	 *
+	 * @var Node
+	 */
+	private $previousSibling = null;
+
+	/**
+	 * The node immediately following this node.
+	 *
+	 * @var Node
+	 */
+	private $nextSibling = null;
 
 	/**
 	 * Contains all child nodes of this node.
@@ -185,6 +199,46 @@ class Node implements ExpressionContainer {
 	public function getAncestor() {
 
 		return $this->ancestor;
+	}
+
+	/**
+	 * Sets the node immediately preceding this node.
+	 *
+	 * @param Node $previousSibling The node immediately preceding this node.
+	 */
+	public function setPreviousSibling(Node $previousSibling) {
+
+		$this->previousSibling = $previousSibling;
+	}
+
+	/**
+	 * Gets the node immediately preceding this node.
+	 *
+	 * @return Node The node immediately preceding this node, or null if there is no such node.
+	 */
+	public function getPreviousSibling() {
+
+		return $this->previousSibling;
+	}
+
+	/**
+	 * Sets the node immediately following this node.
+	 *
+	 * @param Node $nextSibling The node immediately following this node.
+	 */
+	public function setNextSibling(Node $nextSibling) {
+
+		$this->nextSibling = $nextSibling;
+	}
+
+	/**
+	 * Gets the node immediately following this node.
+	 *
+	 * @return string The node immediately following this node, or null if there is no such node.
+	 */
+	public function getNextSibling() {
+
+		return $this->nextSibling;
 	}
 
 	/**
