@@ -33,26 +33,12 @@ use com\mohiva\elixir\document\Node;
 class NodeTest extends \PHPUnit_Framework_TestCase {
 
 	/**
-	 * The node object to test.
-	 *
-	 * @var \com\mohiva\elixir\document\Node
-	 */
-	private $node;
-
-	/**
-	 * Setup the test case.
-	 */
-	public function setUp() {
-
-		$this->node = new Node('root', 1, '<xml></xml>', 1, '/root');
-	}
-
-	/**
 	 * Test if the `getId` method returns the id of the node.
 	 */
 	public function testGetId() {
 
-		$this->assertSame('root', $this->node->getId());
+		$node = new Node('root', 1, '<xml></xml>', 1, '/root');
+		$this->assertSame('root', $node->getId());
 	}
 
 	/**
@@ -60,7 +46,8 @@ class NodeTest extends \PHPUnit_Framework_TestCase {
 	 */
 	public function testGetCode() {
 
-		$this->assertSame(1, $this->node->getCode());
+		$node = new Node('root', 1, '<xml></xml>', 1, '/root');
+		$this->assertSame(1, $node->getCode());
 	}
 
 	/**
@@ -68,7 +55,8 @@ class NodeTest extends \PHPUnit_Framework_TestCase {
 	 */
 	public function testGetContent() {
 
-		$this->assertSame('<xml></xml>', $this->node->getContent());
+		$node = new Node('root', 1, '<xml></xml>', 1, '/root');
+		$this->assertSame('<xml></xml>', $node->getContent());
 	}
 
 	/**
@@ -76,7 +64,8 @@ class NodeTest extends \PHPUnit_Framework_TestCase {
 	 */
 	public function testGetLine() {
 
-		$this->assertSame(1, $this->node->getLine());
+		$node = new Node('root', 1, '<xml></xml>', 1, '/root');
+		$this->assertSame(1, $node->getLine());
 	}
 
 	/**
@@ -84,7 +73,8 @@ class NodeTest extends \PHPUnit_Framework_TestCase {
 	 */
 	public function testGetPath() {
 
-		$this->assertSame('/root', $this->node->getPath());
+		$node = new Node('root', 1, '<xml></xml>', 1, '/root');
+		$this->assertSame('/root', $node->getPath());
 	}
 
 	/**
@@ -92,9 +82,32 @@ class NodeTest extends \PHPUnit_Framework_TestCase {
 	 */
 	public function testAncestorAccessors() {
 
-		$this->node->setAncestor($this->node);
+		$node = new Node('root', 1, '<xml></xml>', 1, '/root');
+		$node->setAncestor($node);
 
-		$this->assertSame($this->node, $this->node->getAncestor());
+		$this->assertSame($node, $node->getAncestor());
+	}
+
+	/**
+	 * Test the `setPreviousSibling` and `getPreviousSibling` accessors.
+	 */
+	public function testPreviousSiblingAccessors() {
+
+		$node = new Node('root', 1, '<xml></xml>', 1, '/root');
+		$node->setPreviousSibling($node);
+
+		$this->assertSame($node, $node->getPreviousSibling());
+	}
+
+	/**
+	 * Test the `setNextSibling` and `getNextSibling` accessors.
+	 */
+	public function testNextSiblingAccessors() {
+
+		$node = new Node('root', 1, '<xml></xml>', 1, '/root');
+		$node->setNextSibling($node);
+
+		$this->assertSame($node, $node->getNextSibling());
 	}
 
 	/**
@@ -102,9 +115,10 @@ class NodeTest extends \PHPUnit_Framework_TestCase {
 	 */
 	public function testChildAccessors() {
 
-		$this->node->addChild($this->node);
+		$node = new Node('root', 1, '<xml></xml>', 1, '/root');
+		$node->addChild($node);
 
-		$this->assertSame(array($this->node), $this->node->getChildren());
+		$this->assertSame(array($node), $node->getChildren());
 	}
 
 	/**
@@ -114,9 +128,10 @@ class NodeTest extends \PHPUnit_Framework_TestCase {
 
 		/* @var \com\mohiva\elixir\document\Helper $stub */
 		$stub = $this->getMock('\com\mohiva\elixir\document\Helper', array(), array(), '', false);
-		$this->node->addHelper($stub);
+		$node = new Node('root', 1, '<xml></xml>', 1, '/root');
+		$node->addHelper($stub);
 
-		$this->assertSame(array($stub), $this->node->getHelpers());
+		$this->assertSame(array($stub), $node->getHelpers());
 	}
 
 	/**
@@ -126,8 +141,9 @@ class NodeTest extends \PHPUnit_Framework_TestCase {
 
 		/* @var \com\mohiva\pyramid\Node $stub */
 		$stub = $this->getMock('\com\mohiva\pyramid\Node', array(), array(), '', false);
-		$this->node->addExpression($stub);
+		$node = new Node('root', 1, '<xml></xml>', 1, '/root');
+		$node->addExpression($stub);
 
-		$this->assertSame(array($stub), $this->node->getExpressions());
+		$this->assertSame(array($stub), $node->getExpressions());
 	}
 }

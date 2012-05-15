@@ -55,7 +55,7 @@ class Parser {
 	 *
 	 * @var string
 	 */
-	const PHP_NAMESPACE = 'com\mohiva\elixir\helpers';
+	const PHP_NAMESPACE = 'com\mohiva\elixir\document\helpers';
 
 	/**
 	 * The PHP namespace separator.
@@ -128,7 +128,7 @@ class Parser {
 	 *
 	 * @param TokenStream $stream The stream to parse.
 	 * @return NodeTree The tree object which contains the parser result.
-	 * @throws \com\mohiva\elixir\document\exceptions\UnexpectedTokenException
+	 * @throws UnexpectedTokenException
 	 */
 	public function parse(TokenStream $stream) {
 
@@ -167,6 +167,7 @@ class Parser {
 					$ancestorNode->addChild($node);
 					$expressionContainer = $node;
 					$node->setAncestor($ancestorNode);
+					$this->setSiblings($token, $nodes);
 					break;
 
 				case Lexer::T_ELEMENT_HELPER:
@@ -197,6 +198,27 @@ class Parser {
 	}
 
 	/**
+	 * Sets the previous and the next sibling node.
+	 *
+	 * It checks if a previous processed node is the preceding sibling of the current node. Is this true
+	 * then the current processed node is the following sibling of this preceding node.
+	 *
+	 * @param NodeToken $token The current processed node token.
+	 * @param array $nodes The list with processed nodes.
+	 */
+	private function setSiblings(NodeToken $token, array $nodes) {
+
+		if (!$token->getPreviousSibling() || !isset($nodes[$token->getPreviousSibling()])) {
+			return;
+		}
+
+		/* @var Node $node */
+		$node = $nodes[$token->getId()];
+		$node->setPreviousSibling($nodes[$token->getPreviousSibling()]);
+		$node->getPreviousSibling()->setNextSibling($node);
+	}
+
+	/**
 	 * @param NodeToken $token
 	 * @return Node
 	 */
@@ -216,7 +238,7 @@ class Parser {
 	/**
 	 * @param HelperToken $token
 	 * @return ElementHelper
-	 * @throws \com\mohiva\elixir\document\exceptions\UnexpectedHelperTypeException
+	 * @throws UnexpectedHelperTypeException
 	 */
 	private function createElementHelperFromToken(HelperToken $token) {
 
@@ -240,7 +262,7 @@ class Parser {
 	/**
 	 * @param HelperToken $token
 	 * @return AttributeHelper
-	 * @throws \com\mohiva\elixir\document\exceptions\UnexpectedHelperTypeException
+	 * @throws UnexpectedHelperTypeException
 	 */
 	private function createAttributeHelperFromToken(HelperToken $token) {
 
@@ -282,7 +304,7 @@ class Parser {
 	 * @param string $helperNamespace
 	 * @param string $helperName
 	 * @return string
-	 * @throws \com\mohiva\elixir\document\exceptions\InvalidNamespaceException if a XML namespace uses no URI or URN.
+	 * @throws InvalidNamespaceException if a XML namespace uses no URI or URN.
 	 */
 	private function getFullyQualifiedHelperName($helperNamespace, $helperName) {
 
@@ -305,7 +327,7 @@ class Parser {
 	/**
 	 * @param string $namespace
 	 * @return string
-	 * @throws \com\mohiva\elixir\document\exceptions\MissingNamespaceException
+	 * @throws MissingNamespaceException
 	 */
 	private function getUrlNamespace($namespace) {
 

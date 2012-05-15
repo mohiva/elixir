@@ -193,9 +193,9 @@ class ParserTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	/**
-	 * Test if the parser sets the correct node ancestor.
+	 * Test if the parser sets the correct ancestor node.
 	 */
-	public function testParserSetsCorrectNodeAncestor() {
+	public function testParserSetsCorrectAncestorNode() {
 
 		$doc = new XMLDocument();
 		$doc->load(Bootstrap::$resourceDir . '/elixir/document/parser/default.xml');
@@ -212,9 +212,55 @@ class ParserTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	/**
-	 * Test if the parser sets the correct node children.
+	 * Test if the parser sets the correct previous node.
 	 */
-	public function testParserSetsCorrectNodeChildren() {
+	public function testParserSetsCorrectPreviousNode() {
+
+		$doc = new XMLDocument();
+		$doc->load(Bootstrap::$resourceDir . '/elixir/document/parser/node_siblings.xml');
+
+		$lexer = new DocumentLexer(new ExpressionLexer());
+		$stream = $lexer->scan($doc);
+
+		$parser = new DocumentParser(new ExpressionParser(new ExpressionGrammar));
+		$tree = $parser->parse($stream);
+
+		$root = $tree->getRoot();
+		$children = $root->getChildren();
+
+		$this->assertNull($children[0]->getPreviousSibling());
+		$this->assertSame('/root/ex:If', $children[1]->getPreviousSibling()->getPath());
+		$this->assertNull($children[2]->getPreviousSibling());
+		$this->assertSame('/root/ex:ElseIf[2]', $children[3]->getPreviousSibling()->getPath());
+	}
+
+	/**
+	 * Test if the parser sets the correct next node.
+	 */
+	public function testParserSetsCorrectNextNode() {
+
+		$doc = new XMLDocument();
+		$doc->load(Bootstrap::$resourceDir . '/elixir/document/parser/node_siblings.xml');
+
+		$lexer = new DocumentLexer(new ExpressionLexer());
+		$stream = $lexer->scan($doc);
+
+		$parser = new DocumentParser(new ExpressionParser(new ExpressionGrammar));
+		$tree = $parser->parse($stream);
+
+		$root = $tree->getRoot();
+		$children = $root->getChildren();
+
+		$this->assertSame('/root/ex:ElseIf', $children[0]->getNextSibling()->getPath());
+		$this->assertNull($children[1]->getNextSibling());
+		$this->assertSame('/root/ex:Else', $children[2]->getNextSibling()->getPath());
+		$this->assertNull($children[3]->getNextSibling());
+	}
+
+	/**
+	 * Test if the parser sets the correct children node.
+	 */
+	public function testParserSetsCorrectChildrenNode() {
 
 		$doc = new XMLDocument();
 		$doc->load(Bootstrap::$resourceDir . '/elixir/document/parser/default.xml');
@@ -367,7 +413,7 @@ class ParserTest extends \PHPUnit_Framework_TestCase {
 		$parser = new DocumentParser(new ExpressionParser(new ExpressionGrammar));
 		$tree = $parser->parse($stream);
 		$children = $tree->getRoot()->getChildren();
-		/* @var \com\mohiva\elixir\document\Node $node */
+		/* @var Node $node */
 		$node = $children[0];
 		$helpers = $node->getHelpers();
 
@@ -388,7 +434,7 @@ class ParserTest extends \PHPUnit_Framework_TestCase {
 		$parser = new DocumentParser(new ExpressionParser(new ExpressionGrammar));
 		$tree = $parser->parse($stream);
 		$children = $tree->getRoot()->getChildren();
-		/* @var \com\mohiva\elixir\document\Node $node */
+		/* @var Node $node */
 		$node = $children[0];
 		$helpers = $node->getHelpers();
 
@@ -402,6 +448,7 @@ class ParserTest extends \PHPUnit_Framework_TestCase {
 	 */
 	public function testThrowsInvalidTokenException() {
 
+		/* @var \PHPUnit_Framework_MockObject_MockObject $token */
 		/* @var \com\mohiva\common\parser\Token $token */
 		$token = $this->getMock('\com\mohiva\common\parser\Token', array(), array(), '', false);
 		$token->expects($this->any())
@@ -452,7 +499,7 @@ class ParserTest extends \PHPUnit_Framework_TestCase {
 	/**
 	 * Helper method which build an array with XML paths from node tree.
 	 *
-	 * @param \com\mohiva\elixir\document\Node $node The root of the node.
+	 * @param Node $node The root of the node.
 	 * @return array A list with XML paths.
 	 */
 	private function getNodePaths(Node $node) {
@@ -469,7 +516,7 @@ class ParserTest extends \PHPUnit_Framework_TestCase {
 	/**
 	 * Helper method which build an array with XML paths from node tree containing the node helpers.
 	 *
-	 * @param \com\mohiva\elixir\document\Node $node The root of the node.
+	 * @param Node $node The root of the node.
 	 * @return array A list with XML paths.
 	 */
 	private function getNodeAndHelperPaths(Node $node) {

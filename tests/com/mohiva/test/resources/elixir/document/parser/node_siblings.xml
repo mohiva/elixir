@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root xmlns:ex="urn:com.mohiva.test.resources.elixir.document.helpers">
+	<ex:If />
+	<ex:ElseIf />
+	<other />
+	<ex:ElseIf>
+		<ex:If />
+	</ex:ElseIf>
+	<ex:Else />
+</root>
