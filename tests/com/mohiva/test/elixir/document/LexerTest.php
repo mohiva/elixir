@@ -352,13 +352,16 @@ class LexerTest extends \PHPUnit_Framework_TestCase {
 		$this->assertNull($token->getPreviousSibling());
 
 		$token = $stream->getLookahead(5);
-		$this->assertNotNull($token->getPreviousSibling());
+		$this->assertSame(sha1('/root/ex:If'), $token->getPreviousSibling());
 
 		$token = $stream->getLookahead(7);
 		$this->assertNull($token->getPreviousSibling());
 
 		$token = $stream->getLookahead(9);
-		$this->assertNotNull($token->getPreviousSibling());
+		$this->assertNull($token->getPreviousSibling());
+
+		$token = $stream->getLookahead(11);
+		$this->assertSame(sha1('/root/ex:ElseIf[2]'), $token->getPreviousSibling());
 	}
 
 	/**
@@ -376,15 +379,18 @@ class LexerTest extends \PHPUnit_Framework_TestCase {
 
 		/* @var \com\mohiva\elixir\document\tokens\NodeToken $token */
 		$token = $stream->getLookahead(3);
-		$this->assertNotNull($token->getNextSibling());
+		$this->assertSame(sha1('/root/ex:ElseIf'), $token->getNextSibling());
 
 		$token = $stream->getLookahead(5);
 		$this->assertNull($token->getNextSibling());
 
 		$token = $stream->getLookahead(7);
-		$this->assertNotNull($token->getNextSibling());
+		$this->assertSame(sha1('/root/ex:Else'), $token->getNextSibling());
 
 		$token = $stream->getLookahead(9);
+		$this->assertNull($token->getNextSibling());
+
+		$token = $stream->getLookahead(11);
 		$this->assertNull($token->getNextSibling());
 	}
 

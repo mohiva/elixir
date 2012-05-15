@@ -3,6 +3,8 @@
 	<ex:If />
 	<ex:ElseIf />
 	<other />
-	<ex:ElseIf />
+	<ex:ElseIf>
+		<ex:If />
+	</ex:ElseIf>
 	<ex:Else />
 </root>
