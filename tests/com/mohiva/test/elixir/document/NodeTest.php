@@ -33,48 +33,22 @@ use com\mohiva\elixir\document\Node;
 class NodeTest extends \PHPUnit_Framework_TestCase {
 
 	/**
-	 * Test if the `getId` method returns the id of the node.
+	 * Test all getters for the values set with the constructor.
 	 */
-	public function testGetId() {
+	public function testConstructorAccessors() {
 
-		$node = new Node('root', 1, '<xml></xml>', 1, '/root');
-		$this->assertSame('root', $node->getId());
-	}
+		$id = sha1(microtime(true));
+		$code = mt_rand(1, 30);
+		$content = sha1(microtime(true));
+		$line = mt_rand(1, 100);
+		$path = sha1(microtime(true));
+		$node = new Node($id, $code, $content, $line, $path);
 
-	/**
-	 * Test if the `getCode` method returns the token code of the node.
-	 */
-	public function testGetCode() {
-
-		$node = new Node('root', 1, '<xml></xml>', 1, '/root');
-		$this->assertSame(1, $node->getCode());
-	}
-
-	/**
-	 * Test if the `getContent` method returns the content of the node.
-	 */
-	public function testGetContent() {
-
-		$node = new Node('root', 1, '<xml></xml>', 1, '/root');
-		$this->assertSame('<xml></xml>', $node->getContent());
-	}
-
-	/**
-	 * Test if the `getLine` method returns the line number of the node.
-	 */
-	public function testGetLine() {
-
-		$node = new Node('root', 1, '<xml></xml>', 1, '/root');
-		$this->assertSame(1, $node->getLine());
-	}
-
-	/**
-	 * Test if the `getPath` method returns the path of the node.
-	 */
-	public function testGetPath() {
-
-		$node = new Node('root', 1, '<xml></xml>', 1, '/root');
-		$this->assertSame('/root', $node->getPath());
+		$this->assertSame($id, $node->getId());
+		$this->assertSame($code, $node->getCode());
+		$this->assertSame($content, $node->getContent());
+		$this->assertSame($line, $node->getLine());
+		$this->assertSame($path, $node->getPath());
 	}
 
 	/**
@@ -126,12 +100,12 @@ class NodeTest extends \PHPUnit_Framework_TestCase {
 	 */
 	public function testHelperAccessors() {
 
-		/* @var \com\mohiva\elixir\document\Helper $stub */
-		$stub = $this->getMock('\com\mohiva\elixir\document\Helper', array(), array(), '', false);
+		/* @var \com\mohiva\elixir\document\Helper $helper */
+		$helper = $this->getMock('\com\mohiva\elixir\document\Helper', array(), array(), '', false);
 		$node = new Node('root', 1, '<xml></xml>', 1, '/root');
-		$node->addHelper($stub);
+		$node->addHelper($helper);
 
-		$this->assertSame(array($stub), $node->getHelpers());
+		$this->assertSame(array($helper), $node->getHelpers());
 	}
 
 	/**
@@ -139,11 +113,11 @@ class NodeTest extends \PHPUnit_Framework_TestCase {
 	 */
 	public function testExpressionAccessors() {
 
-		/* @var \com\mohiva\pyramid\Node $stub */
-		$stub = $this->getMock('\com\mohiva\pyramid\Node', array(), array(), '', false);
+		/* @var \com\mohiva\elixir\document\Expression $expression */
+		$expression = $this->getMock('\com\mohiva\elixir\document\Expression', array(), array(), '', false);
 		$node = new Node('root', 1, '<xml></xml>', 1, '/root');
-		$node->addExpression($stub);
+		$node->setExpressions(array($expression));
 
-		$this->assertSame(array($stub), $node->getExpressions());
+		$this->assertSame(array($expression), $node->getExpressions());
 	}
 }

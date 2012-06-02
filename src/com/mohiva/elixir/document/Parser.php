@@ -19,7 +19,10 @@
 namespace com\mohiva\elixir\document;
 
 use com\mohiva\pyramid\Parser as ExpressionParser;
+use com\mohiva\pyramid\Token;
 use com\mohiva\common\parser\TokenStream;
+use com\mohiva\common\exceptions\SyntaxErrorException;
+use com\mohiva\elixir\document\expression\Lexer as ExpressionLexer;
 use com\mohiva\elixir\document\tokens\PropertyToken;
 use com\mohiva\elixir\document\tokens\NodeToken;
 use com\mohiva\elixir\document\tokens\HelperToken;
@@ -86,6 +89,13 @@ class Parser {
 	const HELPER_PREFIX = 'Helper';
 
 	/**
+	 * The lexer to tokenize the expressions.
+	 *
+	 * @var ExpressionLexer
+	 */
+	private $expressionLexer = null;
+
+	/**
 	 * The parser to parse the expressions.
 	 *
 	 * @var ExpressionParser
@@ -105,10 +115,12 @@ class Parser {
 	/**
 	 * The class constructor.
 	 *
+	 * @param ExpressionLexer $expressionLexer The lexer to tokenize the expressions.
 	 * @param ExpressionParser $expressionParser The parser to parse the expressions.
 	 */
-	public function __construct(ExpressionParser $expressionParser) {
+	public function __construct(ExpressionLexer $expressionLexer, ExpressionParser $expressionParser) {
 
+		$this->expressionLexer = $expressionLexer;
 		$this->expressionParser = $expressionParser;
 	}
 
@@ -186,7 +198,7 @@ class Parser {
 
 				case Lexer::T_EXPRESSION:
 					/* @var ExpressionToken $token */
-					$expressionContainer->addExpression($this->parseExpressionToken($token));
+					$expressionContainer->setExpressions($this->createExpressionsFromToken($token));
 					break;
 
 				default:
@@ -219,8 +231,10 @@ class Parser {
 	}
 
 	/**
-	 * @param NodeToken $token
-	 * @return Node
+	 * Creates a new document node.
+	 *
+	 * @param NodeToken $token The node token.
+	 * @return Node The document node.
 	 */
 	private function createNodeFromToken(NodeToken $token) {
 
@@ -236,9 +250,11 @@ class Parser {
 	}
 
 	/**
-	 * @param HelperToken $token
-	 * @return ElementHelper
-	 * @throws UnexpectedHelperTypeException
+	 * Creates an instance of the found element helper and return it.
+	 *
+	 * @param HelperToken $token The helper token.
+	 * @return ElementHelper The element helper instance.
+	 * @throws UnexpectedHelperTypeException if the found helper isn't derived from `ElementHelper` class.
 	 */
 	private function createElementHelperFromToken(HelperToken $token) {
 
@@ -260,9 +276,11 @@ class Parser {
 	}
 
 	/**
-	 * @param HelperToken $token
-	 * @return AttributeHelper
-	 * @throws UnexpectedHelperTypeException
+	 * Creates an instance of the found attribute helper and return it.
+	 *
+	 * @param HelperToken $token The helper token.
+	 * @return AttributeHelper The attribute helper instance.
+	 * @throws UnexpectedHelperTypeException if the found helper isn't derived from `AttributeHelper` class.
 	 */
 	private function createAttributeHelperFromToken(HelperToken $token) {
 
@@ -284,14 +302,100 @@ class Parser {
 	}
 
 	/**
-	 * @param ExpressionToken $token
-	 * @return \com\mohiva\pyramid\Node
+	 * Parses all expressions found in the token stream and returns a list of
+	 * expression objects. On object for each found expression.
+	 *
+	 * @param ExpressionToken $token The token to parse.
+	 * @return Expression[] The list of found expressions.
 	 */
-	private function parseExpressionToken(ExpressionToken $token) {
+	private function createExpressionsFromToken(ExpressionToken $token) {
 
-		$node = $this->expressionParser->parse($token->getStream());
+		$expressions = array();
+		$number = 0;
+		$stream = $token->getStream();
+		while ($stream->valid()) {
+			if ($stream->current()->getCode() != Lexer::T_EXPRESSION_OPEN &&
+				$stream->current()->getCode() != Lexer::T_EXPRESSION_CLOSE) {
+				$stream->next();
+				continue;
+			}
 
-		return $node;
+			$this->expectExpressionOpener($stream);
+			$content = $this->getExpressionContent($stream);
+			$this->expectExpressionCloser($stream);
+
+			$node = $this->expressionParser->parse($this->expressionLexer->scan($content));
+
+			$path = $token->getPath() . '{% ' . $number++ . ' %}';
+			$expression = new Expression(
+				sha1($path),
+				$token->getCode(),
+				$token->getLine(),
+				$path,
+				$node
+			);
+			$expressions[] = $expression;
+		}
+
+		return $expressions;
+	}
+
+	/**
+	 * Expects that the current token is the expression opener.
+	 *
+	 * @param TokenStream $stream The expression stream.
+	 * @throws SyntaxErrorException if the expression opener couldn't be found.
+	 */
+	private function expectExpressionOpener(TokenStream $stream) {
+
+		$stream->expect(array(Lexer::T_EXPRESSION_OPEN), function(Token $current) {
+			$message = "Expression opener `{%` expected; got `{$current->getValue()}`";
+			throw new SyntaxErrorException($message);
+		});
+		$stream->next();
+	}
+
+	/**
+	 * Expects that the current token is the expression opener.
+	 *
+	 * @param TokenStream $stream The expression stream.
+	 * @throws SyntaxErrorException if the expression opener couldn't be found.
+	 */
+	private function expectExpressionCloser(TokenStream $stream) {
+
+		$stream->expect(array(Lexer::T_EXPRESSION_CLOSE), function(Token $current = null) {
+			if ($current) {
+				$message = "Expression closer `%}` expected; got `{$current->getValue()}`";
+			} else {
+				$message = "Expression closer `%}` expected, but end of stream reached";
+			}
+
+			throw new SyntaxErrorException($message);
+		});
+		$stream->next();
+	}
+
+	/**
+	 * Gets the expression content.
+	 *
+	 * @param TokenStream $stream The token stream.
+	 * @return string The expression.
+	 */
+	private function getExpressionContent(TokenStream $stream) {
+
+		$expression = '';
+		while ($stream->valid()) {
+			if ($stream->current()->getCode() != Lexer::T_EXPRESSION_CHARS) {
+				break;
+			}
+
+			/* @var \com\mohiva\pyramid\Token $token */
+			$token = $stream->current();
+			$expression .= $token->getValue();
+			$stream->next();
+		}
+
+		return $expression;
 	}
 
 	/**

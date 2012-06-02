@@ -19,7 +19,7 @@
 namespace com\mohiva\elixir\document\helpers;
 
 use com\mohiva\elixir\document\Helper;
-use com\mohiva\pyramid\Node;
+use com\mohiva\elixir\document\Expression;
 
 /**
  * Base class for all element helper classes.
@@ -64,7 +64,7 @@ abstract class ElementHelper implements Helper {
 	/**
 	 * All expressions found for the helper.
 	 *
-	 * @var array
+	 * @var Expression[]
 	 */
 	private $expressions = array();
 
@@ -125,19 +125,19 @@ abstract class ElementHelper implements Helper {
 	}
 
 	/**
-	 * Adds a expression for the helper.
+	 * Sets the list with found expressions.
 	 *
-	 * @param Node $expression The expression to add.
+	 * @param Expression[] $expressions The list with found expressions.
 	 */
-	public function addExpression(Node $expression) {
+	public function setExpressions(array $expressions) {
 
-		$this->expressions[] = $expression;
+		$this->expressions = $expressions;
 	}
 
 	/**
-	 * Gets all expressions found for the helper.
+	 * Gets the list with found expressions.
 	 *
-	 * @return array A list with all expressions found for the helper.
+	 * @return Expression[] The list with found expressions.
 	 */
 	public function getExpressions() {
 

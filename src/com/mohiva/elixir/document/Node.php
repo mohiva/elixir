@@ -18,7 +18,6 @@
  */
 namespace com\mohiva\elixir\document;
 
-use com\mohiva\pyramid\Node as ExpressionNode;
 use com\mohiva\elixir\document\expression\Container as ExpressionContainer;
 
 /**
@@ -95,21 +94,21 @@ class Node implements ExpressionContainer {
 	/**
 	 * Contains all child nodes of this node.
 	 *
-	 * @var array
+	 * @var Node[]
 	 */
 	private $children = array();
 
 	/**
 	 * Contains all helper objects associated with this node.
 	 *
-	 * @var array
+	 * @var Helper[]
 	 */
 	private $helpers = array();
 
 	/**
 	 * Contains all expressions found in the content of this node.
 	 *
-	 * @var array
+	 * @var Expression[]
 	 */
 	private $expressions = array();
 
@@ -234,7 +233,7 @@ class Node implements ExpressionContainer {
 	/**
 	 * Gets the node immediately following this node.
 	 *
-	 * @return string The node immediately following this node, or null if there is no such node.
+	 * @return Node The node immediately following this node, or null if there is no such node.
 	 */
 	public function getNextSibling() {
 
@@ -254,7 +253,7 @@ class Node implements ExpressionContainer {
 	/**
 	 * Gets all child nodes of this node.
 	 *
-	 * @return array All child nodes of this node.
+	 * @return Node[] All child nodes of this node.
 	 */
 	public function getChildren() {
 
@@ -274,7 +273,7 @@ class Node implements ExpressionContainer {
 	/**
 	 * Gets all helpers associated with this node.
 	 *
-	 * @return array All helpers associated with this node.
+	 * @return Helper[] All helpers associated with this node.
 	 */
 	public function getHelpers() {
 
@@ -282,19 +281,19 @@ class Node implements ExpressionContainer {
 	}
 
 	/**
-	 * Adds a expression.
+	 * Sets the list with found expressions.
 	 *
-	 * @param ExpressionNode $expression The expression to add.
+	 * @param Expression[] $expressions The list with found expressions.
 	 */
-	public function addExpression(ExpressionNode $expression) {
+	public function setExpressions(array $expressions) {
 
-		$this->expressions[] = $expression;
+		$this->expressions = $expressions;
 	}
 
 	/**
-	 * Gets the expressions contained in the content of this node.
+	 * Gets the list with found expressions.
 	 *
-	 * @return array The expressions contained in the content of this node.
+	 * @return Expression[] The list with found expressions.
 	 */
 	public function getExpressions() {
 

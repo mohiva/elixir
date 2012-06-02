@@ -64,11 +64,11 @@ class AttributeHelperTest extends \PHPUnit_Framework_TestCase {
 			'\com\mohiva\elixir\document\helpers\ElementHelper', array(), '', false
 		);
 
-		/* @var \com\mohiva\pyramid\Node $node */
-		$node = $this->getMock('\com\mohiva\pyramid\Node');
+		/* @var \com\mohiva\elixir\document\Expression $expression */
+		$expression = $this->getMock('\com\mohiva\elixir\document\Expression', array(), array(), '', false);
 
-		$helper->addExpression($node);
+		$helper->setExpressions(array($expression));
 
-		$this->assertSame(array($node), $helper->getExpressions());
+		$this->assertSame(array($expression), $helper->getExpressions());
 	}
 }

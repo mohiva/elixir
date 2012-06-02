@@ -10,39 +10,45 @@
  * https://github.com/mohiva/pyramid/blob/master/LICENSE.textile
  *
  * @category  Mohiva/Elixir
- * @package   Mohiva/Elixir/Document/Expression
+ * @package   Mohiva/Elixir/Test
  * @author    Christian Kaps <christian.kaps@mohiva.com>
  * @copyright Copyright (c) 2007-2012 Christian Kaps (http://www.mohiva.com)
  * @license   https://github.com/mohiva/elixir/blob/master/LICENSE.textile New BSD License
  * @link      https://github.com/mohiva/elixir
  */
-namespace com\mohiva\elixir\document\expression;
+namespace com\mohiva\test\elixir\document;
 
 use com\mohiva\elixir\document\Expression;
 
 /**
- * Interface for containers which can contain expressions.
+ * Unit test case for the Mohiva Elixir project.
  *
  * @category  Mohiva/Elixir
- * @package   Mohiva/Elixir/Document/Expression
+ * @package   Mohiva/Elixir/Test
  * @author    Christian Kaps <christian.kaps@mohiva.com>
  * @copyright Copyright (c) 2007-2012 Christian Kaps (http://www.mohiva.com)
  * @license   https://github.com/mohiva/elixir/blob/master/LICENSE.textile New BSD License
  * @link      https://github.com/mohiva/elixir
  */
-interface Container {
+class ExpressionTest extends \PHPUnit_Framework_TestCase {
 
 	/**
-	 * Sets the list with found expressions.
-	 *
-	 * @param Expression[] $expressions The list with found expressions.
+	 * Test all getters for the values set with the constructor.
 	 */
-	public function setExpressions(array $expressions);
+	public function testConstructorAccessors() {
 
-	/**
-	 * Gets the list with found expressions.
-	 *
-	 * @return Expression[] The list with found expressions.
-	 */
-	public function getExpressions();
+		/* @var \com\mohiva\pyramid\Node $node */
+		$id = sha1(microtime(true));
+		$code = mt_rand(1, 30);
+		$line = mt_rand(1, 100);
+		$path = sha1(microtime(true));
+		$node = $this->getMock('\com\mohiva\pyramid\Node');
+		$expression = new Expression($id, $code, $line, $path, $node);
+
+		$this->assertSame($id, $expression->getId());
+		$this->assertSame($code, $expression->getCode());
+		$this->assertSame($line, $expression->getLine());
+		$this->assertSame($path, $expression->getPath());
+		$this->assertSame($node, $expression->getNode());
+	}
 }

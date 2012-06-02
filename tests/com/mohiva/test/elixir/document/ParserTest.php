@@ -19,6 +19,7 @@
 namespace com\mohiva\test\elixir\document;
 
 use com\mohiva\test\elixir\Bootstrap;
+use com\mohiva\common\exceptions\SyntaxErrorException;
 use com\mohiva\common\parser\TokenStream;
 use com\mohiva\common\xml\XMLDocument;
 use com\mohiva\pyramid\Parser as ExpressionParser;
@@ -48,10 +49,10 @@ class ParserTest extends \PHPUnit_Framework_TestCase {
 		$doc = new XMLDocument();
 		$doc->load(Bootstrap::$resourceDir . '/elixir/document/parser/properties.xml');
 
-		$lexer = new DocumentLexer(new ExpressionLexer());
+		$lexer = new DocumentLexer();
 		$stream = $lexer->scan($doc);
 
-		$parser = new DocumentParser(new ExpressionParser(new ExpressionGrammar));
+		$parser = new DocumentParser(new ExpressionLexer(), new ExpressionParser(new ExpressionGrammar));
 		$tree = $parser->parse($stream);
 
 		$this->assertEquals('1.0', $tree->getVersion());
@@ -65,10 +66,10 @@ class ParserTest extends \PHPUnit_Framework_TestCase {
 		$doc = new XMLDocument();
 		$doc->load(Bootstrap::$resourceDir . '/elixir/document/parser/properties.xml');
 
-		$lexer = new DocumentLexer(new ExpressionLexer());
+		$lexer = new DocumentLexer();
 		$stream = $lexer->scan($doc);
 
-		$parser = new DocumentParser(new ExpressionParser(new ExpressionGrammar));
+		$parser = new DocumentParser(new ExpressionLexer(), new ExpressionParser(new ExpressionGrammar));
 		$tree = $parser->parse($stream);
 
 		$this->assertEquals('iso-8859-15', $tree->getEncoding());
@@ -82,10 +83,10 @@ class ParserTest extends \PHPUnit_Framework_TestCase {
 		$doc = new XMLDocument();
 		$doc->load(Bootstrap::$resourceDir . '/elixir/document/parser/root_node.xml');
 
-		$lexer = new DocumentLexer(new ExpressionLexer());
+		$lexer = new DocumentLexer();
 		$stream = $lexer->scan($doc);
 
-		$parser = new DocumentParser(new ExpressionParser(new ExpressionGrammar));
+		$parser = new DocumentParser(new ExpressionLexer(), new ExpressionParser(new ExpressionGrammar));
 		$tree = $parser->parse($stream);
 
 		$this->assertNotNull($tree->getRoot());
@@ -100,10 +101,10 @@ class ParserTest extends \PHPUnit_Framework_TestCase {
 		$doc = new XMLDocument();
 		$doc->load(Bootstrap::$resourceDir . '/elixir/document/parser/node_tree.xml');
 
-		$lexer = new DocumentLexer(new ExpressionLexer());
+		$lexer = new DocumentLexer();
 		$stream = $lexer->scan($doc);
 
-		$parser = new DocumentParser(new ExpressionParser(new ExpressionGrammar));
+		$parser = new DocumentParser(new ExpressionLexer(), new ExpressionParser(new ExpressionGrammar));
 		$tree = $parser->parse($stream);
 
 		$expectedPaths = array(
@@ -130,10 +131,10 @@ class ParserTest extends \PHPUnit_Framework_TestCase {
 		$doc = new XMLDocument();
 		$doc->load(Bootstrap::$resourceDir . '/elixir/document/parser/node_helpers.xml');
 
-		$lexer = new DocumentLexer(new ExpressionLexer());
+		$lexer = new DocumentLexer();
 		$stream = $lexer->scan($doc);
 
-		$parser = new DocumentParser(new ExpressionParser(new ExpressionGrammar));
+		$parser = new DocumentParser(new ExpressionLexer(), new ExpressionParser(new ExpressionGrammar));
 		$tree = $parser->parse($stream);
 
 		$expectedPaths = array(
@@ -176,12 +177,12 @@ class ParserTest extends \PHPUnit_Framework_TestCase {
 		$doc = new XMLDocument();
 		$doc->load(Bootstrap::$resourceDir . '/elixir/document/parser/node_data.xml');
 
-		$lexer = new DocumentLexer(new ExpressionLexer());
+		$lexer = new DocumentLexer();
 		$stream = $lexer->scan($doc);
 		/* @var \com\mohiva\elixir\document\tokens\NodeToken $token */
 		$token = $stream->getLookahead(2);
 
-		$parser = new DocumentParser(new ExpressionParser(new ExpressionGrammar));
+		$parser = new DocumentParser(new ExpressionLexer(), new ExpressionParser(new ExpressionGrammar));
 		$tree = $parser->parse($stream);
 		$node = $tree->getRoot();
 
@@ -200,10 +201,10 @@ class ParserTest extends \PHPUnit_Framework_TestCase {
 		$doc = new XMLDocument();
 		$doc->load(Bootstrap::$resourceDir . '/elixir/document/parser/default.xml');
 
-		$lexer = new DocumentLexer(new ExpressionLexer());
+		$lexer = new DocumentLexer();
 		$stream = $lexer->scan($doc);
 
-		$parser = new DocumentParser(new ExpressionParser(new ExpressionGrammar));
+		$parser = new DocumentParser(new ExpressionLexer(), new ExpressionParser(new ExpressionGrammar));
 		$tree = $parser->parse($stream);
 		$root = $tree->getRoot();
 		$children = $root->getChildren();
@@ -219,10 +220,10 @@ class ParserTest extends \PHPUnit_Framework_TestCase {
 		$doc = new XMLDocument();
 		$doc->load(Bootstrap::$resourceDir . '/elixir/document/parser/node_siblings.xml');
 
-		$lexer = new DocumentLexer(new ExpressionLexer());
+		$lexer = new DocumentLexer();
 		$stream = $lexer->scan($doc);
 
-		$parser = new DocumentParser(new ExpressionParser(new ExpressionGrammar));
+		$parser = new DocumentParser(new ExpressionLexer(), new ExpressionParser(new ExpressionGrammar));
 		$tree = $parser->parse($stream);
 
 		$root = $tree->getRoot();
@@ -242,10 +243,10 @@ class ParserTest extends \PHPUnit_Framework_TestCase {
 		$doc = new XMLDocument();
 		$doc->load(Bootstrap::$resourceDir . '/elixir/document/parser/node_siblings.xml');
 
-		$lexer = new DocumentLexer(new ExpressionLexer());
+		$lexer = new DocumentLexer();
 		$stream = $lexer->scan($doc);
 
-		$parser = new DocumentParser(new ExpressionParser(new ExpressionGrammar));
+		$parser = new DocumentParser(new ExpressionLexer(), new ExpressionParser(new ExpressionGrammar));
 		$tree = $parser->parse($stream);
 
 		$root = $tree->getRoot();
@@ -265,10 +266,10 @@ class ParserTest extends \PHPUnit_Framework_TestCase {
 		$doc = new XMLDocument();
 		$doc->load(Bootstrap::$resourceDir . '/elixir/document/parser/default.xml');
 
-		$lexer = new DocumentLexer(new ExpressionLexer());
+		$lexer = new DocumentLexer();
 		$stream = $lexer->scan($doc);
 
-		$parser = new DocumentParser(new ExpressionParser(new ExpressionGrammar));
+		$parser = new DocumentParser(new ExpressionLexer(), new ExpressionParser(new ExpressionGrammar));
 		$tree = $parser->parse($stream);
 		$root = $tree->getRoot();
 		$children = $root->getChildren();
@@ -277,30 +278,232 @@ class ParserTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	/**
-	 * Test if the parser sets the correct node expression.
-	 * TODO Implement test
+	 * Test if the parser sets the correct root node expression.
 	 */
-	public function testParserSetsCorrectNodeExpression() {
+	public function testParserSetsCorrectRootNodeExpression() {
 
+		/* @var \PHPUnit_Framework_MockObject_MockObject $expressionLexer */
+		/* @var \com\mohiva\elixir\document\expression\Lexer $expressionLexer */
+		$expressionLexer = $this->getMock('\com\mohiva\elixir\document\expression\Lexer', array(), array(), '', false);
+		$expressionLexer->expects($this->any())
+			->method('scan')
+			->will($this->returnValue(new TokenStream()));
 
+		/* @var \PHPUnit_Framework_MockObject_MockObject $expressionParser */
+		/* @var \com\mohiva\pyramid\Parser $expressionParser */
+		$expressionParser = $this->getMock('\com\mohiva\pyramid\Parser', array(), array(), '', false);
+		$expressionParser->expects($this->any())
+			->method('parse')
+			->will($this->returnValue($this->getMock('\com\mohiva\pyramid\Node')));
+
+		$doc = new XMLDocument();
+		$doc->load(Bootstrap::$resourceDir . '/elixir/document/parser/root_node_expression.xml');
+
+		$lexer = new DocumentLexer();
+		$stream = $lexer->scan($doc);
+
+		$parser = new DocumentParser($expressionLexer, $expressionParser);
+		$nodeTree = $parser->parse($stream);
+
+		$this->assertCount(2, $nodeTree->getRoot()->getExpressions());
+	}
+
+	/**
+	 * Test if the parser sets the correct element node expression.
+	 */
+	public function testParserSetsCorrectElementNodeExpression() {
+
+		/* @var \PHPUnit_Framework_MockObject_MockObject $expressionLexer */
+		/* @var \com\mohiva\elixir\document\expression\Lexer $expressionLexer */
+		$expressionLexer = $this->getMock('\com\mohiva\elixir\document\expression\Lexer', array(), array(), '', false);
+		$expressionLexer->expects($this->any())
+			->method('scan')
+			->will($this->returnValue(new TokenStream()));
+
+		/* @var \PHPUnit_Framework_MockObject_MockObject $expressionParser */
+		/* @var \com\mohiva\pyramid\Parser $expressionParser */
+		$expressionParser = $this->getMock('\com\mohiva\pyramid\Parser', array(), array(), '', false);
+		$expressionParser->expects($this->any())
+			->method('parse')
+			->will($this->returnValue($this->getMock('\com\mohiva\pyramid\Node')));
+
+		$doc = new XMLDocument();
+		$doc->load(Bootstrap::$resourceDir . '/elixir/document/parser/element_node_expression.xml');
+
+		$lexer = new DocumentLexer();
+		$stream = $lexer->scan($doc);
+
+		$parser = new DocumentParser($expressionLexer, $expressionParser);
+		$nodeTree = $parser->parse($stream);
+		$children = $nodeTree->getRoot()->getChildren();
+
+		$this->assertCount(2, $children[0]->getExpressions());
 	}
 
 	/**
 	 * Test if the parser sets the correct attribute helper expression.
-	 * TODO Implement test
 	 */
 	public function testParserSetsCorrectAttributeHelperExpression() {
 
+		/* @var \PHPUnit_Framework_MockObject_MockObject $expressionLexer */
+		/* @var \com\mohiva\elixir\document\expression\Lexer $expressionLexer */
+		$expressionLexer = $this->getMock('\com\mohiva\elixir\document\expression\Lexer', array(), array(), '', false);
+		$expressionLexer->expects($this->any())
+			->method('scan')
+			->will($this->returnValue(new TokenStream()));
 
+		/* @var \PHPUnit_Framework_MockObject_MockObject $expressionParser */
+		/* @var \com\mohiva\pyramid\Parser $expressionParser */
+		$expressionParser = $this->getMock('\com\mohiva\pyramid\Parser', array(), array(), '', false);
+		$expressionParser->expects($this->any())
+			->method('parse')
+			->will($this->returnValue($this->getMock('\com\mohiva\pyramid\Node')));
+
+		$doc = new XMLDocument();
+		$doc->load(Bootstrap::$resourceDir . '/elixir/document/parser/attribute_helper_expression.xml');
+
+		$lexer = new DocumentLexer();
+		$stream = $lexer->scan($doc);
+
+		$parser = new DocumentParser($expressionLexer, $expressionParser);
+		$nodeTree = $parser->parse($stream);
+		$helpers = $nodeTree->getRoot()->getChildren()[0]->getHelpers();
+
+		$this->assertCount(1, $helpers[0]->getExpressions());
 	}
 
 	/**
 	 * Test if the parser sets the correct element helper expression.
-	 * TODO Implement test
 	 */
 	public function testParserSetsCorrectElementHelperExpression() {
 
+		/* @var \PHPUnit_Framework_MockObject_MockObject $expressionLexer */
+		/* @var \com\mohiva\elixir\document\expression\Lexer $expressionLexer */
+		$expressionLexer = $this->getMock('\com\mohiva\elixir\document\expression\Lexer', array(), array(), '', false);
+		$expressionLexer->expects($this->any())
+			->method('scan')
+			->will($this->returnValue(new TokenStream()));
 
+		/* @var \PHPUnit_Framework_MockObject_MockObject $expressionParser */
+		/* @var \com\mohiva\pyramid\Parser $expressionParser */
+		$expressionParser = $this->getMock('\com\mohiva\pyramid\Parser', array(), array(), '', false);
+		$expressionParser->expects($this->any())
+			->method('parse')
+			->will($this->returnValue($this->getMock('\com\mohiva\pyramid\Node')));
+
+		$doc = new XMLDocument();
+		$doc->load(Bootstrap::$resourceDir . '/elixir/document/parser/element_helper_expression.xml');
+
+		$lexer = new DocumentLexer();
+		$stream = $lexer->scan($doc);
+
+		$parser = new DocumentParser($expressionLexer, $expressionParser);
+		$nodeTree = $parser->parse($stream);
+		$helpers = $nodeTree->getRoot()->getChildren()[0]->getHelpers();
+
+		$this->assertCount(1, $helpers[0]->getExpressions());
+	}
+
+	/**
+	 * Test if the parser throws an exception if the expression opener was expected but an other token was found.
+	 */
+	public function testThrowsExceptionIfExpressionOpenerWasExpectedButOtherTokenWasFound() {
+
+		/* @var \PHPUnit_Framework_MockObject_MockObject $expressionLexer */
+		/* @var \com\mohiva\elixir\document\expression\Lexer $expressionLexer */
+		$expressionLexer = $this->getMock('\com\mohiva\elixir\document\expression\Lexer', array(), array(), '', false);
+		$expressionLexer->expects($this->any())
+			->method('scan')
+			->will($this->returnValue(new TokenStream()));
+
+		/* @var \PHPUnit_Framework_MockObject_MockObject $expressionParser */
+		/* @var \com\mohiva\pyramid\Parser $expressionParser */
+		$expressionParser = $this->getMock('\com\mohiva\pyramid\Parser', array(), array(), '', false);
+		$expressionParser->expects($this->any())
+			->method('parse')
+			->will($this->returnValue($this->getMock('\com\mohiva\pyramid\Node')));
+
+		$doc = new XMLDocument();
+		$doc->load(Bootstrap::$resourceDir . '/elixir/document/parser/missing_expression_opener_1.xml');
+
+		$lexer = new DocumentLexer();
+		$stream = $lexer->scan($doc);
+
+		$parser = new DocumentParser($expressionLexer, $expressionParser);
+		try {
+			$parser->parse($stream);
+			$this->fail('SyntaxErrorException expected');
+		} catch (SyntaxErrorException $e) {
+			$this->assertContains('got `%}`', $e->getMessage());
+		}
+	}
+
+	/**
+	 * Test if the parser throws an exception if the expression closer was expected but an other token was found.
+	 */
+	public function testThrowsExceptionIfExpressionCloserWasExpectedButOtherTokenWasFound() {
+
+		/* @var \PHPUnit_Framework_MockObject_MockObject $expressionLexer */
+		/* @var \com\mohiva\elixir\document\expression\Lexer $expressionLexer */
+		$expressionLexer = $this->getMock('\com\mohiva\elixir\document\expression\Lexer', array(), array(), '', false);
+		$expressionLexer->expects($this->any())
+			->method('scan')
+			->will($this->returnValue(new TokenStream()));
+
+		/* @var \PHPUnit_Framework_MockObject_MockObject $expressionParser */
+		/* @var \com\mohiva\pyramid\Parser $expressionParser */
+		$expressionParser = $this->getMock('\com\mohiva\pyramid\Parser', array(), array(), '', false);
+		$expressionParser->expects($this->any())
+			->method('parse')
+			->will($this->returnValue($this->getMock('\com\mohiva\pyramid\Node')));
+
+		$doc = new XMLDocument();
+		$doc->load(Bootstrap::$resourceDir . '/elixir/document/parser/missing_expression_closer_1.xml');
+
+		$lexer = new DocumentLexer();
+		$stream = $lexer->scan($doc);
+
+		$parser = new DocumentParser($expressionLexer, $expressionParser);
+		try {
+			$parser->parse($stream);
+			$this->fail('SyntaxErrorException expected');
+		} catch (SyntaxErrorException $e) {
+			$this->assertContains('got `{%`', $e->getMessage());
+		}
+	}
+
+	/**
+	 * Test if the parser throws an exception if the expression closer was expected but an other token was found.
+	 */
+	public function testThrowsExceptionIfExpressionCloserWasExpectedButEndOfStreamWasReached() {
+
+		/* @var \PHPUnit_Framework_MockObject_MockObject $expressionLexer */
+		/* @var \com\mohiva\elixir\document\expression\Lexer $expressionLexer */
+		$expressionLexer = $this->getMock('\com\mohiva\elixir\document\expression\Lexer', array(), array(), '', false);
+		$expressionLexer->expects($this->any())
+			->method('scan')
+			->will($this->returnValue(new TokenStream()));
+
+		/* @var \PHPUnit_Framework_MockObject_MockObject $expressionParser */
+		/* @var \com\mohiva\pyramid\Parser $expressionParser */
+		$expressionParser = $this->getMock('\com\mohiva\pyramid\Parser', array(), array(), '', false);
+		$expressionParser->expects($this->any())
+			->method('parse')
+			->will($this->returnValue($this->getMock('\com\mohiva\pyramid\Node')));
+
+		$doc = new XMLDocument();
+		$doc->load(Bootstrap::$resourceDir . '/elixir/document/parser/missing_expression_closer_2.xml');
+
+		$lexer = new DocumentLexer();
+		$stream = $lexer->scan($doc);
+
+		$parser = new DocumentParser($expressionLexer, $expressionParser);
+		try {
+			$parser->parse($stream);
+			$this->fail('SyntaxErrorException expected');
+		} catch (SyntaxErrorException $e) {
+			$this->assertContains('but end of stream reached', $e->getMessage());
+		}
 	}
 
 	/**
@@ -311,10 +514,10 @@ class ParserTest extends \PHPUnit_Framework_TestCase {
 		$doc = new XMLDocument();
 		$doc->load(Bootstrap::$resourceDir . '/elixir/document/parser/with_url_namespace.xml');
 
-		$lexer = new DocumentLexer(new ExpressionLexer());
+		$lexer = new DocumentLexer();
 		$stream = $lexer->scan($doc);
 
-		$parser = new DocumentParser(new ExpressionParser(new ExpressionGrammar));
+		$parser = new DocumentParser(new ExpressionLexer(), new ExpressionParser(new ExpressionGrammar));
 		$parser->registerNamespace(
 			'http://elixir.mohiva.com/test', '\com\mohiva\test\resources\elixir\document\helpers\\'
 		);
@@ -331,10 +534,10 @@ class ParserTest extends \PHPUnit_Framework_TestCase {
 		$doc = new XMLDocument();
 		$doc->load(Bootstrap::$resourceDir . '/elixir/document/parser/with_url_namespace.xml');
 
-		$lexer = new DocumentLexer(new ExpressionLexer());
+		$lexer = new DocumentLexer();
 		$stream = $lexer->scan($doc);
 
-		$parser = new DocumentParser(new ExpressionParser(new ExpressionGrammar));
+		$parser = new DocumentParser(new ExpressionLexer(), new ExpressionParser(new ExpressionGrammar));
 		$parser->registerNamespace(
 			'http://elixir.mohiva.com/test', 'com\mohiva\test\resources\elixir\document\helpers'
 		);
@@ -353,10 +556,10 @@ class ParserTest extends \PHPUnit_Framework_TestCase {
 		$doc = new XMLDocument();
 		$doc->load(Bootstrap::$resourceDir . '/elixir/document/parser/with_url_namespace.xml');
 
-		$lexer = new DocumentLexer(new ExpressionLexer());
+		$lexer = new DocumentLexer();
 		$stream = $lexer->scan($doc);
 
-		$parser = new DocumentParser(new ExpressionParser(new ExpressionGrammar));
+		$parser = new DocumentParser(new ExpressionLexer(), new ExpressionParser(new ExpressionGrammar));
 		$parser->parse($stream);
 	}
 
@@ -370,10 +573,10 @@ class ParserTest extends \PHPUnit_Framework_TestCase {
 		$doc = new XMLDocument();
 		$doc->load(Bootstrap::$resourceDir . '/elixir/document/parser/invalid_namespace.xml');
 
-		$lexer = new DocumentLexer(new ExpressionLexer());
+		$lexer = new DocumentLexer();
 		$stream = $lexer->scan($doc);
 
-		$parser = new DocumentParser(new ExpressionParser(new ExpressionGrammar));
+		$parser = new DocumentParser(new ExpressionLexer(), new ExpressionParser(new ExpressionGrammar));
 		$parser->parse($stream);
 	}
 
@@ -385,10 +588,10 @@ class ParserTest extends \PHPUnit_Framework_TestCase {
 		$doc = new XMLDocument();
 		$doc->load(Bootstrap::$resourceDir . '/elixir/document/parser/valid_namespaces.xml');
 
-		$lexer = new DocumentLexer(new ExpressionLexer());
+		$lexer = new DocumentLexer();
 		$stream = $lexer->scan($doc);
 
-		$parser = new DocumentParser(new ExpressionParser(new ExpressionGrammar));
+		$parser = new DocumentParser(new ExpressionLexer(), new ExpressionParser(new ExpressionGrammar));
 		$parser->registerNamespace(
 			'http://elixir.mohiva.com/test', 'com\mohiva\test\resources\elixir\document\helpers'
 		);
@@ -407,10 +610,10 @@ class ParserTest extends \PHPUnit_Framework_TestCase {
 		$doc = new XMLDocument();
 		$doc->load(Bootstrap::$resourceDir . '/elixir/document/parser/valid_element_helper.xml');
 
-		$lexer = new DocumentLexer(new ExpressionLexer());
+		$lexer = new DocumentLexer();
 		$stream = $lexer->scan($doc);
 
-		$parser = new DocumentParser(new ExpressionParser(new ExpressionGrammar));
+		$parser = new DocumentParser(new ExpressionLexer(), new ExpressionParser(new ExpressionGrammar));
 		$tree = $parser->parse($stream);
 		$children = $tree->getRoot()->getChildren();
 		/* @var Node $node */
@@ -428,10 +631,10 @@ class ParserTest extends \PHPUnit_Framework_TestCase {
 		$doc = new XMLDocument();
 		$doc->load(Bootstrap::$resourceDir . '/elixir/document/parser/valid_attribute_helper.xml');
 
-		$lexer = new DocumentLexer(new ExpressionLexer());
+		$lexer = new DocumentLexer();
 		$stream = $lexer->scan($doc);
 
-		$parser = new DocumentParser(new ExpressionParser(new ExpressionGrammar));
+		$parser = new DocumentParser(new ExpressionLexer(), new ExpressionParser(new ExpressionGrammar));
 		$tree = $parser->parse($stream);
 		$children = $tree->getRoot()->getChildren();
 		/* @var Node $node */
@@ -458,7 +661,7 @@ class ParserTest extends \PHPUnit_Framework_TestCase {
 		$stream = new TokenStream();
 		$stream->push($token);
 
-		$parser = new DocumentParser(new ExpressionParser(new ExpressionGrammar));
+		$parser = new DocumentParser(new ExpressionLexer(), new ExpressionParser(new ExpressionGrammar));
 		$parser->parse($stream);
 	}
 
@@ -472,10 +675,10 @@ class ParserTest extends \PHPUnit_Framework_TestCase {
 		$doc = new XMLDocument();
 		$doc->load(Bootstrap::$resourceDir . '/elixir/document/parser/invalid_element_helper.xml');
 
-		$lexer = new DocumentLexer(new ExpressionLexer());
+		$lexer = new DocumentLexer();
 		$stream = $lexer->scan($doc);
 
-		$parser = new DocumentParser(new ExpressionParser(new ExpressionGrammar));
+		$parser = new DocumentParser(new ExpressionLexer(), new ExpressionParser(new ExpressionGrammar));
 		$parser->parse($stream);
 	}
 
@@ -489,10 +692,10 @@ class ParserTest extends \PHPUnit_Framework_TestCase {
 		$doc = new XMLDocument();
 		$doc->load(Bootstrap::$resourceDir . '/elixir/document/parser/invalid_attribute_helper.xml');
 
-		$lexer = new DocumentLexer(new ExpressionLexer());
+		$lexer = new DocumentLexer();
 		$stream = $lexer->scan($doc);
 
-		$parser = new DocumentParser(new ExpressionParser(new ExpressionGrammar));
+		$parser = new DocumentParser(new ExpressionLexer(), new ExpressionParser(new ExpressionGrammar));
 		$parser->parse($stream);
 	}
 

@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="iso-8859-15" ?>
+<test xmlns:test="urn:com.mohiva.test.resources.elixir.document.helpers">
+	<test:If exp="{% 1 + 1 = 2 %}" />
+</test>
