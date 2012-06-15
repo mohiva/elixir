@@ -42,7 +42,6 @@ class ExpressionTokenTest extends \PHPUnit_Framework_TestCase {
 		$id = sha1(microtime(true));
 		$path = sha1(microtime(true));
 		$line = mt_rand(1, 100);
-		$expression = sha1(microtime(true));
 		$attribute = sha1(microtime(true));
 		$stream = new TokenStream();
 		$token = new ExpressionToken(
@@ -50,7 +49,6 @@ class ExpressionTokenTest extends \PHPUnit_Framework_TestCase {
 			$id,
 			$path,
 			$line,
-			$expression,
 			$attribute,
 			$stream
 		);
@@ -59,7 +57,6 @@ class ExpressionTokenTest extends \PHPUnit_Framework_TestCase {
 		$this->assertSame($id, $token->getId());
 		$this->assertSame($path, $token->getPath());
 		$this->assertSame($line, $token->getLine());
-		$this->assertSame($expression, $token->getExpression());
 		$this->assertSame($attribute, $token->getAttribute());
 		$this->assertSame($stream, $token->getStream());
 	}

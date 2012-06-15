@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<root>
+<root xmlns:test="urn:test">
 
+	<!--
+	This expression should be in the stream of the second expression token.
+	-->
+	<tag var="{% 'test  test' %}" />
+
+	<!--
+	The following expressions should be available in the stream of the first expression token.
+	-->
 	' test '{% gum %}' test '
 
 	'{% index %}'

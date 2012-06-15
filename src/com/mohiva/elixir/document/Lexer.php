@@ -65,13 +65,6 @@ class Lexer {
 	const EXPRESSION_QUERY = "(contains(., '{%') or contains(., '%}'))";
 
 	/**
-	 * Prevent the lexer to tokenize anything inside the Raw tag of the core namespace.
-	 *
-	 * @var string
-	 */
-	const RAW_QUERY = "not(ancestor::*[namespace-uri() = 'http://elixir.mohiva.com' and local-name() = 'Raw'])";
-
-	/**
 	 * The placeholder node.
 	 *
 	 * @var string
@@ -328,12 +321,49 @@ class Lexer {
 				sha1($node->getNodePath()),
 				$node->getNodePath(),
 				$node->getLineNo(),
-				$node->nodeValue,
 				$node->nodeType == XML_ATTRIBUTE_NODE ? /* @var \DOMAttr $node */ $node->name : null,
-				$this->tokenizeExpressionContent($node->nodeValue)
+				$this->tokenizeExpressionContent(
+					$node->nodeType == XML_ELEMENT_NODE
+						? /* @var XMLElement $node */ $this->getExpressionContent($node)
+						: $node->value
+				)
 			);
 			$stream->push($token);
 		}
+	}
+
+	/**
+	 * Gets the content of the element which is relevant for expression tokenization.
+	 *
+	 * Relevant content are element nodes inside an expression and all text nodes.
+	 *
+	 * @param XMLElement $element The current processed element.
+	 * @return string The content of the node which is relevant for expression tokenization.
+	 */
+	private function getExpressionContent(XMLElement $element) {
+
+		$content = '';
+		$nodes = $element->childNodes;
+		for ($i = 0; $i < $nodes->length; $i++) {
+			$node = $nodes->item($i);
+			$prev = $nodes->item($i - 1);
+			$next = $nodes->item($i + 1);
+			// Get only element nodes inside an expression
+			if ($node->nodeType == XML_ELEMENT_NODE &&
+				$prev instanceof \DOMText &&
+				$next instanceof \DOMText &&
+				preg_match('/{%[^(%})]+$/', $prev->nodeValue) &&
+				preg_match('/^[^({%)]+%}/', $next->nodeValue)) {
+
+				/* @var XMLElement $node */
+				$this->removeHelperNamespaces($node);
+				$content .= $node->toXML();
+			} else if ($node->nodeType == XML_TEXT_NODE) {
+				$content .= $node->nodeValue;
+			}
+		}
+
+		return $content;
 	}
 
 	/**
@@ -351,6 +381,7 @@ class Lexer {
 
 		$matches = preg_split($this->expressionPattern, $content, -1, $this->expressionFlags);
 		$stream = new TokenStream;
+		$stream->setSource($content);
 		foreach ($matches as $match) {
 			if (isset($this->constTokenMap[$match[0]])) {
 				$code = $this->constTokenMap[$match[0]];
@@ -605,12 +636,45 @@ class Lexer {
 	 */
 	private function removeHelperNamespaces(XMLElement $element) {
 
-		$namespaces = $element('descendant-or-self::*/namespace::*[' . self::RAW_QUERY . ']');
+		$namespaces = $element("descendant-or-self::*/namespace::*[{$this->buildRawQuery('parent::*')}]");
 		foreach ($namespaces as $node) { /* @var \DOMElement $node */
 			if (!in_array($node->nodeValue, $this->nonHelperNamespaces)) {
 				$node->parentNode->removeAttributeNS($node->nodeValue, $node->prefix);
 			}
 		}
+	}
+
+	/**
+	 * Build the XPath query to find all nodes.
+	 *
+	 * Nodes are XML tags which contains at least one helper. An exception is the root node of a
+	 * document. This is always a node, even if no helper is located on it.
+	 *
+	 * @return string The XPath query to find all nodes.
+	 */
+	private function buildNodeQuery() {
+
+		/**
+		 * Prevents the lexer to find an expression inside a Raw tag or inside an expression.
+		 */
+		$rawQuery = $this->buildRawQuery('.');
+
+		/**
+		 * Finds the root node.
+		 */
+		$query = '/*';
+
+		/**
+		 * Finds all nodes which have at least one element helper and which are not inside a Raw tag.
+		 */
+		if ($this->elNsQuery) $query .= "|//*[{$this->elNsQuery} and {$rawQuery}]";
+
+		/**
+		 * Finds all nodes which have at least one attribute helper and which not are inside a Raw tag.
+		 */
+		if ($this->elNsQuery) $query .= "|//@*[{$this->elNsQuery}]/parent::*[{$rawQuery}]";
+
+		return $query;
 	}
 
 	/**
@@ -629,9 +693,9 @@ class Lexer {
 		$expQuery = self::EXPRESSION_QUERY;
 
 		/**
-		 * Prevents the lexer to find an expression inside the Raw tag of the core namespace.
+		 * Prevents the lexer to find an expression inside a Raw tag or inside an expression.
 		 */
-		$rawQuery = self::RAW_QUERY;
+		$rawQuery = $this->buildRawQuery('parent::*');
 
 		/**
 		 * This query prevents the node expression query to find expressions in attribute helpers. So
@@ -677,40 +741,55 @@ class Lexer {
 		 *    {% var %}
 		 * </root>
 		 */
-		$query .= "|descendant-or-self::*//text()[{$rawQuery} and {$expQuery}]";
+		$query .= "|descendant-or-self::*//text()[{$rawQuery} and {$expQuery}]/parent::*";
 
 		return $query;
 	}
 
 	/**
-	 * Build the XPath query to find all nodes.
+	 * Builds the XPath query which recognizes that a node isn't inside a Raw tag or inside an expression.
 	 *
-	 * Nodes are XML tags which contains at least one helper. An exception is the root node of a
-	 * document. This is always a node, even if no helper is located on it.
+	 * Raw tag:
+	 * ========
+	 * It matches only if the node isn't inside a Raw tag.
 	 *
-	 * @return string The XPath query to find all nodes.
+	 * <ex:Raw>
+	 *     <tag test:Locale="{% test %}" />
+	 * </ex:Raw>
+	 *
+	 * Expression:
+	 * ===========
+	 * It matches only if the node has no previous sibling text node which contains an expression opener
+	 * and if the node has no next sibling text node which contains an expression closer.
+	 *
+	 * {% '<tag test:Locale="{% test %}" />' %}
+	 *
+	 * @param string $node The node to start from.
+	 * @return string The raw query.
 	 */
-	private function buildNodeQuery() {
+	private function buildRawQuery($node) {
 
 		/**
-		 * Prevents the lexer to find a node inside the Raw tag of the core namespace.
+		 * Prevent the lexer to tokenize anything inside the Raw tag of the core namespace.
 		 */
-		$rawQuery = self::RAW_QUERY;
+		$query = "not(ancestor::*[namespace-uri() = 'http://elixir.mohiva.com' and local-name() = 'Raw']) and ";
 
 		/**
-		 * Finds the root node.
+		 * Prevents the lexer to find a node inside an expression.
+		 *
+		 * Note: Previous and following text expressions may not have consequences on XML tags that are between
+		 * these two. The problem ist that the previous text expression has also an expression opener. The lexer
+		 * must recognize that an expression closer follows and therefore it must recognize that the expression
+		 * opener is not associated with the XML tag. The same counts for the expression following this tag.
+		 *
+		 * {% var %} <tag xmlns:test="urn:test" test:Locale="tag1" />  {% var %}
+		 *
+		 * So these expression checks for the previous text node that it only matches if an expression opener
+		 * is not followed by an expression closer and for the following text node that no expression opener
+		 * is in front of an expression closer.
 		 */
-		$query = '/*';
-
-		/**
-		 * Finds all nodes which have at least one element helper and which are not inside a Raw tag.
-		 */
-		if ($this->elNsQuery) $query .= "|//*[{$this->elNsQuery} and {$rawQuery}]";
-
-		/**
-		 * Finds all nodes which have at least one attribute helper and which not are inside a Raw tag.
-		 */
-		if ($this->elNsQuery) $query .= "|//@*[{$this->elNsQuery} and {$rawQuery}]/parent::*";
+		$query .= "not({$node}/preceding-sibling::text()[1][php:functionString('preg_match', '/{%[^(%})]+$/', .) = 1]";
+		$query .= "and {$node}/following-sibling::text()[1][php:functionString('preg_match', '/^[^({%)]+%}/', .) = 1])";
 
 		return $query;
 	}

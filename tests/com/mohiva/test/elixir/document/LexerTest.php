@@ -664,9 +664,10 @@ class LexerTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	/**
-	 * Test if the lexer recognizes that an expression is escaped.
+	 * Test if the lexer recognizes that an expression is escaped and that the expressions are in the
+	 * token stream of the first expression token.
 	 */
-	public function testExpressionEscaping() {
+	public function testExpressionEscapingInFirstToken() {
 
 		$xmlFile = Bootstrap::$resourceDir . '/elixir/document/lexer/expression_escaping.xml';
 
@@ -700,6 +701,75 @@ class LexerTest extends \PHPUnit_Framework_TestCase {
 
 			array(Lexer::T_EXPRESSION_OPEN => '{%'),
 			array(Lexer::T_EXPRESSION_CHARS => '\'test  test\''),
+			array(Lexer::T_EXPRESSION_CLOSE => '%}')
+		);
+
+		$this->assertSame($expected, $actual);
+	}
+
+	/**
+	 * Test if the lexer recognizes that an expression is escaped and that the expressions are in the
+	 * token stream of the second expression token.
+	 */
+	public function testExpressionEscapingInSecondToken() {
+
+		$xmlFile = Bootstrap::$resourceDir . '/elixir/document/lexer/expression_escaping.xml';
+
+		$doc = new XMLDocument();
+		$doc->load($xmlFile);
+
+		$lexer = new Lexer();
+		$stream = $lexer->scan($doc);
+
+		/* @var \com\mohiva\elixir\document\tokens\ExpressionToken $token */
+		$token = $stream->getLookahead(4);
+		$this->assertInstanceOf('\com\mohiva\elixir\document\tokens\ExpressionToken', $token);
+
+		$stream = $token->getStream();
+		$actual = $this->buildActualTokens($stream);
+		$expected = array(
+			array(Lexer::T_EXPRESSION_OPEN => '{%'),
+			array(Lexer::T_EXPRESSION_CHARS => '\'test  test\''),
+			array(Lexer::T_EXPRESSION_CLOSE => '%}')
+		);
+
+		$this->assertSame($expected, $actual);
+	}
+
+	/**
+	 * Test if the lexer recognizes that an XML tag inside an expression is escaped.
+	 */
+	public function testExpressionEscapingWithInnerXML() {
+
+		$xmlFile = Bootstrap::$resourceDir . '/elixir/document/lexer/expression_escaping_with_inner_xml.xml';
+
+		$doc = new XMLDocument();
+		$doc->load($xmlFile);
+
+		$lexer = new Lexer();
+		$stream = $lexer->scan($doc);
+
+		/* @var \com\mohiva\elixir\document\tokens\ExpressionToken $token */
+		$token = $stream->getLookahead(3);
+		$this->assertInstanceOf('\com\mohiva\elixir\document\tokens\ExpressionToken', $token);
+
+		$stream = $token->getStream();
+		$actual = $this->buildActualTokens($stream);
+		$expected = array(
+			array(Lexer::T_EXPRESSION_OPEN => '{%'),
+
+			array(Lexer::T_EXPRESSION_OPEN => '{%'),
+			array(Lexer::T_EXPRESSION_CHARS => '\'<tag xmlns:test="urn:test" test:Locale="tag1"/>\''),
+			array(Lexer::T_EXPRESSION_CLOSE => '%}'),
+
+			array(Lexer::T_EXPRESSION_CLOSE => '%}'),
+
+			array(Lexer::T_EXPRESSION_OPEN => '{%'),
+			array(Lexer::T_EXPRESSION_CHARS => ' var '),
+			array(Lexer::T_EXPRESSION_CLOSE => '%}'),
+
+			array(Lexer::T_EXPRESSION_OPEN => '{%'),
+			array(Lexer::T_EXPRESSION_CHARS => ' var '),
 			array(Lexer::T_EXPRESSION_CLOSE => '%}')
 		);
 

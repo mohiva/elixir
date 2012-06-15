@@ -62,13 +62,6 @@ class ExpressionToken implements Token {
 	private $line = null;
 
 	/**
-	 * The found expression.
-	 *
-	 * @var string
-	 */
-	private $expression = null;
-
-	/**
 	 * The attribute name or null if the expression wasn't found inside an attribute value.
 	 *
 	 * @var array
@@ -76,7 +69,7 @@ class ExpressionToken implements Token {
 	private $attribute = null;
 
 	/**
-	 * The token stream for the expression.
+	 * The token stream for the found expression[s].
 	 *
 	 * @var TokenStream
 	 */
@@ -89,16 +82,14 @@ class ExpressionToken implements Token {
 	 * @param string $id The id of the node.
 	 * @param string $path The path to this node in the source file.
 	 * @param int $line The line number of the node in the source file.
-	 * @param string $expression The found expression.
 	 * @param string $attribute The attribute name or null if the expression wasn't found inside an attribute value.
-	 * @param TokenStream $stream The token stream for the expression.
+	 * @param TokenStream $stream The token stream for the found expression[s].
 	 */
 	public function __construct(
 		$code,
 		$id,
 		$path,
 		$line,
-		$expression,
 		$attribute,
 		TokenStream $stream) {
 
@@ -106,7 +97,6 @@ class ExpressionToken implements Token {
 		$this->id = $id;
 		$this->path = $path;
 		$this->line = $line;
-		$this->expression = $expression;
 		$this->attribute = $attribute;
 		$this->stream = $stream;
 	}
@@ -149,16 +139,6 @@ class ExpressionToken implements Token {
 	public function getLine() {
 
 		return $this->line;
-	}
-
-	/**
-	 * Returns the found expression.
-	 *
-	 * @return string The found expression.
-	 */
-	public function getExpression() {
-
-		return $this->expression;
 	}
 
 	/**
