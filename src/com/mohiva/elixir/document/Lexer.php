@@ -19,6 +19,7 @@
 namespace com\mohiva\elixir\document;
 
 use DOMAttr;
+use DOMText;
 use DOMComment;
 use com\mohiva\pyramid\Token;
 use com\mohiva\common\xml\XMLDocument;
@@ -350,13 +351,12 @@ class Lexer {
 			$next = $nodes->item($i + 1);
 			// Get only element nodes inside an expression
 			if ($node->nodeType == XML_ELEMENT_NODE &&
-				$prev instanceof \DOMText &&
-				$next instanceof \DOMText &&
+				$prev instanceof DOMText &&
+				$next instanceof DOMText &&
 				preg_match('/{%[^(%})]+$/', $prev->nodeValue) &&
 				preg_match('/^[^({%)]+%}/', $next->nodeValue)) {
 
 				/* @var XMLElement $node */
-				$this->removeHelperNamespaces($node);
 				$content .= $node->toXML();
 			} else if ($node->nodeType == XML_TEXT_NODE) {
 				$content .= $node->nodeValue;
