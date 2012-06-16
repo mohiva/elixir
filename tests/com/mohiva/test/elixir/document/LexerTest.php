@@ -637,7 +637,7 @@ class LexerTest extends \PHPUnit_Framework_TestCase {
 		/* @var \com\mohiva\elixir\document\tokens\ExpressionToken $token */
 		$token = $stream->getLookahead(3);
 		$stream = $token->getStream();
-		$token = $stream->getLookahead(1);
+		$token = $stream->getLookahead(0);
 
 		$this->assertSame(Lexer::T_EXPRESSION_OPEN, $token->getCode());
 	}
@@ -658,7 +658,7 @@ class LexerTest extends \PHPUnit_Framework_TestCase {
 		/* @var \com\mohiva\elixir\document\tokens\ExpressionToken $token */
 		$token = $stream->getLookahead(3);
 		$stream = $token->getStream();
-		$token = $stream->getLookahead(1);
+		$token = $stream->getLookahead(0);
 
 		$this->assertSame(Lexer::T_EXPRESSION_CLOSE, $token->getCode());
 	}

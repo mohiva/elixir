@@ -379,6 +379,7 @@ class Lexer {
 	 */
 	private function tokenizeExpressionContent($content) {
 
+		$inExpression = false;
 		$matches = preg_split($this->expressionPattern, $content, -1, $this->expressionFlags);
 		$stream = new TokenStream;
 		$stream->setSource($content);
@@ -387,6 +388,15 @@ class Lexer {
 				$code = $this->constTokenMap[$match[0]];
 			} else {
 				$code = self::T_EXPRESSION_CHARS;
+			}
+
+			// Keep only this whitespaces which are inside an expression
+			if ($code == self::T_EXPRESSION_OPEN) {
+				$inExpression = true;
+			} else if ($code == self::T_EXPRESSION_CLOSE) {
+				$inExpression = false;
+			} else if (!$inExpression && ctype_space($match[0])) {
+				continue;
 			}
 
 			$stream->push(new Token(
