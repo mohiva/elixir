@@ -422,7 +422,7 @@ class Lexer {
 		$attributes = array();
 		foreach ($element->attributes as $attribute) {
 			/* @var \DOMAttr $attribute */
-			if (!$this->isAttributeHelper($attribute)) {
+			if (!$this->isHelperAttribute($attribute)) {
 				$attributes[$attribute->name] = $attribute->value;
 			}
 		}
@@ -431,14 +431,14 @@ class Lexer {
 	}
 
 	/**
-	 * Check if the given DOMAttr element is an attribute helper.
+	 * Check if the given DOMAttr element is an helper attribute.
 	 *
-	 * Attribute helpers have its own namespace.
+	 * Helper attributes have its own namespace.
 	 *
-	 * @param \DOMAttr $attribute The attribute element to check.
-	 * @return boolean True if the element is an attribute helper, false otherwise.
+	 * @param \DOMAttr $attribute The attribute to check.
+	 * @return boolean True if the attribute is an helper attribute, false otherwise.
 	 */
-	private function isAttributeHelper(DOMAttr $attribute) {
+	private function isHelperAttribute(DOMAttr $attribute) {
 
 		return $attribute->namespaceURI ? true : false;
 	}
