@@ -385,8 +385,6 @@ class Lexer {
 		foreach ($matches as $match) {
 			if (isset($this->constTokenMap[$match[0]])) {
 				$code = $this->constTokenMap[$match[0]];
-			} else if (ctype_space($match[0])) {
-				continue;
 			} else {
 				$code = self::T_EXPRESSION_CHARS;
 			}
