@@ -332,6 +332,7 @@ class Parser {
 				$token->getCode(),
 				$token->getLine(),
 				$path,
+				$content,
 				$node
 			);
 			$expressions[] = $expression;

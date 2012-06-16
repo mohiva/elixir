@@ -61,6 +61,13 @@ class Expression {
 	private $path = null;
 
 	/**
+	 * The expression content without the expression opener and closer.
+	 *
+	 * @var string
+	 */
+	private $content = null;
+
+	/**
 	 * The expression node.
 	 *
 	 * @var ExpressionNode
@@ -74,14 +81,16 @@ class Expression {
 	 * @param int $code The code of the expression token.
 	 * @param int $line The line of the source file in which the expression is located.
 	 * @param string $path The path to this expression in the source file.
+	 * @param string $content The expression content without the expression opener and closer.
 	 * @param ExpressionNode $node The expression node.
 	 */
-	public function __construct($id, $code, $line, $path, ExpressionNode $node) {
+	public function __construct($id, $code, $line, $path, $content, ExpressionNode $node) {
 
 		$this->id = $id;
 		$this->code = $code;
 		$this->line = $line;
 		$this->path = $path;
+		$this->content = $content;
 		$this->node = $node;
 	}
 
@@ -123,6 +132,16 @@ class Expression {
 	public function getPath() {
 
 		return $this->path;
+	}
+
+	/**
+	 * Gets the expression content without the expression opener and closer.
+	 *
+	 * @return string The expression content without the expression opener and closer.
+	 */
+	public function getContent() {
+
+		return $this->content;
 	}
 
 	/**
