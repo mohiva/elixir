@@ -116,7 +116,7 @@ class NodeTest extends \PHPUnit_Framework_TestCase {
 		/* @var \com\mohiva\elixir\document\Expression $expression */
 		$expression = $this->getMock('\com\mohiva\elixir\document\Expression', array(), array(), '', false);
 		$node = new Node('root', 1, '<xml></xml>', 1, '/root');
-		$node->setExpressions(array($expression));
+		$node->addExpressions(array($expression));
 
 		$this->assertSame(array($expression), $node->getExpressions());
 	}

@@ -125,13 +125,13 @@ abstract class AttributeHelper implements Helper {
 	}
 
 	/**
-	 * Sets the list with found expressions.
+	 * Adds a list with found expressions to the existing expression list.
 	 *
 	 * @param Expression[] $expressions The list with found expressions.
 	 */
-	public function setExpressions(array $expressions) {
+	public function addExpressions(array $expressions) {
 
-		$this->expressions = $expressions;
+		$this->expressions = array_merge($this->expressions, $expressions);
 	}
 
 	/**

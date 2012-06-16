@@ -507,6 +507,37 @@ class ParserTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	/**
+	 * Test if the parser can assign correct expressions if multiple tokens are given for one node.
+	 */
+	public function testMultipleExpressionTokens() {
+
+		/* @var \PHPUnit_Framework_MockObject_MockObject $expressionLexer */
+		/* @var \com\mohiva\elixir\document\expression\Lexer $expressionLexer */
+		$expressionLexer = $this->getMock('\com\mohiva\elixir\document\expression\Lexer', array(), array(), '', false);
+		$expressionLexer->expects($this->any())
+			->method('scan')
+			->will($this->returnValue(new TokenStream()));
+
+		/* @var \PHPUnit_Framework_MockObject_MockObject $expressionParser */
+		/* @var \com\mohiva\pyramid\Parser $expressionParser */
+		$expressionParser = $this->getMock('\com\mohiva\pyramid\Parser', array(), array(), '', false);
+		$expressionParser->expects($this->any())
+			->method('parse')
+			->will($this->returnValue($this->getMock('\com\mohiva\pyramid\Node')));
+
+		$doc = new XMLDocument();
+		$doc->load(Bootstrap::$resourceDir . '/elixir/document/parser/multiple_expression_tokens.xml');
+
+		$lexer = new DocumentLexer();
+		$stream = $lexer->scan($doc);
+
+		$parser = new DocumentParser($expressionLexer, $expressionParser);
+		$tree = $parser->parse($stream);
+
+		$this->assertSame(4, count($tree->getRoot()->getExpressions()));
+	}
+
+	/**
 	 * Test if can load helpers from a registered URL namespace.
 	 */
 	public function testRegisterNamespaceWithLeadingAndTrailingSlashes() {

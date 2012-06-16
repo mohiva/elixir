@@ -198,7 +198,7 @@ class Parser {
 
 				case Lexer::T_EXPRESSION:
 					/* @var ExpressionToken $token */
-					$expressionContainer->setExpressions($this->createExpressionsFromToken($token));
+					$expressionContainer->addExpressions($this->createExpressionsFromToken($token));
 					break;
 
 				default:

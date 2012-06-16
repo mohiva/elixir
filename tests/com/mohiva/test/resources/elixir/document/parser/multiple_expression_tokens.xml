@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="iso-8859-15" ?>
+<!-- Generates multiple expression tokens for the root node -->
+<test>
+
+	<!-- First token -->
+	<tag attr="{% tag1 %}" />
+
+	<!-- Second token -->
+	<tag attr="{% tag2 %}" />
+
+	<!-- An other token with multiple expressions -->
+	{% test %}
+	{% test %}
+
+</test>

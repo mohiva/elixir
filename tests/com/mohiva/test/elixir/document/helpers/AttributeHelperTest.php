@@ -67,7 +67,7 @@ class AttributeHelperTest extends \PHPUnit_Framework_TestCase {
 		/* @var \com\mohiva\elixir\document\Expression $expression */
 		$expression = $this->getMock('\com\mohiva\elixir\document\Expression', array(), array(), '', false);
 
-		$helper->setExpressions(array($expression));
+		$helper->addExpressions(array($expression));
 
 		$this->assertSame(array($expression), $helper->getExpressions());
 	}
