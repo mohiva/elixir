@@ -14,14 +14,74 @@
 	<!-- A normal comment, it should be preserved -->
 
 	<ex:Set name="var1"><inner /></ex:Set>
-	<ex:Set name="var2" value="{% [(3 * index.toInt()) => 1, 2, (3 * 4 + (1 + 2))] %}" />
+	<ex:Set name="var2" value="{% [(3 * index.toNumber()) => 1, 2, (3 * 4 + (1 + 2))] %}" />
 	<ex:Set name="var2" value="all scalar values can be passed without an expression" />
 
 	<ex:For var="user" in="{% users %}">
-		<ex:Set name="name" value="{% user.name.default('Default value') ?: 'Jon Doe' %}" />
+		<ex:Set name="name" value="{% user.name.whenNull('Default value') ?: 'Jon Doe' %}" />
+
+		<!--
+		Encoding will be ignored here, because the encode() method doesn't manipulate the value directly.
+		It defines only the encoding strategy which will be used when the value is inserted into the template.
+		And in this example the value will not directly be inserted into template, because the toLower() method
+		returns a new Value object. Also note: the encode method should only be called as the last method.
+		 -->
+		{% name.encode('html').toLower() %} <!-- Doesn't work as expected -->
+		{% name.toLower().encode('html') %} <!-- It works as expected -->
+
+		<!--
+		The same counts for the raw method. It should always be called as the last method before
+		the is inserted into the template.
+		-->
+		{% name.raw().toLower() %} <!-- Doesn't work as expected -->
+		{% name.toLower().raw() %} <!-- It works as expected -->
+
+		<!-- Encodes all unsafe values in a block -->
+		<ex:Encode strategy="html">
+			{% name.encode('html') %}     <!-- Encoded as html -->
+			{% tag.encode('xml') %}       <!-- Encoded as xml -->
+			{% name %}                    <!-- Encoded as html -->
+			{% name.raw() %}              <!-- Not encoded because it is marked as safe -->
+		</ex:Encode>
+
+		<!-- Calling encode() without an strategy uses the global encoding strategy -->
+		{% name.encode() %}
+
+		<!-- Calling encode()  -->
+
+
+
+		<!--
+		Safe values:
+		============
+		- All values which are defined directly in the template are automatically save and they will never be
+		  encoded automatically. This doesn't mean that it isn't possible to encode such values. If you call
+		  the encode() method on a safe value, it is also possible to encode it.
+		- Values which are marked as raw.
+		-->
+		{% 1 %}
+		{%
+			name = 'Lucky Luke'
+			name.toLower()
+		%}
+		{% var[1].raw() %}
+
+		<!--
+		Unsafe values:
+		==============
+
+		-->
+
+		<!-- Values are always returned as new object -->
+		{%
+			name = 'Lucky Luke'
+			toLower = name.toLower() <!-- toLower: lucky luke -->
+			toUpper = name.toUpper() <!-- toUpper: LUCKY LUKE -->
+			default = name           <!-- default: Lucky Luke -->
+		%}
 
 		{%
-			name = user.name[index].split(' ').default('Default value'.toLower())
+			name = user.name[index].split(' ').whenEmpty('Default value'.toLower())
 				? 'Lucky Luke'
 				: 'Jon' _ 'Doe'.toLower()
 		%}
@@ -29,7 +89,9 @@
 		$this->setVar('name', (new ObjectValue($this->getVar('user')))
 			->getByProperty('name')
 			->getByKey($this->getVar('index'))
-			->toString() ?:  'Jon' . new StringValue('Doe')->toLower()
+			->split(' ')
+			->whenEmpty((new StringValue('Default value'))->toLower())
+			->toString() ?:  'Jon' . (new StringValue('Doe'))->toLower()
 		);
 
 		A raw '{% index %}'
@@ -44,8 +106,8 @@
 
 	</ex:For>
 
-	<ex:Foreach key="key" value="value" in="{% users %}">
-		{% key %} {% value %}
+	<ex:Foreach key="k" value="v" in="{% users %}">
+		{% k %} {% v %}
 	</ex:Foreach>
 
 	<ex:Foreach in="{% users %}">
@@ -64,8 +126,9 @@ my.object.round(2)
 my.object.round(2).isNotNull()
 my.object.arrayVar.merge(my.object.otherArrayVar.keys())
 
-Constants (Only class constants are allowed)
+Constants
 ==============
+Global::CONSTANT
 Class::CONSTANT
 namespace.Class::CONSTANT.split('/')
 
@@ -79,6 +142,7 @@ true
 false
 null
 [1, 2, 3 => 5]
+{key: 'value'}
 "a string"
 
 Helpers(ExpressionHelper)
@@ -93,11 +157,6 @@ unary
 ! NOT (prefix notation)
 - NEGATIVE (prefix notation)
 + POSITIVE (prefix notation)
-(string) STRING_CAST (prefix notation)
-(int) INT_CAST (prefix notation)
-(float) FLOAT_CAST (prefix notation)
-(bool) BOOL_CAST (prefix notation)
-(xml) XML_CAST (prefix notation)
 
 binary
 ======
@@ -119,11 +178,14 @@ _  CONCAT
 && AND
 
 Every value is passed to an value object(autoboxing). this object contains methods like isNull(),
-toInt(), toFloat(), toString(), toBool(), toXML(), ... by default. Values are passed to specific
-objects by the type of the value:
+toNumber(), toArray(), toObject(), toString(), toBool(), toXML(), ... by default. Values are passed
+to specific objects by the type of the value:
 array  => ArrayValue
 object => ObjectValue
-scalar => ScalarValue
+int, float => NumberValue
+string => StringValue
+boolean => BooleanValue
+xml => XMLValue
 
 Values should only be autoboxed if an explicit method call follows after the value.
 
@@ -137,20 +199,8 @@ Every object has specific methods to work with the value:
 ArrayValue: join, merge, length, sort, keys, values, contains
 ScalarValue: split, replace, format, upper, lower, reverse, length
 
-A cast forces the call to one of this methods.
-(string) => toString()
-(int) => toInt()
-(float) => toFloat()
-(bool) => toBool()
-(xml) => toXML()
-
-It should be possible to register own value classes.
-Interfaces:
-ArrayValue
-ScalarValue
-
-And then the users can register its own implementations:
-class CustomArrayValue implements ArrayValue {
+It should be possible to register own value classes so that users can register its own implementations:
+class CustomArrayValue extends ArrayValue {
 
 }
 
@@ -162,8 +212,8 @@ class CustomValueFactory extends ValueFactory {
     }
 }
 
-$document = new Document();
-$document->registerValueFactory(new CustomValueFactory());
+$config = new Config();
+$config->setValueFactory(new CustomValueFactory());
 
 -->
 

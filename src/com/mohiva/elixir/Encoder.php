@@ -10,24 +10,32 @@
  * https://github.com/mohiva/pyramid/blob/master/LICENSE.textile
  *
  * @category  Mohiva/Elixir
- * @package   Mohiva/Elixir/Values/Exceptions
+ * @package   Mohiva/Elixir
  * @author    Christian Kaps <christian.kaps@mohiva.com>
  * @copyright Copyright (c) 2007-2012 Christian Kaps (http://www.mohiva.com)
  * @license   https://github.com/mohiva/elixir/blob/master/LICENSE.textile New BSD License
  * @link      https://github.com/mohiva/elixir
  */
-namespace com\mohiva\elixir\values\exceptions;
-
-use com\mohiva\common\exceptions\MohivaException;
+namespace com\mohiva\elixir;
 
 /**
- * Will be thrown if an invalid cast occurred.
+ * Interface for the encoder objects.
  *
  * @category  Mohiva/Elixir
- * @package   Mohiva/Elixir/Values/Exceptions
+ * @package   Mohiva/Elixir
  * @author    Christian Kaps <christian.kaps@mohiva.com>
  * @copyright Copyright (c) 2007-2012 Christian Kaps (http://www.mohiva.com)
  * @license   https://github.com/mohiva/elixir/blob/master/LICENSE.textile New BSD License
  * @link      https://github.com/mohiva/elixir
  */
-class InvalidCastException extends \Exception implements MohivaException {}
+interface Encoder {
+
+	/**
+	 * Encodes the given value,
+	 *
+	 * @param string $value The value to encode.
+	 * @param string $charset The charset to use.
+	 * @return string The encoded value.
+	 */
+	public function encode($value, $charset);
+}

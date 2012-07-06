@@ -24,7 +24,7 @@ use com\mohiva\elixir\ValueContext;
 use com\mohiva\common\exceptions\UnexpectedValueException;
 
 /**
- * Represents an array value.
+ * Represents an object value.
  *
  * @category  Mohiva/Elixir
  * @package   Mohiva/Elixir/Values
@@ -33,20 +33,20 @@ use com\mohiva\common\exceptions\UnexpectedValueException;
  * @license   https://github.com/mohiva/elixir/blob/master/LICENSE.textile New BSD License
  * @link      https://github.com/mohiva/elixir
  */
-class ArrayValue extends AbstractValue {
+class ObjectValue extends AbstractValue {
 
 	/**
 	 * The class constructor.
 	 *
-	 * @param array|null $value The array value.
+	 * @param object|null $value The object value.
 	 * @param ValueContext $context Context based information about the value.
 	 * @param Config $config The document config.
-	 * @throws UnexpectedValueException if value isn't null or an array.
+	 * @throws UnexpectedValueException if value isn't null or an object value.
 	 */
 	public function __construct($value, ValueContext $context, Config $config) {
 
-		if ($value !== null && !is_array($value)) {
-			throw new UnexpectedValueException('Array value expected but ' . gettype($value) . ' value given');
+		if ($value !== null && !is_object($value)) {
+			throw new UnexpectedValueException('Object value expected but ' . gettype($value) . ' value given');
 		}
 
 		parent::__construct($value, $context, $config);
@@ -60,33 +60,27 @@ class ArrayValue extends AbstractValue {
 	public function __toString() {
 
 		$value = var_export($this->value, true);
-
-		// Context is safe
-		if ($this->context == self::CONTEXT_DOC) {
-			return $value;
-		}
-
-
+		$value = htmlentities($value, ENT_QUOTES, $this->config->getCharset());
 
 		return $value;
 	}
 
 	/**
-	 * Gets a value from an array by the given key.
+	 * Gets a value from an object by the given property.
 	 *
-	 * @param string $key The array key.
-	 * @return Value The value for the given key.
-	 * @throws UnexpectedValueException value is not an array.
-	 * @throws UnexpectedValueException if the key doesn't exists in array.
+	 * @param string $property The object property.
+	 * @return Value The value for the given property.
+	 * @throws UnexpectedValueException value is not an object.
+	 * @throws UnexpectedValueException if the property doesn't exists in object.
 	 */
-	public function getByKey($key) {
+	public function getByProperty($property) {
 
 		if ($this->value === null) {
-			throw new UnexpectedValueException('Try to get a key of a non array');
-		} else if (!isset($this->value[$key])) {
-			throw new UnexpectedValueException('Key `' . $key . '` does not exists in array');
+			throw new UnexpectedValueException('Try to get a property of a non object');
+		} else if (!isset($this->value->{$property})) {
+			throw new UnexpectedValueException('Property `' . $property . '` does not exists in object');
 		}
 
-		return $this->config->getValueFactory()->getByValue($this->value[$key], $this->context, $this->config);
+		return $this->config->getValueFactory()->getByValue($this->value->{$property}, $this->context, $this->config);
 	}
 }

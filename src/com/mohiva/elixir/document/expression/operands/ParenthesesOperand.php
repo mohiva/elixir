@@ -52,9 +52,6 @@ class ParenthesesOperand implements Operand {
 	/**
 	 * Parse the operand.
 	 *
-	 * This example shows how you should parse sub expressions. You must only create a
-	 * new parser with the passed grammar and token stream.
-	 *
 	 * @param Grammar $grammar The grammar of the parser.
 	 * @param TokenStream $stream The token stream to parse.
 	 * @return Node The node between the parentheses.

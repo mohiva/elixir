@@ -18,8 +18,12 @@
  */
 namespace com\mohiva\elixir\values;
 
+use com\mohiva\elixir\Config;
 use com\mohiva\elixir\Value;
+use com\mohiva\elixir\ValueContext;
 use com\mohiva\elixir\values\exceptions\InvalidCastException;
+use com\mohiva\common\exceptions\UnexpectedValueException;
+use com\mohiva\common\exceptions\BadMethodCallException;
 
 /**
  * Abstract value class.
@@ -36,43 +40,133 @@ abstract class AbstractValue implements Value {
 	/**
 	 * The value handled by this class.
 	 *
-	 * @var array
+	 * @var mixed
 	 */
 	protected $value = null;
 
 	/**
+	 * Context based information about the value.
+	 *
+	 * @var ValueContext
+	 */
+	protected $context = null;
+
+	/**
+	 * The document config.
+	 *
+	 * @var Config
+	 */
+	protected $config = null;
+
+	protected $encodingStrategy;
+
+	/**
 	 * The class constructor.
 	 *
-	 * @param mixed $value The value for this object.
-	 * @param mixed $default The default value. This will be used if value is null.
+	 * @param mixed $value The value.
+	 * @param ValueContext $context Context based information about the value.
+	 * @param Config $config The document config.
 	 */
-	public function __construct($value, $default = null) {
+	public function __construct($value, ValueContext $context, Config $config) {
 
-		if ($value === null) {
-			$this->value = $default;
-		} else {
-			$this->value = $value;
-		}
+		$this->value = $value;
+		$this->context = $context;
+		$this->config = $config;
 	}
 
 	/**
-	 * Handle
+	 * Handle the call to the not existing methods.
 	 *
-	 * @param $name
+	 * @param string $name The name of the method
+	 * @param array $args The arguments of the method.
+	 * @throws UnexpectedValueException it trying to access a property of a non object.
+	 * @throws UnexpectedValueException it trying to access a key of a non array.
+	 * @throws BadMethodCallException if the method doesn't exists.
 	 */
-	public function __call($name) {
+	public function __call($name, array $args) {
 
 		if ($name == 'getByProperty') {
-			// Try to get a property of a none object.
+			throw new UnexpectedValueException('Try to get a property of a none object');
 		} else if ($name == 'getByKey') {
-			// Try to get a key of a non array
+			throw new UnexpectedValueException('Try to get a key of a non array');
 		} else {
-			// Undefined method for value type ...
+			$class = get_class($this);
+			throw new BadMethodCallException("Method `{$name}` does not exists for object `{$class}`");
 		}
 	}
 
 	/**
-	 * Indicates if the value is NULL or not.
+	 * {@inheritDoc}
+	 *
+	 * @return string The string representation of the value.
+	 */
+	public function __toString() {
+
+		// Context is safe
+		if ($this->context->getContext() == ValueContext::DOC) {
+			return (string) $this->value;
+		}
+
+		// Get the encoding strategy
+
+		$encoder = $this->config->getEncoderFactory()->getEncoder('');
+	}
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @param string $strategy The strategy to use for encoding.
+	 * @return Value This instance to provide a fluent interface.
+	 */
+	public function encode($strategy) {
+
+
+
+		return $this;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @return Value This instance to provide a fluent interface.
+	 */
+	public function raw() {
+
+		return $this;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @param Value $value The value to use if the object value is null.
+	 * @return Value If the object value is null then the given value, otherwise this instance.
+	 */
+	public function whenNull(Value $value) {
+
+		if ($this->value === null) {
+			return $value;
+		}
+
+		return $this;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @param Value $value The value to use if the object value is empty.
+	 * @return Value If the object value is empty then the given value, otherwise this instance.
+	 */
+	public function whenEmpty(Value $value) {
+
+		if (empty($this->value)) {
+			return $value;
+		}
+
+		return $this;
+	}
+
+	/**
+	 * {@inheritDoc}
 	 *
 	 * @return boolean True if the value is null, false otherwise.
 	 */
@@ -82,59 +176,67 @@ abstract class AbstractValue implements Value {
 	}
 
 	/**
-	 * Casts the value to a string.
+	 * {@inheritDoc}
 	 *
-	 * @return string The value as string.
-	 * @throws \com\mohiva\elixir\values\exceptions\InvalidCastException if the value can't be casted to string.
+	 * @return ObjectValue The value as object value.
+	 * @throws InvalidCastException if the value can't be casted to `ObjectValue`.
+	 */
+	public function toObject() {
+
+		throw new InvalidCastException('Type `' . gettype($this->value) . '` cannot be casted to `ObjectValue`');
+	}
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @return ArrayValue The value as array value.
+	 * @throws InvalidCastException if the value can't be casted to `ArrayValue`.
+	 */
+	public function toArray() {
+
+		throw new InvalidCastException('Type `' . gettype($this->value) . '` cannot be casted to `ArrayValue`');
+	}
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @return StringValue The value as string value.
+	 * @throws InvalidCastException if the value can't be casted to `StringValue`.
 	 */
 	public function toString() {
 
-		throw new InvalidCastException('Array cannot be casted to string');
+		throw new InvalidCastException('Type `' . gettype($this->value) . '` cannot be casted to `StringValue`');
 	}
 
 	/**
-	 * Casts the value to a integer value.
+	 * {@inheritDoc}
 	 *
-	 * @return int The value as integer.
-	 * @throws \com\mohiva\elixir\values\exceptions\InvalidCastException if the value can't be casted to int.
+	 * @return NumberValue The value as number value.
+	 * @throws InvalidCastException if the value can't be casted to `NumberValue`.
 	 */
-	public function toInt() {
+	public function toNumber() {
 
-		throw new InvalidCastException('Array cannot be casted to int');
+		throw new InvalidCastException('Type `' . gettype($this->value) . '` cannot be casted to `NumberValue`');
 	}
 
 	/**
-	 * Casts the value to a floating point value.
+	 * {@inheritDoc}
 	 *
-	 * @return float The value as float.
-	 * @throws \com\mohiva\elixir\values\exceptions\InvalidCastException if the value can't be casted to float.
-	 */
-	public function toFloat() {
-
-		throw new InvalidCastException('Array cannot be casted to float');
-	}
-
-	/**
-	 * Casts the value to a boolean value.
-	 *
-	 * @return boolean The value as boolean.
-	 * @throws \com\mohiva\elixir\values\exceptions\InvalidCastException if the value can't be casted to bool.
+	 * @return BooleanValue The value as boolean value.
+	 * @throws InvalidCastException if the value can't be casted to `BooleanValue`.
 	 */
 	public function toBool() {
 
-		throw new InvalidCastException('Array cannot be casted to bool');
+		throw new InvalidCastException('Type `' . gettype($this->value) . '` cannot be casted to `BooleanValue`');
 	}
 
 	/**
-	 * Casts the value to XML.
+	 * Gets the encoding strategy.
 	 *
-	 * This means it replaces all XML entities inside this value, so that it can be imported as XML node.
-	 *
-	 * @return string The value as XML.
-	 * @throws \com\mohiva\elixir\values\exceptions\InvalidCastException if the value can't be casted to XML.
+	 * @param string $strategy The strategy set
 	 */
-	public function toXML() {
+	private function getEncodingStrategy($strategy) {
 
-		throw new InvalidCastException('Array cannot be casted to XML');
+
 	}
 }

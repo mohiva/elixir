@@ -26,7 +26,30 @@ use com\mohiva\pyramid\Operand;
 use com\mohiva\pyramid\Node;
 
 /**
- * Operand which parses scalar values.
+ * Operand which parses named values.
+ *
+ * Named values are values which start with a name token. This can be:
+ *
+ * Class constants
+ * ===============
+ * Class::CONSTANT
+ * namespace.Class::CONSTANT
+ *
+ * Object values
+ * =============
+ * object.property
+ *
+ * Array values
+ * ============
+ * array[key]
+ *
+ * Method calls
+ * ============
+ * object.method()
+ *
+ * Helper calls
+ * ============
+ * ex:helper()
  *
  * @category  Mohiva/Elixir
  * @package   Mohiva/Elixir/Document/Expression/Operands
@@ -35,7 +58,7 @@ use com\mohiva\pyramid\Node;
  * @license   https://github.com/mohiva/elixir/blob/master/LICENSE.textile New BSD License
  * @link      https://github.com/mohiva/elixir
  */
-class ScalarValueOperand implements Operand {
+class NamedValueOperand implements Operand {
 
 	/**
 	 * Returns the identifiers for this operand.
@@ -44,7 +67,7 @@ class ScalarValueOperand implements Operand {
 	 */
 	public function getIdentifiers() {
 
-		return array(Lexer::T_VALUE);
+		return array(Lexer::T_NAME);
 	}
 
 	/**

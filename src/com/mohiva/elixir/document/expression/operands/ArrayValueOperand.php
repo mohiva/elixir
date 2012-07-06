@@ -26,7 +26,10 @@ use com\mohiva\pyramid\Operand;
 use com\mohiva\pyramid\Node;
 
 /**
- * Operand which parses scalar values.
+ * Operand which parses array values.
+ *
+ * Parses arrays in the form:
+ * [1, 2 => 3]
  *
  * @category  Mohiva/Elixir
  * @package   Mohiva/Elixir/Document/Expression/Operands
@@ -35,7 +38,7 @@ use com\mohiva\pyramid\Node;
  * @license   https://github.com/mohiva/elixir/blob/master/LICENSE.textile New BSD License
  * @link      https://github.com/mohiva/elixir
  */
-class ScalarValueOperand implements Operand {
+class ArrayValueOperand implements Operand {
 
 	/**
 	 * Returns the identifiers for this operand.
@@ -44,7 +47,7 @@ class ScalarValueOperand implements Operand {
 	 */
 	public function getIdentifiers() {
 
-		return array(Lexer::T_VALUE);
+		return array(Lexer::T_OPEN_ARRAY);
 	}
 
 	/**
