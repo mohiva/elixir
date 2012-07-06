@@ -10,8 +10,11 @@
     ],
     "require": {
         "php": ">=5.4",
-        "mohiva/common": "master",
-        "mohiva/manitou": "master",
-        "mohiva/pyramid": "master"
-    }
+        "mohiva/common": "dev-master",
+        "mohiva/manitou": "dev-master",
+        "mohiva/pyramid": "dev-master"
+    },
+	"autoload": {
+		"psr-0": {"com\\mohiva\\elixir": "src/"}
+	}
 }

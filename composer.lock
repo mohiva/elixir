@@ -1,0 +1,33 @@
+{
+    "hash": "0797ba629529f251368203c98e54688f",
+    "packages": [
+        {
+            "package": "mohiva/common",
+            "version": "dev-master",
+            "source-reference": "6db519f8b5df6c63135c69d12bf149e412942664",
+            "commit-date": "1341602421"
+        },
+        {
+            "package": "mohiva/manitou",
+            "version": "dev-master",
+            "source-reference": "3725324fd8618511b676ead613b847b37e3e134e",
+            "commit-date": "1341606837"
+        },
+        {
+            "package": "mohiva/pyramid",
+            "version": "dev-master",
+            "source-reference": "af17fad6ecd752aef2fe95a9363ef8595ba18836",
+            "commit-date": "1341606761"
+        }
+    ],
+    "packages-dev": null,
+    "aliases": [
+
+    ],
+    "minimum-stability": "stable",
+    "stability-flags": {
+        "mohiva/common": 20,
+        "mohiva/manitou": 20,
+        "mohiva/pyramid": 20
+    }
+}

@@ -109,9 +109,9 @@ class Bootstrap {
 		$path = array(
 			self::$srcDir,
 			self::$testDir,
-			self::$vendorDir . '/mohiva-common/src',
-			self::$vendorDir . '/mohiva-manitou/src',
-			self::$vendorDir . '/mohiva-pyramid/src',
+			self::$vendorDir . '/mohiva/common/src',
+			self::$vendorDir . '/mohiva/manitou/src',
+			self::$vendorDir . '/mohiva/pyramid/src',
 			get_include_path()
 		);
 		self::$includePath = set_include_path(implode(PATH_SEPARATOR, $path));
