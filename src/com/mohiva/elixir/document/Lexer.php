@@ -77,7 +77,7 @@ class Lexer {
 	 *
 	 * This approach is used to recognize if a string is escaped or not. Because the first both lexemes
 	 * detect all strings first, and thereafter all opening and closing tags. So the following syntax is
-	 * correctly recognized as a string expression: {% '{% user.name.toLower() %}' %} and not as an nested
+	 * correctly recognized as a escaped expression: {% '{% user.name.toLower() %}' %} and not as an nested
 	 * expression.
 	 *
 	 * @var array
