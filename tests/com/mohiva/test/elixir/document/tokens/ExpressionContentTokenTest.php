@@ -18,8 +18,10 @@
  */
 namespace com\mohiva\test\elixir\document\tokens;
 
+use com\mohiva\elixir\document\tokens\ExpressionContentToken;
+
 /**
- * Test suite for the Mohiva Elixir project.
+ * Unit test case for the Mohiva Elixir project.
  *
  * @category  Mohiva/Elixir
  * @package   Mohiva/Elixir/Test
@@ -28,28 +30,27 @@ namespace com\mohiva\test\elixir\document\tokens;
  * @license   https://github.com/mohiva/elixir/blob/master/LICENSE.textile New BSD License
  * @link      https://github.com/mohiva/elixir
  */
-class AllTests extends \PHPUnit_Framework_TestSuite {
+class ExpressionContentTokenTest extends \PHPUnit_Framework_TestCase {
 
 	/**
-	 * Constructs the test suite handler.
+	 * Test all getters for the values set with the constructor.
 	 */
-	public function __construct() {
+	public function testConstructorAccessors() {
 
-		$this->setName(__CLASS__);
-		$this->addTestSuite(__NAMESPACE__ . '\NodeTokenTest');
-		$this->addTestSuite(__NAMESPACE__ . '\PropertyTokenTest');
-		$this->addTestSuite(__NAMESPACE__ . '\HelperTokenTest');
-		$this->addTestSuite(__NAMESPACE__ . '\ExpressionTokenTest');
-		$this->addTestSuite(__NAMESPACE__ . '\ExpressionContentTokenTest');
-	}
+		$code = mt_rand(1, 30);
+		$value = sha1(microtime(true));
+		$line = mt_rand(1, 100);
+		$offset = mt_rand(1, 100);
+		$token = new ExpressionContentToken(
+			$code,
+			$value,
+			$line,
+			$offset
+		);
 
-	/**
-	 * Creates the suite.
-	 *
-	 * @return AllTests The test suite.
-	 */
-	public static function suite() {
-
-		return new self();
+		$this->assertSame($code, $token->getCode());
+		$this->assertSame($value, $token->getValue());
+		$this->assertSame($line, $token->getLine());
+		$this->assertSame($offset, $token->getOffset());
 	}
 }

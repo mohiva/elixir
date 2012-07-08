@@ -19,7 +19,7 @@
 	The problem ist that the previous text expression has also an expression opener. The lexer
 	must recognize that an expression closer follows and therefore it must recognize that the
 	expression opener is not associated with the XML tag. The same counts for the expression
-	following this tag.
+	which follows this tag.
 	-->
 
 	{% var %}

@@ -19,7 +19,6 @@
 namespace com\mohiva\elixir\document;
 
 use com\mohiva\pyramid\Parser as ExpressionParser;
-use com\mohiva\pyramid\Token;
 use com\mohiva\common\parser\TokenStream;
 use com\mohiva\common\exceptions\SyntaxErrorException;
 use com\mohiva\elixir\document\expression\Lexer as ExpressionLexer;
@@ -27,6 +26,7 @@ use com\mohiva\elixir\document\tokens\PropertyToken;
 use com\mohiva\elixir\document\tokens\NodeToken;
 use com\mohiva\elixir\document\tokens\HelperToken;
 use com\mohiva\elixir\document\tokens\ExpressionToken;
+use com\mohiva\elixir\document\tokens\ExpressionContentToken;
 use com\mohiva\elixir\document\helpers\ElementHelper;
 use com\mohiva\elixir\document\helpers\AttributeHelper;
 use com\mohiva\elixir\document\exceptions\UnexpectedTokenException;
@@ -349,7 +349,7 @@ class Parser {
 	 */
 	private function expectExpressionOpener(TokenStream $stream) {
 
-		$stream->expect(array(Lexer::T_EXPRESSION_OPEN), function(Token $current) {
+		$stream->expect(array(Lexer::T_EXPRESSION_OPEN), function(ExpressionContentToken $current) {
 			$message = "Expression opener `{%` expected; got `{$current->getValue()}`";
 			throw new SyntaxErrorException($message);
 		});
@@ -364,7 +364,7 @@ class Parser {
 	 */
 	private function expectExpressionCloser(TokenStream $stream) {
 
-		$stream->expect(array(Lexer::T_EXPRESSION_CLOSE), function(Token $current = null) {
+		$stream->expect(array(Lexer::T_EXPRESSION_CLOSE), function(ExpressionContentToken $current = null) {
 			if ($current) {
 				$message = "Expression closer `%}` expected; got `{$current->getValue()}`";
 			} else {
@@ -390,7 +390,7 @@ class Parser {
 				break;
 			}
 
-			/* @var \com\mohiva\pyramid\Token $token */
+			/* @var \com\mohiva\elixir\document\tokens\ExpressionContentToken $token */
 			$token = $stream->current();
 			$expression .= $token->getValue();
 			$stream->next();

@@ -19,6 +19,7 @@
 namespace com\mohiva\elixir\document;
 
 use DOMAttr;
+use com\mohiva\elixir\document\tokens\ExpressionContentToken;
 use DOMText;
 use DOMComment;
 use com\mohiva\pyramid\Token;
@@ -57,6 +58,7 @@ class Lexer {
 	const T_EXPRESSION_OPEN  = 8;  // {%
 	const T_EXPRESSION_CLOSE = 9;  // %}
 	const T_EXPRESSION_CHARS = 10; // .+
+	const T_EXPRESSION_LINE  = 11; // __L_-_I_-_N_-_E__(1)
 
 	/**
 	 * The XPath pattern used to find the expressions inside the XML document.
@@ -70,14 +72,21 @@ class Lexer {
 	 *
 	 * @var string
 	 */
-	const PLACEHOLDER = '__N_-_O_-_D_-_E__';
+	const NODE_PLACEHOLDER = '__N_-_O_-_D_-_E__';
+
+	/**
+	 * The placeholder to annotate the line numbers for the expressions.
+	 *
+	 * @var string
+	 */
+	const LINE_PLACEHOLDER = '__L_-_I_-_N_-_E__';
 
 	/**
 	 * The lexemes to recognize the expressions.
 	 *
 	 * This approach is used to recognize if a string is escaped or not. Because the first both lexemes
-	 * detect all strings first, and thereafter all opening and closing tags. So the following syntax is
-	 * correctly recognized as a escaped expression: {% '{% user.name.toLower() %}' %} and not as an nested
+	 * detect all strings first, and thereafter all other tokens. So the following syntax is correctly
+	 * recognized as a escaped expression: {% '{% user.name.toLower() %}' %} and not as an nested
 	 * expression.
 	 *
 	 * @var array
@@ -85,7 +94,8 @@ class Lexer {
 	private $lexemes = array(
 		"('(?:[^'\\\\]|\\\\['\"]|\\\\)*')",
 		'("(?:[^"\\\]|\\\["\']|\\\)*")',
-		'(\{%|%\})'
+		'(__L_-_I_-_N_-_E__\([0-9]+\))',
+		'(\{%|%\})',
 	);
 
 	/**
@@ -225,7 +235,7 @@ class Lexer {
 				$this->getChildren($node)
 			);
 
-			$placeholder = $doc->createElement(self::PLACEHOLDER);
+			$placeholder = $doc->createElement(self::NODE_PLACEHOLDER);
 			$placeholder->setAttribute('id', $id);
 			$node->parentNode->replaceChild($placeholder, $node);
 			$stream->push($token);
@@ -325,8 +335,8 @@ class Lexer {
 				$node->nodeType == XML_ATTRIBUTE_NODE ? /* @var \DOMAttr $node */ $node->name : null,
 				$this->tokenizeExpressionContent(
 					$node->nodeType == XML_ELEMENT_NODE
-						? /* @var XMLElement $node */ $this->getExpressionContent($node)
-						: $node->value
+						? /* @var XMLElement $node */ $this->getExpressionContentForElement($node)
+						: [$node->getLineNo() => $node->value]
 				)
 			);
 			$stream->push($token);
@@ -339,11 +349,14 @@ class Lexer {
 	 * Relevant content are element nodes inside an expression and all text nodes.
 	 *
 	 * @param XMLElement $element The current processed element.
-	 * @return string The content of the node which is relevant for expression tokenization.
+	 * @return array An array which contains the related content parts of the node as value and the line in
+	 * which this related content starts as key.
 	 */
-	private function getExpressionContent(XMLElement $element) {
+	private function getExpressionContentForElement(XMLElement $element) {
 
-		$content = '';
+		$line = 0;
+		$content = [];
+		$relatedContent = null;
 		$nodes = $element->childNodes;
 		for ($i = 0; $i < $nodes->length; $i++) {
 			$node = $nodes->item($i);
@@ -357,10 +370,17 @@ class Lexer {
 				preg_match('/^[^({%)]+%}/', $next->nodeValue)) {
 
 				/* @var XMLElement $node */
-				$content .= $node->toXML();
+				$line = $relatedContent === null ? $node->getLineNo() : $line;
+				$relatedContent .= $node->toXML();
 			} else if ($node->nodeType == XML_TEXT_NODE) {
-				$content .= $node->nodeValue;
+				$line = $relatedContent === null ? $node->getLineNo() : $line;
+				$relatedContent .= $node->nodeValue;
+			} else {
+				$relatedContent = null;
+				continue;
 			}
+
+			$content[$line] = $relatedContent;
 		}
 
 		return $content;
@@ -369,41 +389,42 @@ class Lexer {
 	/**
 	 * Tokenize the content of an expression.
 	 *
-	 * This method tokenize the complete node value and it splits the content only in three
-	 * tokens. The main task of this tokenize process is to find all non escaped start or
-	 * end tokens of an expression. The expression itself will then be parsed later by the
-	 * Pyramid library.
+	 * This method tokenize the related content parts of a node and splits the content only in three
+	 * tokens. The main task of this tokenize process is to find all non escaped start or end tokens
+	 * of an expression. The expression itself will then be parsed later by the Mohiva Pyramid library.
 	 *
-	 * @param string $content The content to tokenize.
+	 * @param array $content The list of related content parts to tokenize.
 	 * @return TokenStream The resulting token stream.
 	 */
-	private function tokenizeExpressionContent($content) {
+	private function tokenizeExpressionContent(array $content) {
 
 		$inExpression = false;
-		$matches = preg_split($this->expressionPattern, $content, -1, $this->expressionFlags);
 		$stream = new TokenStream;
-		$stream->setSource($content);
-		foreach ($matches as $match) {
-			if (isset($this->constTokenMap[$match[0]])) {
-				$code = $this->constTokenMap[$match[0]];
-			} else {
-				$code = self::T_EXPRESSION_CHARS;
-			}
+		foreach ($content as $line => $relatedContent) {
+			$matches = preg_split($this->expressionPattern, $relatedContent, -1, $this->expressionFlags);
+			foreach ($matches as $match) {
+				$value = $match[0];
+				$offset = $match[1];
+				$line += substr_count($value, "\n");
 
-			// Keep only this whitespaces which are inside an expression
-			if ($code == self::T_EXPRESSION_OPEN) {
-				$inExpression = true;
-			} else if ($code == self::T_EXPRESSION_CLOSE) {
-				$inExpression = false;
-			} else if (!$inExpression && ctype_space($match[0])) {
-				continue;
-			}
+				// Get the token code
+				if (isset($this->constTokenMap[$value])) {
+					$code = $this->constTokenMap[$value];
+				} else {
+					$code = self::T_EXPRESSION_CHARS;
+				}
 
-			$stream->push(new Token(
-				$code,
-				$match[0],
-				$match[1]
-			));
+				// Keep only this whitespaces which are inside an expression
+				if ($code == self::T_EXPRESSION_OPEN) {
+					$inExpression = true;
+				} else if ($code == self::T_EXPRESSION_CLOSE) {
+					$inExpression = false;
+				} else if (!$inExpression && ctype_space($value)) {
+					continue;
+				}
+
+				$stream->push(new ExpressionContentToken($code, $value, $line, $offset));
+			}
 		}
 
 		$stream->rewind();
@@ -516,7 +537,7 @@ class Lexer {
 
 		/* @var \DOMNode $sibling */
 		$sibling = $element("#following-sibling::*");
-		if (!$sibling || $sibling->localName != self::PLACEHOLDER) {
+		if (!$sibling || $sibling->localName != self::NODE_PLACEHOLDER) {
 			return null;
 		}
 
@@ -538,7 +559,7 @@ class Lexer {
 		}
 
 		/* @var \DOMNodeList $nodes */
-		$nodes = $element("descendant-or-self::*[local-name() = '" . self::PLACEHOLDER . "']");
+		$nodes = $element("descendant-or-self::*[local-name() = '" . self::NODE_PLACEHOLDER . "']");
 		for ($i = 0; $i < $nodes->length; $i++) {
 			$children[] = $nodes->item($i)['id']->toString();
 		}

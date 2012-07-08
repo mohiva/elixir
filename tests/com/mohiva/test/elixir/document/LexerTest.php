@@ -442,8 +442,8 @@ class LexerTest extends \PHPUnit_Framework_TestCase {
 		$stream = $lexer->scan($doc);
 
 		$firstContent  = '<root>';
-		$firstContent .= '<' . Lexer::PLACEHOLDER . ' id="6a5d3ea5544a23b536835030b4d503db8fda53fc"/>';
-		$firstContent .= '<' . Lexer::PLACEHOLDER . ' id="ab3325e2d97bb917a40d19c6d468082cde28866c"/>';
+		$firstContent .= '<' . Lexer::NODE_PLACEHOLDER . ' id="6a5d3ea5544a23b536835030b4d503db8fda53fc"/>';
+		$firstContent .= '<' . Lexer::NODE_PLACEHOLDER . ' id="ab3325e2d97bb917a40d19c6d468082cde28866c"/>';
 		$firstContent .= '<div>The root content.</div>';
 		$firstContent .= '</root>';
 
@@ -777,6 +777,47 @@ class LexerTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	/**
+	 * Test if the lexer recognizes the correct line numbers for the expression content.
+	 */
+	public function testExpressionLineNumbers() {
+
+		$xmlFile = Bootstrap::$resourceDir . '/elixir/document/lexer/expression_escaping_with_inner_xml.xml';
+
+		$doc = new XMLDocument();
+		$doc->fixLineNumbers = true;
+		$doc->load($xmlFile);
+
+		$lexer = new Lexer();
+		$stream = $lexer->scan($doc);
+
+		/* @var \com\mohiva\elixir\document\tokens\ExpressionToken $token */
+		$token = $stream->getLookahead(3);
+		$this->assertInstanceOf('\com\mohiva\elixir\document\tokens\ExpressionToken', $token);
+
+		$stream = $token->getStream();
+		$actual = $this->buildActualLineNumbers($stream);
+		$expected = array(
+			array(9 => '{%'),
+
+			array(11 => '{%'),
+			array(11 => '\'<tag xmlns:test="urn:test" test:Locale="tag1"/>\''),
+			array(11 => '%}'),
+
+			array(13 => '%}'),
+
+			array(25 => '{%'),
+			array(25 => ' var '),
+			array(25 => '%}'),
+
+			array(29 => '{%'),
+			array(29 => ' var '),
+			array(29 => '%}')
+		);
+
+		$this->assertSame($expected, $actual);
+	}
+
+	/**
 	 * Test if the lexer recognizes a greedy expression.
 	 */
 	public function testGreedyExpression() {
@@ -891,16 +932,16 @@ class LexerTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	/**
-	 * Create an array from the token stream which contains only the tokens and the operators/values.
+	 * Create an array from the token stream which contains only the tokens and the values.
 	 *
 	 * @param \com\mohiva\common\parser\TokenStream $stream The stream containing the lexer tokens.
-	 * @return array The actual list with tokens and operators/values.
+	 * @return array The actual list with tokens and values.
 	 */
 	private function buildActualTokens(TokenStream $stream) {
 
 		$actual = array();
 		while ($stream->valid()) {
-			/* @var \com\mohiva\pyramid\Token $current */
+			/* @var \com\mohiva\elixir\document\tokens\ExpressionContentToken $current */
 			$current = $stream->current();
 			$stream->next();
 			// Skip whitespaces
@@ -909,6 +950,30 @@ class LexerTest extends \PHPUnit_Framework_TestCase {
 			}
 
 			$actual[] = array($current->getCode() => $current->getValue());
+		}
+
+		return $actual;
+	}
+
+	/**
+	 * Create an array from the token stream which contains only the line numbers and the values.
+	 *
+	 * @param \com\mohiva\common\parser\TokenStream $stream The stream containing the lexer tokens.
+	 * @return array The actual list with line numbers and values.
+	 */
+	private function buildActualLineNumbers(TokenStream $stream) {
+
+		$actual = array();
+		while ($stream->valid()) {
+			/* @var \com\mohiva\elixir\document\tokens\ExpressionContentToken $current */
+			$current = $stream->current();
+			$stream->next();
+			// Skip whitespaces
+			if (ctype_space($current->getValue())) {
+				continue;
+			}
+
+			$actual[] = array($current->getLine() => $current->getValue());
 		}
 
 		return $actual;
