@@ -307,11 +307,12 @@ class Parser {
 	 *
 	 * @param ExpressionToken $token The token to parse.
 	 * @return Expression[] The list of found expressions.
+	 * @throws SyntaxErrorException if an syntax error occurs during expression parsing.
 	 */
 	private function createExpressionsFromToken(ExpressionToken $token) {
 
-		$expressions = array();
 		$number = 0;
+		$expressions = array();
 		$stream = $token->getStream();
 		while ($stream->valid()) {
 			if ($stream->current()->getCode() != Lexer::T_EXPRESSION_OPEN &&
@@ -320,11 +321,17 @@ class Parser {
 				continue;
 			}
 
-			$this->expectExpressionOpener($stream);
+			$opener = $this->expectExpressionOpener($stream);
 			$content = $this->getExpressionContent($stream);
 			$this->expectExpressionCloser($stream);
-
-			$node = $this->expressionParser->parse($this->expressionLexer->scan($content));
+			try {
+				$node = $this->expressionParser->parse($this->expressionLexer->scan($content));
+			} catch (SyntaxErrorException $e) {
+				$message = 'An syntax error occurred during expression parsing';
+				$exception = new SyntaxErrorException($message, 0, $e);
+				$exception->setLineNo($opener->getLine());
+				throw $exception;
+			}
 
 			$path = $token->getPath() . '{% ' . $number++ . ' %}';
 			$expression = new Expression(
@@ -345,35 +352,48 @@ class Parser {
 	 * Expects that the current token is the expression opener.
 	 *
 	 * @param TokenStream $stream The expression stream.
+	 * @return ExpressionContentToken The expression opener token.
 	 * @throws SyntaxErrorException if the expression opener couldn't be found.
 	 */
 	private function expectExpressionOpener(TokenStream $stream) {
 
+		$opener = $stream->current();
 		$stream->expect(array(Lexer::T_EXPRESSION_OPEN), function(ExpressionContentToken $current) {
 			$message = "Expression opener `{%` expected; got `{$current->getValue()}`";
-			throw new SyntaxErrorException($message);
+			$exception = new SyntaxErrorException($message);
+			$exception->setLineNo($current->getLine());
+			throw $exception;
 		});
 		$stream->next();
+
+		return $opener;
 	}
 
 	/**
 	 * Expects that the current token is the expression opener.
 	 *
 	 * @param TokenStream $stream The expression stream.
+	 * @return ExpressionContentToken The expression closer token.
 	 * @throws SyntaxErrorException if the expression opener couldn't be found.
 	 */
 	private function expectExpressionCloser(TokenStream $stream) {
 
+		$closer = $stream->current();
 		$stream->expect(array(Lexer::T_EXPRESSION_CLOSE), function(ExpressionContentToken $current = null) {
 			if ($current) {
 				$message = "Expression closer `%}` expected; got `{$current->getValue()}`";
+				$exception = new SyntaxErrorException($message);
+				$exception->setLineNo($current->getLine());
 			} else {
 				$message = "Expression closer `%}` expected, but end of stream reached";
+				$exception = new SyntaxErrorException($message);
 			}
 
-			throw new SyntaxErrorException($message);
+			throw $exception;
 		});
 		$stream->next();
+
+		return $closer;
 	}
 
 	/**
