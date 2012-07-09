@@ -58,7 +58,6 @@ class Lexer {
 	const T_EXPRESSION_OPEN  = 8;  // {%
 	const T_EXPRESSION_CLOSE = 9;  // %}
 	const T_EXPRESSION_CHARS = 10; // .+
-	const T_EXPRESSION_LINE  = 11; // __L_-_I_-_N_-_E__(1)
 
 	/**
 	 * The XPath pattern used to find the expressions inside the XML document.
@@ -75,13 +74,6 @@ class Lexer {
 	const NODE_PLACEHOLDER = '__N_-_O_-_D_-_E__';
 
 	/**
-	 * The placeholder to annotate the line numbers for the expressions.
-	 *
-	 * @var string
-	 */
-	const LINE_PLACEHOLDER = '__L_-_I_-_N_-_E__';
-
-	/**
 	 * The lexemes to recognize the expressions.
 	 *
 	 * This approach is used to recognize if a string is escaped or not. Because the first both lexemes
@@ -94,7 +86,6 @@ class Lexer {
 	private $lexemes = array(
 		"('(?:[^'\\\\]|\\\\['\"]|\\\\)*')",
 		'("(?:[^"\\\]|\\\["\']|\\\)*")',
-		'(__L_-_I_-_N_-_E__\([0-9]+\))',
 		'(\{%|%\})',
 	);
 
