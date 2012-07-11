@@ -48,16 +48,20 @@ class Lexer {
 	 *
 	 * @var int
 	 */
-	const T_XML_VERSION      = 1;
-	const T_XML_ENCODING     = 2;
-	const T_ROOT_NODE        = 3;
-	const T_ELEMENT_NODE     = 4;
-	const T_ELEMENT_HELPER   = 5;
-	const T_ATTRIBUTE_HELPER = 6;
-	const T_EXPRESSION       = 7;
-	const T_EXPRESSION_OPEN  = 8;  // {%
-	const T_EXPRESSION_CLOSE = 9;  // %}
-	const T_EXPRESSION_CHARS = 10; // .+
+	const T_XML_VERSION        = 1;
+	const T_XML_ENCODING       = 2;
+	const T_ROOT_NODE          = 3;
+	const T_ELEMENT_NODE       = 4;
+	const T_ELEMENT_HELPER     = 5;
+	const T_ATTRIBUTE_HELPER   = 6;
+	const T_EXPRESSION         = 7;
+	const T_EXPRESSION_OPEN    = 8;  // {%
+	const T_EXPRESSION_CLOSE   = 9;  // %}
+	const T_EXPRESSION_CHARS   = 10; // .+
+	const T_EXPRESSION_ELEMENT = 11; // <tag />
+	const T_EXPRESSION_COMMENT = 12; // <!-- comment -->
+	const T_EXPRESSION_CDATA   = 13; // <![CDATA[ ]]>
+	const T_EXPRESSION_PI      = 14; /* <?PITarget PIContent?> */
 
 	/**
 	 * The XPath pattern used to find the expressions inside the XML document.
@@ -65,6 +69,19 @@ class Lexer {
 	 * @var string
 	 */
 	const EXPRESSION_QUERY = "(contains(., '{%') or contains(., '%}'))";
+
+	/**
+	 * Prevent the lexer to tokenize anything inside the Raw tag of the core namespace.
+	 *
+	 * It matches only if the node isn't inside a Raw tag.
+	 *
+	 * <ex:Raw>
+	 *     <tag test:Locale="{% test %}" />
+	 * </ex:Raw>
+	 *
+	 * @var string
+	 */
+	const RAW_QUERY = "not(ancestor::*[namespace-uri() = 'http://elixir.mohiva.com' and local-name() = 'Raw'])";
 
 	/**
 	 * The placeholder node.
@@ -155,12 +172,19 @@ class Lexer {
 	private $expressionFlags = null;
 
 	/**
+	 * Contains all original helper nodes before they were processed.
+	 *
+	 * @var array
+	 */
+	private $originalHelperNodes = [];
+
+	/**
 	 * The class constructor.
 	 */
 	public function __construct() {
 
 		$this->expressionPattern = '/' . implode('|', $this->lexemes) . '/';
-		$this->expressionFlags = PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_OFFSET_CAPTURE;
+		$this->expressionFlags = PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE;
 	}
 
 	/**
@@ -205,15 +229,15 @@ class Lexer {
 		for ($i = $nodes->length - 1; $i >= 0; $i--) {
 			/* @var XMLElement $node */
 			$node = $nodes->item($i);
+			$path = $node->getNodePath();
+			$id = sha1($path);
+			$this->originalHelperNodes[$id] = clone $node;
 
 			// NOTE: This order shouldn't be changed, otherwise the parser cannot
 			// resolve the Parent/Child relationship
 			$this->tokenizeAttributeHelpers($stream, $node);
 			$this->tokenizeElementHelper($stream, $node);
 			$this->tokenizeExpressions($stream, $node, $expressionQuery);
-
-			$path = $node->getNodePath();
-			$id = sha1($path);
 			$token = new NodeToken(
 				$node === $doc->documentElement ? self::T_ROOT_NODE : self::T_ELEMENT_NODE,
 				$id,
@@ -231,6 +255,8 @@ class Lexer {
 			$node->parentNode->replaceChild($placeholder, $node);
 			$stream->push($token);
 		}
+
+		$this->originalHelperNodes = [];
 
 		// Iterator mode is set to LIFO, so this are the the first tokens
 		$stream->push(new PropertyToken(self::T_XML_ENCODING, $doc->xmlEncoding));
@@ -316,109 +342,102 @@ class Lexer {
 		/* @var \DomNodeList $nodes */
 		$nodes = $element($query);
 		for ($i = $nodes->length - 1; $i >= 0; $i--) {
+			$contentStream = new TokenStream;
+
 			/* @var \DOMNode $node */
 			$node = $nodes->item($i);
+			if ($node->nodeType == XML_ELEMENT_NODE) {
+				/* @var XMLElement $node */
+				$contentStream = $this->tokenizeExpressionNode($contentStream, $node);
+			} else {
+				$contentStream = $this->tokenizeExpressionText($contentStream, $node->value, $node->getLineNo());
+			}
+
+			$contentStream->rewind();
 			$token = new ExpressionToken(
 				self::T_EXPRESSION,
 				sha1($node->getNodePath()),
 				$node->getNodePath(),
 				$node->getLineNo(),
 				$node->nodeType == XML_ATTRIBUTE_NODE ? /* @var \DOMAttr $node */ $node->name : null,
-				$this->tokenizeExpressionContent(
-					$node->nodeType == XML_ELEMENT_NODE
-						? /* @var XMLElement $node */ $this->getExpressionContentForElement($node)
-						: [$node->getLineNo() => $node->value]
-				)
+				$contentStream
 			);
 			$stream->push($token);
 		}
 	}
 
 	/**
-	 * Gets the content of the element which is relevant for expression tokenization.
+	 * Tokenize a complete XML node.
 	 *
-	 * Relevant content are element nodes inside an expression and all text nodes.
-	 *
+	 * @param TokenStream $stream The stream to which the tokens should be added.
 	 * @param XMLElement $element The current processed element.
-	 * @return array An array which contains the related content parts of the node as value and the line in
-	 * which this related content starts as key.
+	 * @return TokenStream The stream with the added tokens.
 	 */
-	private function getExpressionContentForElement(XMLElement $element) {
+	private function tokenizeExpressionNode(TokenStream $stream, XMLElement $element) {
 
-		$line = 0;
-		$content = [];
-		$relatedContent = null;
 		$nodes = $element->childNodes;
 		for ($i = 0; $i < $nodes->length; $i++) {
 			$node = $nodes->item($i);
-			$prev = $nodes->item($i - 1);
-			$next = $nodes->item($i + 1);
-			// Get only element nodes inside an expression
-			if ($node->nodeType == XML_ELEMENT_NODE &&
-				$prev instanceof DOMText &&
-				$next instanceof DOMText &&
-				preg_match('/{%[^(%})]+$/', $prev->nodeValue) &&
-				preg_match('/^[^({%)]+%}/', $next->nodeValue)) {
-
+			if ($node->nodeType == XML_ELEMENT_NODE && $node->nodeName === self::NODE_PLACEHOLDER) {
 				/* @var XMLElement $node */
-				$line = $relatedContent === null ? $node->getLineNo() : $line;
-				$relatedContent .= $node->toXML();
+				$id = $node['id']->toString();
+				$node = $this->originalHelperNodes[$id];
+				$token = new ExpressionContentToken(self::T_EXPRESSION_ELEMENT, $node->toXML(), $node->getLineNo());
+				$stream->push($token);
+			} else if ($node->nodeType == XML_ELEMENT_NODE) {
+				/* @var XMLElement $node */
+				$token = new ExpressionContentToken(self::T_EXPRESSION_ELEMENT, $node->toXML(), $node->getLineNo());
+				$stream->push($token);
+			} else if ($node->nodeType == XML_COMMENT_NODE) {
+				/* @var \DOMComment $node */
+				$value = '<!--' . $node->nodeValue . '-->';
+				$token = new ExpressionContentToken(self::T_EXPRESSION_COMMENT, $value, $node->getLineNo());
+				$stream->push($token);
+			} else if ($node->nodeType == XML_PI_NODE) {
+				/* @var \DOMProcessingInstruction $node */
+				$value = '<?' . $node->target . ' ' . $node->data . '?>';
+				$token = new ExpressionContentToken(self::T_EXPRESSION_PI, $value, $node->getLineNo());
+				$stream->push($token);
+			} else if ($node->nodeType == XML_CDATA_SECTION_NODE) {
+				/* @var \DOMCdataSection $node */
+				$value = '<![CDATA[' . $node->nodeValue . ']]>';
+				$token = new ExpressionContentToken(self::T_EXPRESSION_CDATA, $value, $node->getLineNo());
+				$stream->push($token);
 			} else if ($node->nodeType == XML_TEXT_NODE) {
-				$line = $relatedContent === null ? $node->getLineNo() : $line;
-				$relatedContent .= $node->nodeValue;
-			} else {
-				$relatedContent = null;
-				continue;
+				/* @var \DOMText $node */
+				$stream = $this->tokenizeExpressionText($stream, $node->nodeValue, $node->getLineNo());
 			}
-
-			$content[$line] = $relatedContent;
 		}
 
-		return $content;
+		return $stream;
 	}
 
 	/**
-	 * Tokenize the content of an expression.
+	 * Tokenize the text part of a node.
 	 *
-	 * This method tokenize the related content parts of a node and splits the content only in three
-	 * tokens. The main task of this tokenize process is to find all non escaped start or end tokens
-	 * of an expression. The expression itself will then be parsed later by the Mohiva Pyramid library.
+	 * This method tokenize the text parts of a node and splits it in three kind of tokens. The main
+	 * task of this tokenize process is to find all non escaped start or end tokens of an expression.
+	 * The expression itself will then be parsed later by the Mohiva Pyramid library.
 	 *
-	 * @param array $content The list of related content parts to tokenize.
-	 * @return TokenStream The resulting token stream.
+	 * @param TokenStream $stream The stream to which the tokens should be added.
+	 * @param string $text The text part of an expression to tokenize.
+	 * @param int $line The line in which the text was found.
+	 * @return TokenStream The stream with the added tokens.
 	 */
-	private function tokenizeExpressionContent(array $content) {
+	private function tokenizeExpressionText(TokenStream $stream, $text, $line) {
 
-		$inExpression = false;
-		$stream = new TokenStream;
-		foreach ($content as $line => $relatedContent) {
-			$matches = preg_split($this->expressionPattern, $relatedContent, -1, $this->expressionFlags);
-			foreach ($matches as $match) {
-				$value = $match[0];
-				$offset = $match[1];
-				$line += substr_count($value, "\n");
-
-				// Get the token code
-				if (isset($this->constTokenMap[$value])) {
-					$code = $this->constTokenMap[$value];
-				} else {
-					$code = self::T_EXPRESSION_CHARS;
-				}
-
-				// Keep only this whitespaces which are inside an expression
-				if ($code == self::T_EXPRESSION_OPEN) {
-					$inExpression = true;
-				} else if ($code == self::T_EXPRESSION_CLOSE) {
-					$inExpression = false;
-				} else if (!$inExpression && ctype_space($value)) {
-					continue;
-				}
-
-				$stream->push(new ExpressionContentToken($code, $value, $line, $offset));
+		$matches = preg_split($this->expressionPattern, $text, -1, $this->expressionFlags);
+		$cnt = count($matches);
+		for ($i = 0; $i < $cnt; $i++) {
+			if (isset($this->constTokenMap[$matches[$i]])) {
+				$code = $this->constTokenMap[$matches[$i]];
+			} else {
+				$code = self::T_EXPRESSION_CHARS;
 			}
-		}
 
-		$stream->rewind();
+			$stream->push(new ExpressionContentToken($code, $matches[$i], $line));
+			if ($cnt > 1) $line += substr_count($matches[$i], "\n");
+		}
 
 		return $stream;
 	}
@@ -656,7 +675,8 @@ class Lexer {
 	 */
 	private function removeHelperNamespaces(XMLElement $element) {
 
-		$namespaces = $element("descendant-or-self::*/namespace::*[{$this->buildRawQuery('parent::*')}]");
+		$rawQuery = self::RAW_QUERY;
+		$namespaces = $element("descendant-or-self::*/namespace::*[{$rawQuery}]");
 		foreach ($namespaces as $node) { /* @var \DOMElement $node */
 			if (!in_array($node->nodeValue, $this->nonHelperNamespaces)) {
 				$node->parentNode->removeAttributeNS($node->nodeValue, $node->prefix);
@@ -675,9 +695,9 @@ class Lexer {
 	private function buildNodeQuery() {
 
 		/**
-		 * Prevents the lexer to find an expression inside a Raw tag or inside an expression.
+		 * Prevents the lexer to find an expression inside a Raw tag.
 		 */
-		$rawQuery = $this->buildRawQuery('.');
+		$rawQuery = self::RAW_QUERY;
 
 		/**
 		 * Finds the root node.
@@ -713,9 +733,9 @@ class Lexer {
 		$expQuery = self::EXPRESSION_QUERY;
 
 		/**
-		 * Prevents the lexer to find an expression inside a Raw tag or inside an expression.
+		 * Prevents the lexer to find an expression inside a Raw tag.
 		 */
-		$rawQuery = $this->buildRawQuery('parent::*');
+		$rawQuery = self::RAW_QUERY;
 
 		/**
 		 * This query prevents the node expression query to find expressions in attribute helpers. So
@@ -762,54 +782,6 @@ class Lexer {
 		 * </root>
 		 */
 		$query .= "|descendant-or-self::*//text()[{$rawQuery} and {$expQuery}]/parent::*";
-
-		return $query;
-	}
-
-	/**
-	 * Builds the XPath query which recognizes that a node isn't inside a Raw tag or inside an expression.
-	 *
-	 * Raw tag:
-	 * ========
-	 * It matches only if the node isn't inside a Raw tag.
-	 *
-	 * <ex:Raw>
-	 *     <tag test:Locale="{% test %}" />
-	 * </ex:Raw>
-	 *
-	 * Expression:
-	 * ===========
-	 * It matches only if the node has no previous sibling text node which contains an expression opener
-	 * and if the node has no next sibling text node which contains an expression closer.
-	 *
-	 * {% '<tag test:Locale="{% test %}" />' %}
-	 *
-	 * @param string $node The node to start from.
-	 * @return string The raw query.
-	 */
-	private function buildRawQuery($node) {
-
-		/**
-		 * Prevent the lexer to tokenize anything inside the Raw tag of the core namespace.
-		 */
-		$query = "not(ancestor::*[namespace-uri() = 'http://elixir.mohiva.com' and local-name() = 'Raw']) and ";
-
-		/**
-		 * Prevents the lexer to find a node inside an expression.
-		 *
-		 * Note: Previous and following text expressions may not have consequences on XML tags that are between
-		 * these two. The problem ist that the previous text expression has also an expression opener. The lexer
-		 * must recognize that an expression closer follows and therefore it must recognize that the expression
-		 * opener is not associated with the XML tag. The same counts for the expression following this tag.
-		 *
-		 * {% var %} <tag xmlns:test="urn:test" test:Locale="tag1" />  {% var %}
-		 *
-		 * So these expression checks for the previous text node that it only matches if an expression opener
-		 * is not followed by an expression closer and for the following text node that no expression opener
-		 * is in front of an expression closer.
-		 */
-		$query .= "not({$node}/preceding-sibling::text()[1][php:functionString('preg_match', '/{%[^(%})]+$/', .) = 1]";
-		$query .= "and {$node}/following-sibling::text()[1][php:functionString('preg_match', '/^[^({%)]+%}/', .) = 1])";
 
 		return $query;
 	}

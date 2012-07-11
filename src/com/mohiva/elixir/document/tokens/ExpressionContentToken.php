@@ -54,26 +54,17 @@ class ExpressionContentToken implements Token {
 	private $line = null;
 
 	/**
-	 * The token offset.
-	 *
-	 * @var int
-	 */
-	private $offset = null;
-
-	/**
 	 * The class constructor.
 	 *
 	 * @param int $code The token code.
 	 * @param string $value The token offset.
 	 * @param int $line The line number of the token in the source file.
-	 * @param int $offset The token offset.
 	 */
-	public function __construct($code, $value, $line, $offset) {
+	public function __construct($code, $value, $line) {
 
 		$this->code = $code;
 		$this->value = $value;
 		$this->line = $line;
-		$this->offset = $offset;
 	}
 
 	/**
@@ -104,15 +95,5 @@ class ExpressionContentToken implements Token {
 	public function getLine() {
 
 		return $this->line;
-	}
-
-	/**
-	 * Returns thr token offset.
-	 *
-	 * @return int The token offset.
-	 */
-	public function getOffset() {
-
-		return $this->offset;
 	}
 }

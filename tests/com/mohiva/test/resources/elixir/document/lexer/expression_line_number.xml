@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root xmlns:test="urn:test">
+
+	{% <!-- A comment --> %}
+
+	<test xmlns:test="urn:test" />
+
+	<tag xmlns:test="urn:test" test:Locale="tag1" />
+
+	<?php echo 'test'; ?>
+
+	<![CDATA[ test ]]>
+
+	{% var %}
+
+	{%
+
+	%}
+
+</root>

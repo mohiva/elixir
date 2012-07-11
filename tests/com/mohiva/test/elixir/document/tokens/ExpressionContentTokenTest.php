@@ -40,17 +40,14 @@ class ExpressionContentTokenTest extends \PHPUnit_Framework_TestCase {
 		$code = mt_rand(1, 30);
 		$value = sha1(microtime(true));
 		$line = mt_rand(1, 100);
-		$offset = mt_rand(1, 100);
 		$token = new ExpressionContentToken(
 			$code,
 			$value,
-			$line,
-			$offset
+			$line
 		);
 
 		$this->assertSame($code, $token->getCode());
 		$this->assertSame($value, $token->getValue());
 		$this->assertSame($line, $token->getLine());
-		$this->assertSame($offset, $token->getOffset());
 	}
 }

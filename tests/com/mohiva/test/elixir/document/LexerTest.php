@@ -637,9 +637,12 @@ class LexerTest extends \PHPUnit_Framework_TestCase {
 		/* @var \com\mohiva\elixir\document\tokens\ExpressionToken $token */
 		$token = $stream->getLookahead(3);
 		$stream = $token->getStream();
-		$token = $stream->getLookahead(0);
+		$actual = $this->buildActualTokens($stream);
+		$expected = array(
+			array(Lexer::T_EXPRESSION_OPEN => '{%')
+		);
 
-		$this->assertSame(Lexer::T_EXPRESSION_OPEN, $token->getCode());
+		$this->assertSame($expected, $actual);
 	}
 
 	/**
@@ -658,9 +661,12 @@ class LexerTest extends \PHPUnit_Framework_TestCase {
 		/* @var \com\mohiva\elixir\document\tokens\ExpressionToken $token */
 		$token = $stream->getLookahead(3);
 		$stream = $token->getStream();
-		$token = $stream->getLookahead(0);
+		$actual = $this->buildActualTokens($stream);
+		$expected = array(
+			array(Lexer::T_EXPRESSION_CLOSE => '%}')
+		);
 
-		$this->assertSame(Lexer::T_EXPRESSION_CLOSE, $token->getCode());
+		$this->assertSame($expected, $actual);
 	}
 
 	/**
@@ -684,23 +690,26 @@ class LexerTest extends \PHPUnit_Framework_TestCase {
 		$stream = $token->getStream();
 		$actual = $this->buildActualTokens($stream);
 		$expected = array(
+			/* Must only recognize the complete element and not the expression in the element */
+			array(Lexer::T_EXPRESSION_ELEMENT => '<tag var="{% \'second token\' %}"/>'),
+
+			/* Must recognize all expressions */
 			array(Lexer::T_EXPRESSION_CHARS => '\' test \''),
 			array(Lexer::T_EXPRESSION_OPEN => '{%'),
-			array(Lexer::T_EXPRESSION_CHARS => ' gum '),
+			array(Lexer::T_EXPRESSION_CHARS => ' first token '),
 			array(Lexer::T_EXPRESSION_CLOSE => '%}'),
-
 			array(Lexer::T_EXPRESSION_CHARS => '\' test \''),
 
-			array(Lexer::T_EXPRESSION_CHARS => '\'{% index %}\''),
+			array(Lexer::T_EXPRESSION_CHARS => '\'{% first token %}\''),
 
-			array(Lexer::T_EXPRESSION_CHARS => '\'test {% index %} test\''),
+			array(Lexer::T_EXPRESSION_CHARS => '\'test {% first token %} test\''),
 
 			array(Lexer::T_EXPRESSION_OPEN => '{%'),
-			array(Lexer::T_EXPRESSION_CHARS => '\'{% index %}\''),
+			array(Lexer::T_EXPRESSION_CHARS => '\'{% first token %}\''),
 			array(Lexer::T_EXPRESSION_CLOSE => '%}'),
 
 			array(Lexer::T_EXPRESSION_OPEN => '{%'),
-			array(Lexer::T_EXPRESSION_CHARS => '\'test  test\''),
+			array(Lexer::T_EXPRESSION_CHARS => '\'first token\''),
 			array(Lexer::T_EXPRESSION_CLOSE => '%}')
 		);
 
@@ -729,7 +738,7 @@ class LexerTest extends \PHPUnit_Framework_TestCase {
 		$actual = $this->buildActualTokens($stream);
 		$expected = array(
 			array(Lexer::T_EXPRESSION_OPEN => '{%'),
-			array(Lexer::T_EXPRESSION_CHARS => '\'test  test\''),
+			array(Lexer::T_EXPRESSION_CHARS => '\'second token\''),
 			array(Lexer::T_EXPRESSION_CLOSE => '%}')
 		);
 
@@ -737,11 +746,11 @@ class LexerTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	/**
-	 * Test if the lexer recognizes that an XML tag inside an expression is escaped.
+	 * Test if the lexer tokenize all possible element types which can be related to an expression.
 	 */
-	public function testExpressionEscapingWithInnerXML() {
+	public function testExpressionTokenization() {
 
-		$xmlFile = Bootstrap::$resourceDir . '/elixir/document/lexer/expression_escaping_with_inner_xml.xml';
+		$xmlFile = Bootstrap::$resourceDir . '/elixir/document/lexer/expression_tokenization.xml';
 
 		$doc = new XMLDocument();
 		$doc->load($xmlFile);
@@ -757,17 +766,12 @@ class LexerTest extends \PHPUnit_Framework_TestCase {
 		$actual = $this->buildActualTokens($stream);
 		$expected = array(
 			array(Lexer::T_EXPRESSION_OPEN => '{%'),
-
-			array(Lexer::T_EXPRESSION_OPEN => '{%'),
-			array(Lexer::T_EXPRESSION_CHARS => '\'<tag xmlns:test="urn:test" test:Locale="tag1"/>\''),
+			array(Lexer::T_EXPRESSION_COMMENT => '<!-- A comment -->'),
 			array(Lexer::T_EXPRESSION_CLOSE => '%}'),
-
-			array(Lexer::T_EXPRESSION_CLOSE => '%}'),
-
-			array(Lexer::T_EXPRESSION_OPEN => '{%'),
-			array(Lexer::T_EXPRESSION_CHARS => ' var '),
-			array(Lexer::T_EXPRESSION_CLOSE => '%}'),
-
+			array(Lexer::T_EXPRESSION_ELEMENT => '<test xmlns:test="urn:test"/>'),
+			array(Lexer::T_EXPRESSION_ELEMENT => '<tag xmlns:test="urn:test" test:Locale="tag1"/>'),
+			array(Lexer::T_EXPRESSION_PI => '<?php echo \'test\'; ?>'),
+			array(Lexer::T_EXPRESSION_CDATA => '<![CDATA[ test ]]>'),
 			array(Lexer::T_EXPRESSION_OPEN => '{%'),
 			array(Lexer::T_EXPRESSION_CHARS => ' var '),
 			array(Lexer::T_EXPRESSION_CLOSE => '%}')
@@ -781,7 +785,7 @@ class LexerTest extends \PHPUnit_Framework_TestCase {
 	 */
 	public function testExpressionLineNumbers() {
 
-		$xmlFile = Bootstrap::$resourceDir . '/elixir/document/lexer/expression_escaping_with_inner_xml.xml';
+		$xmlFile = Bootstrap::$resourceDir . '/elixir/document/lexer/expression_line_number.xml';
 
 		$doc = new XMLDocument();
 		$doc->fixLineNumbers = true;
@@ -797,21 +801,18 @@ class LexerTest extends \PHPUnit_Framework_TestCase {
 		$stream = $token->getStream();
 		$actual = $this->buildActualLineNumbers($stream);
 		$expected = array(
-			array(9 => '{%'),
-
-			array(11 => '{%'),
-			array(11 => '\'<tag xmlns:test="urn:test" test:Locale="tag1"/>\''),
-			array(11 => '%}'),
-
-			array(13 => '%}'),
-
-			array(25 => '{%'),
-			array(25 => ' var '),
-			array(25 => '%}'),
-
-			array(29 => '{%'),
-			array(29 => ' var '),
-			array(29 => '%}')
+			array(4 => '{%'),
+			array(4 => '<!-- A comment -->'),
+			array(4 => '%}'),
+			array(6 => '<test xmlns:test="urn:test"/>'),
+			array(8 => '<tag xmlns:test="urn:test" test:Locale="tag1"/>'),
+			array(10 => '<?php echo \'test\'; ?>'),
+			array(12 => '<![CDATA[ test ]]>'),
+			array(14 => '{%'),
+			array(14 => ' var '),
+			array(14 => '%}'),
+			array(16 => '{%'),
+			array(18 => '%}')
 		);
 
 		$this->assertSame($expected, $actual);
@@ -934,6 +935,8 @@ class LexerTest extends \PHPUnit_Framework_TestCase {
 	/**
 	 * Create an array from the token stream which contains only the tokens and the values.
 	 *
+	 * This method skips all the values which contains only whitespaces.
+	 *
 	 * @param \com\mohiva\common\parser\TokenStream $stream The stream containing the lexer tokens.
 	 * @return array The actual list with tokens and values.
 	 */
@@ -957,6 +960,8 @@ class LexerTest extends \PHPUnit_Framework_TestCase {
 
 	/**
 	 * Create an array from the token stream which contains only the line numbers and the values.
+	 *
+	 * This method skips all the values which contains only whitespaces.
 	 *
 	 * @param \com\mohiva\common\parser\TokenStream $stream The stream containing the lexer tokens.
 	 * @return array The actual list with line numbers and values.

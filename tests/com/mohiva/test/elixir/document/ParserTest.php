@@ -538,6 +538,177 @@ class ParserTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	/**
+	 * Test if the parser throws a `SyntaxErrorException` id a element node was found inside an expression.
+	 */
+	public function testThrowsExceptionOnElementNodeInsideExpression() {
+
+		/* @var \PHPUnit_Framework_MockObject_MockObject $expressionLexer */
+		/* @var \com\mohiva\elixir\document\expression\Lexer $expressionLexer */
+		$expressionLexer = $this->getMock('\com\mohiva\elixir\document\expression\Lexer', array(), array(), '', false);
+		$expressionLexer->expects($this->any())
+			->method('scan')
+			->will($this->returnValue(new TokenStream()));
+
+		/* @var \PHPUnit_Framework_MockObject_MockObject $expressionParser */
+		/* @var \com\mohiva\pyramid\Parser $expressionParser */
+		$expressionParser = $this->getMock('\com\mohiva\pyramid\Parser', array(), array(), '', false);
+		$expressionParser->expects($this->any())
+			->method('parse')
+			->will($this->returnValue($this->getMock('\com\mohiva\pyramid\Node')));
+
+		$doc = new XMLDocument();
+		$doc->load(Bootstrap::$resourceDir . '/elixir/document/parser/expression_element_node.xml');
+
+		$lexer = new DocumentLexer();
+		$stream = $lexer->scan($doc);
+
+		$parser = new DocumentParser($expressionLexer, $expressionParser);
+		try {
+			$parser->parse($stream);
+			$this->fail('SyntaxErrorException expected');
+		} catch (SyntaxErrorException $e) {
+			$this->assertContains('Element nodes', $e->getMessage());
+		}
+	}
+
+	/**
+	 * Test if the parser throws a `SyntaxErrorException` id a comment was found inside an expression.
+	 */
+	public function testThrowsExceptionOnCommentInsideExpression() {
+
+		/* @var \PHPUnit_Framework_MockObject_MockObject $expressionLexer */
+		/* @var \com\mohiva\elixir\document\expression\Lexer $expressionLexer */
+		$expressionLexer = $this->getMock('\com\mohiva\elixir\document\expression\Lexer', array(), array(), '', false);
+		$expressionLexer->expects($this->any())
+			->method('scan')
+			->will($this->returnValue(new TokenStream()));
+
+		/* @var \PHPUnit_Framework_MockObject_MockObject $expressionParser */
+		/* @var \com\mohiva\pyramid\Parser $expressionParser */
+		$expressionParser = $this->getMock('\com\mohiva\pyramid\Parser', array(), array(), '', false);
+		$expressionParser->expects($this->any())
+			->method('parse')
+			->will($this->returnValue($this->getMock('\com\mohiva\pyramid\Node')));
+
+		$doc = new XMLDocument();
+		$doc->load(Bootstrap::$resourceDir . '/elixir/document/parser/expression_comment.xml');
+
+		$lexer = new DocumentLexer();
+		$stream = $lexer->scan($doc);
+
+		$parser = new DocumentParser($expressionLexer, $expressionParser);
+		try {
+			$parser->parse($stream);
+			$this->fail('SyntaxErrorException expected');
+		} catch (SyntaxErrorException $e) {
+			$this->assertContains('Comments', $e->getMessage());
+		}
+	}
+
+	/**
+	 * Test if the parser throws a `SyntaxErrorException` id CDATA was found inside an expression.
+	 */
+	public function testThrowsExceptionOnCdataInsideExpression() {
+
+		/* @var \PHPUnit_Framework_MockObject_MockObject $expressionLexer */
+		/* @var \com\mohiva\elixir\document\expression\Lexer $expressionLexer */
+		$expressionLexer = $this->getMock('\com\mohiva\elixir\document\expression\Lexer', array(), array(), '', false);
+		$expressionLexer->expects($this->any())
+			->method('scan')
+			->will($this->returnValue(new TokenStream()));
+
+		/* @var \PHPUnit_Framework_MockObject_MockObject $expressionParser */
+		/* @var \com\mohiva\pyramid\Parser $expressionParser */
+		$expressionParser = $this->getMock('\com\mohiva\pyramid\Parser', array(), array(), '', false);
+		$expressionParser->expects($this->any())
+			->method('parse')
+			->will($this->returnValue($this->getMock('\com\mohiva\pyramid\Node')));
+
+		$doc = new XMLDocument();
+		$doc->load(Bootstrap::$resourceDir . '/elixir/document/parser/expression_cdata.xml');
+
+		$lexer = new DocumentLexer();
+		$stream = $lexer->scan($doc);
+
+		$parser = new DocumentParser($expressionLexer, $expressionParser);
+		try {
+			$parser->parse($stream);
+			$this->fail('SyntaxErrorException expected');
+		} catch (SyntaxErrorException $e) {
+			$this->assertContains('CDATA', $e->getMessage());
+		}
+	}
+
+	/**
+	 * Test if the parser throws a `SyntaxErrorException` a processing instruction was found inside an expression.
+	 */
+	public function testThrowsExceptionOnProcessingInstructionInsideExpression() {
+
+		/* @var \PHPUnit_Framework_MockObject_MockObject $expressionLexer */
+		/* @var \com\mohiva\elixir\document\expression\Lexer $expressionLexer */
+		$expressionLexer = $this->getMock('\com\mohiva\elixir\document\expression\Lexer', array(), array(), '', false);
+		$expressionLexer->expects($this->any())
+			->method('scan')
+			->will($this->returnValue(new TokenStream()));
+
+		/* @var \PHPUnit_Framework_MockObject_MockObject $expressionParser */
+		/* @var \com\mohiva\pyramid\Parser $expressionParser */
+		$expressionParser = $this->getMock('\com\mohiva\pyramid\Parser', array(), array(), '', false);
+		$expressionParser->expects($this->any())
+			->method('parse')
+			->will($this->returnValue($this->getMock('\com\mohiva\pyramid\Node')));
+
+		$doc = new XMLDocument();
+		$doc->load(Bootstrap::$resourceDir . '/elixir/document/parser/expression_pi.xml');
+
+		$lexer = new DocumentLexer();
+		$stream = $lexer->scan($doc);
+
+		$parser = new DocumentParser($expressionLexer, $expressionParser);
+		try {
+			$parser->parse($stream);
+			$this->fail('SyntaxErrorException expected');
+		} catch (SyntaxErrorException $e) {
+			$this->assertContains('Processing instructions', $e->getMessage());
+		}
+	}
+
+	/**
+	 * Test if the parser sets the line number for a caught `SyntaxErrorException` which was thrown by the
+	 * Mohiva Pyramid library.
+	 */
+	public function testParserSetsLineNumberForCaughtExceptionFromMohivaPyramid() {
+
+		/* @var \PHPUnit_Framework_MockObject_MockObject $expressionLexer */
+		/* @var \com\mohiva\elixir\document\expression\Lexer $expressionLexer */
+		$expressionLexer = $this->getMock('\com\mohiva\elixir\document\expression\Lexer', array(), array(), '', false);
+		$expressionLexer->expects($this->any())
+			->method('scan')
+			->will($this->returnValue(new TokenStream()));
+
+		/* @var \PHPUnit_Framework_MockObject_MockObject $expressionParser */
+		/* @var \com\mohiva\pyramid\Parser $expressionParser */
+		$expressionParser = $this->getMock('\com\mohiva\pyramid\Parser', array(), array(), '', false);
+		$expressionParser->expects($this->any())
+			->method('parse')
+			->will($this->throwException(new SyntaxErrorException()));
+
+		$doc = new XMLDocument();
+		$doc->loadXML('<root>{% %}</root>');
+
+		$lexer = new DocumentLexer();
+		$stream = $lexer->scan($doc);
+
+		$parser = new DocumentParser($expressionLexer, $expressionParser);
+		try {
+			$parser->parse($stream);
+			$this->fail('SyntaxErrorException expected');
+		} catch (SyntaxErrorException $e) {
+			$this->assertNotNull($e->getLineNo());
+		}
+	}
+
+	/**
 	 * Test if can load helpers from a registered URL namespace.
 	 */
 	public function testRegisterNamespaceWithLeadingAndTrailingSlashes() {

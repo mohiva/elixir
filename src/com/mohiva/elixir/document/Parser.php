@@ -327,10 +327,8 @@ class Parser {
 			try {
 				$node = $this->expressionParser->parse($this->expressionLexer->scan($content));
 			} catch (SyntaxErrorException $e) {
-				$message = 'An syntax error occurred during expression parsing';
-				$exception = new SyntaxErrorException($message, 0, $e);
-				$exception->setLineNo($opener->getLine());
-				throw $exception;
+				$e->setLineNo($opener->getLine());
+				throw $e;
 			}
 
 			$path = $token->getPath() . '{% ' . $number++ . ' %}';
@@ -401,12 +399,31 @@ class Parser {
 	 *
 	 * @param TokenStream $stream The token stream.
 	 * @return string The expression.
+	 * @throws SyntaxErrorException if an unexpected token was found inside the expression.
 	 */
 	private function getExpressionContent(TokenStream $stream) {
 
 		$expression = '';
 		while ($stream->valid()) {
-			if ($stream->current()->getCode() != Lexer::T_EXPRESSION_CHARS) {
+			/* @var ExpressionContentToken $token */
+			$token = $stream->current();
+			$message = false;
+			if ($token->getCode() == Lexer::T_EXPRESSION_ELEMENT) {
+				$message = 'Element nodes are not allowed in the content of an expression; ';
+			} else if ($token->getCode() == Lexer::T_EXPRESSION_COMMENT) {
+				$message = 'Comments are not allowed in the content of an expression; ';
+			} else if ($token->getCode() == Lexer::T_EXPRESSION_CDATA) {
+				$message = 'CDATA is not allowed in the content of an expression; ';
+			} else if ($token->getCode() == Lexer::T_EXPRESSION_PI) {
+				$message = 'Processing instructions are not allowed in the content of an expression; ';
+			}
+
+			if ($message) {
+				$message .= 'found: ' . $token->getValue();
+				$exception = new SyntaxErrorException($message);
+				$exception->setLineNo($token->getLine());
+				throw $exception;
+			} else if ($stream->current()->getCode() != Lexer::T_EXPRESSION_CHARS) {
 				break;
 			}
 

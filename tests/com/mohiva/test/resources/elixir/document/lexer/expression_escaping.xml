@@ -1,22 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <root xmlns:test="urn:test">
 
-	<!--
-	This expression should be in the stream of the second expression token.
-	-->
-	<tag var="{% 'test  test' %}" />
+	<tag var="{% 'second token' %}" />
 
-	<!--
-	The following expressions should be available in the stream of the first expression token.
-	-->
-	' test '{% gum %}' test '
+	' test '{% first token %}' test '
 
-	'{% index %}'
+	'{% first token %}'
 
-	'test {% index %} test'
+	'test {% first token %} test'
 
-	{% '{% index %}' %}
+	{% '{% first token %}' %}
 
-	{% 'test  test' %}
+	{% 'first token' %}
 
 </root>
