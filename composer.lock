@@ -4,8 +4,8 @@
         {
             "package": "mohiva/common",
             "version": "dev-master",
-            "source-reference": "93c2235c3ac81f02172b83d04da1fbff5eafe304",
-            "commit-date": "1341860226"
+            "source-reference": "184d37d980da7317d8b5c375f7b08a6e97094b9e",
+            "commit-date": "1342606769"
         },
         {
             "package": "mohiva/manitou",

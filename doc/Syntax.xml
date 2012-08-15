@@ -31,7 +31,7 @@
 
 		<!--
 		The same counts for the raw method. It should always be called as the last method before
-		the is inserted into the template.
+		the value is inserted into the template.
 		-->
 		{% name.raw().toLower() %} <!-- Doesn't work as expected -->
 		{% name.toLower().raw() %} <!-- It works as expected -->

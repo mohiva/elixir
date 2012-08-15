@@ -91,7 +91,7 @@ class ValueContext {
 	/**
 	 * Gets the context based encoding strategy for unsafe values.
 	 *
-	 * @return string The context based encoding strategy for unsafe values is disabled.
+	 * @return string The context based encoding strategy for unsafe values.
 	 */
 	public function getEncodingStrategy() {
 

@@ -58,6 +58,11 @@ abstract class AbstractValue implements Value {
 	 */
 	protected $config = null;
 
+	/**
+	 * The encoding strategy to use for value encoding.
+	 *
+	 * @var string
+	 */
 	protected $encodingStrategy;
 
 	/**
@@ -120,7 +125,7 @@ abstract class AbstractValue implements Value {
 	 */
 	public function encode($strategy) {
 
-
+		$this->context->setEncodingStrategy($strategy);
 
 		return $this;
 	}
