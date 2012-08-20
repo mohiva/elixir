@@ -41,7 +41,7 @@ interface Value {
 	 * Sets the strategy to use to encode this value.
 	 *
 	 * This method doesn't encode the value. It sets only the strategy which should be used
-	 * for encoding when the value is inserted into the template.
+	 * to encode the value when it is inserted into the template.
 	 *
 	 * @param string $strategy The strategy to use for encoding.
 	 * @return Value This instance to provide a fluent interface.
