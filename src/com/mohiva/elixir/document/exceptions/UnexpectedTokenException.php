@@ -10,7 +10,7 @@
  * https://github.com/mohiva/elixir/blob/master/LICENSE.textile
  *
  * @category  Mohiva/Elixir
- * @package   Mohiva/Elixir/Document/Expression
+ * @package   Mohiva/Elixir/Document/Exceptions
  * @author    Christian Kaps <christian.kaps@mohiva.com>
  * @copyright Copyright (c) 2007-2012 Christian Kaps (http://www.mohiva.com)
  * @license   https://github.com/mohiva/elixir/blob/master/LICENSE.textile New BSD License
@@ -24,7 +24,7 @@ use com\mohiva\common\exceptions\MohivaException;
  * Signals that a token is unexpected.
  *
  * @category  Mohiva/Elixir
- * @package   Mohiva/Elixir/Document/Expression
+ * @package   Mohiva/Elixir/Document/Exceptions
  * @author    Christian Kaps <christian.kaps@mohiva.com>
  * @copyright Copyright (c) 2007-2012 Christian Kaps (http://www.mohiva.com)
  * @license   https://github.com/mohiva/elixir/blob/master/LICENSE.textile New BSD License
