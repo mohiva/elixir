@@ -114,9 +114,10 @@ class StringValue extends AbstractValue {
 	 */
 	public function toBool() {
 
-		if ($this->value === 'true') {
+		$lowerValue = strtolower($this->value);
+		if ($lowerValue === 'true') {
 			$value = 'true';
-		} else if ($this->value === 'false') {
+		} else if ($lowerValue === 'false') {
 			$value = 'false';
 		} else {
 			$value = (bool) $this->value;

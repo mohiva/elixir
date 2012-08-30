@@ -45,9 +45,10 @@ class BooleanValue extends AbstractValue {
 	 */
 	public function __construct($value, ValueContext $context, Config $config) {
 
-		if ($value === 'true') {
+		$lowerValue = strtolower($value);
+		if ($lowerValue === 'true') {
 			$value = true;
-		} else if ($value === 'false') {
+		} else if ($lowerValue === 'false') {
 			$value = false;
 		} else if (!is_bool($value)) {
 			throw new UnexpectedValueException('Boolean value expected but ' . gettype($value) . ' value given');

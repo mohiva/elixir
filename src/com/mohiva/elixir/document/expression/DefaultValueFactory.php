@@ -51,9 +51,12 @@ class DefaultValueFactory implements ValueFactory {
 	 */
 	public function getByValue($value, ValueContext $context, Config $config) {
 
-		if (is_null($value) || $value === 'null') {
+		$lowerValue = strtolower($value);
+		if (is_null($value) || $lowerValue === 'null') {
+			// TODO Consider if a null string value from outside should be treated as null
 			return $this->createNullValue($context, $config);
-		} else if ($value === true || $value === false || $value === 'true' || $value === 'false') {
+		} else if ($value === true || $value === false || $lowerValue === 'true' || $lowerValue === 'false') {
+			// TODO Consider if boolean string values from outside should be treated as boolean
 			return $this->createBooleanValue($value, $context, $config);
 		} else if (is_object($value)) {
 			return $this->createObjectValue($value, $context, $config);

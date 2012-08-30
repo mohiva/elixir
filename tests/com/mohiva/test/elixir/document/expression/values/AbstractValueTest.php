@@ -68,6 +68,122 @@ abstract class AbstractValueTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	/**
+	 * Test if the `whenNull` method returns the current value object when it isn't null.
+	 */
+	public function testWhenNullReturnsCurrentValue() {
+
+		/* @var \com\mohiva\elixir\document\expression\values\AbstractValue $givenValue */
+		$givenValue = Phake::mock('\com\mohiva\elixir\document\expression\values\AbstractValue');
+
+		/* @var \com\mohiva\elixir\document\expression\values\AbstractValue $currentValue */
+		$currentValue = $this->getMockForAbstractClass('\com\mohiva\elixir\document\expression\values\AbstractValue',
+			['a string', $this->valueContext, $this->config]
+		);
+
+		$this->assertSame($currentValue, $currentValue->whenNull($givenValue));
+	}
+
+	/**
+	 * Test if the `whenNull` method returns the current value object when it is null.
+	 */
+	public function testWhenNullReturnsGivenValue() {
+
+		/* @var \com\mohiva\elixir\document\expression\values\AbstractValue $givenValue */
+		$givenValue = Phake::mock('\com\mohiva\elixir\document\expression\values\AbstractValue');
+
+		/* @var \com\mohiva\elixir\document\expression\values\AbstractValue $currentValue */
+		$currentValue = $this->getMockForAbstractClass('\com\mohiva\elixir\document\expression\values\AbstractValue',
+			[null, $this->valueContext, $this->config]
+		);
+
+		$this->assertSame($givenValue, $currentValue->whenNull($givenValue));
+	}
+
+	/**
+	 * Test if the `whenEmpty` method returns the current value object when it isn't empty.
+	 */
+	public function testWhenEmptyReturnsCurrentValue() {
+
+		/* @var \com\mohiva\elixir\document\expression\values\AbstractValue $givenValue */
+		$givenValue = Phake::mock('\com\mohiva\elixir\document\expression\values\AbstractValue');
+
+		/* @var \com\mohiva\elixir\document\expression\values\AbstractValue $currentValue */
+		$currentValue = $this->getMockForAbstractClass('\com\mohiva\elixir\document\expression\values\AbstractValue',
+			['a string', $this->valueContext, $this->config]
+		);
+
+		$this->assertSame($currentValue, $currentValue->whenEmpty($givenValue));
+	}
+
+	/**
+	 * Test if the `whenEmpty` method returns the current value object when it is empty.
+	 */
+	public function testWhenEmptyReturnsGivenValue() {
+
+		/* @var \com\mohiva\elixir\document\expression\values\AbstractValue $givenValue */
+		$givenValue = Phake::mock('\com\mohiva\elixir\document\expression\values\AbstractValue');
+
+		/* @var \com\mohiva\elixir\document\expression\values\AbstractValue $currentValue */
+		$currentValue = $this->getMockForAbstractClass('\com\mohiva\elixir\document\expression\values\AbstractValue',
+			['', $this->valueContext, $this->config]
+		);
+
+		$this->assertSame($givenValue, $currentValue->whenEmpty($givenValue));
+	}
+
+	/**
+	 * Test if the `isNull` method returns `true` if the value is `null`.
+	 */
+	public function testIsNullReturnsTrueIfValueIsNull() {
+
+		/* @var \com\mohiva\elixir\document\expression\values\AbstractValue $value */
+		$value = $this->getMockForAbstractClass('\com\mohiva\elixir\document\expression\values\AbstractValue',
+			[null, $this->valueContext, $this->config]
+		);
+
+		$this->assertTrue($value->isNull());
+	}
+
+	/**
+	 * Test if the `isNull` method returns `false` if the value is not `null`.
+	 */
+	public function testIsNullReturnsFalseIfValueIsNotNull() {
+
+		/* @var \com\mohiva\elixir\document\expression\values\AbstractValue $value */
+		$value = $this->getMockForAbstractClass('\com\mohiva\elixir\document\expression\values\AbstractValue',
+			['not null', $this->valueContext, $this->config]
+		);
+
+		$this->assertFalse($value->isNull());
+	}
+
+	/**
+	 * Test if the `isEmpty` method returns `true` if the value is empty.
+	 */
+	public function testIsEmptyReturnsTrueIfValueIsNull() {
+
+		/* @var \com\mohiva\elixir\document\expression\values\AbstractValue $value */
+		$value = $this->getMockForAbstractClass('\com\mohiva\elixir\document\expression\values\AbstractValue',
+			['', $this->valueContext, $this->config]
+		);
+
+		$this->assertTrue($value->isEmpty());
+	}
+
+	/**
+	 * Test if the `isEmpty` method returns `false` if the value is not empty.
+	 */
+	public function testIsEmptyReturnsFalseIfValueIsNotNull() {
+
+		/* @var \com\mohiva\elixir\document\expression\values\AbstractValue $value */
+		$value = $this->getMockForAbstractClass('\com\mohiva\elixir\document\expression\values\AbstractValue',
+			['not empty', $this->valueContext, $this->config]
+		);
+
+		$this->assertFalse($value->isEmpty());
+	}
+
+	/**
 	 * Gets a mock of the encoder factory.
 	 *
 	 * @return EncoderFactory A mock of the encoder factory.
@@ -79,15 +195,19 @@ abstract class AbstractValueTest extends \PHPUnit_Framework_TestCase {
 		$encoderFactory = Phake::mock('\com\mohiva\elixir\document\expression\EncoderFactory');
 
 		/** @noinspection PhpUndefinedMethodInspection */
+		/** @noinspection PhpParamsInspection */
 		Phake::when($rawEncoder)->encode(Phake::anyParameters())->thenReturn(self::STRATEGY_RAW);
 
 		/** @noinspection PhpUndefinedMethodInspection */
+		/** @noinspection PhpParamsInspection */
 		Phake::when($customEncoder)->encode(Phake::anyParameters())->thenReturn(self::STRATEGY_CUSTOM);
 
 		/** @noinspection PhpUndefinedMethodInspection */
+		/** @noinspection PhpParamsInspection */
 		Phake::when($encoderFactory)->getEncoder(self::STRATEGY_RAW)->thenReturn($rawEncoder);
 
 		/** @noinspection PhpUndefinedMethodInspection */
+		/** @noinspection PhpParamsInspection */
 		Phake::when($encoderFactory)->getEncoder(self::STRATEGY_CUSTOM)->thenReturn($customEncoder);
 
 		return $encoderFactory;

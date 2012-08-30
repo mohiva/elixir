@@ -22,7 +22,6 @@ use com\mohiva\elixir\Config;
 use com\mohiva\elixir\document\expression\EncoderFactory;
 use com\mohiva\elixir\document\expression\ValueContext;
 use com\mohiva\elixir\document\expression\DefaultEncoderFactory;
-use com\mohiva\elixir\document\expression\DefaultValueFactory;
 use com\mohiva\elixir\document\expression\values\BooleanValue;
 use com\mohiva\common\exceptions\UnexpectedValueException;
 
@@ -188,7 +187,7 @@ class BooleanValueTest extends AbstractValueTest {
 	/**
 	 * Test if the `toObject` method throws an `InvalidCastException`.
 	 *
-	 * @expectedException com\mohiva\elixir\document\exceptions\InvalidCastException
+	 * @expectedException \com\mohiva\elixir\document\exceptions\InvalidCastException
 	 */
 	public function testToObjectThrowsException() {
 
@@ -199,7 +198,7 @@ class BooleanValueTest extends AbstractValueTest {
 	/**
 	 * Test if the `toArray` method throws an `InvalidCastException`.
 	 *
-	 * @expectedException com\mohiva\elixir\document\exceptions\InvalidCastException
+	 * @expectedException \com\mohiva\elixir\document\exceptions\InvalidCastException
 	 */
 	public function testToArrayThrowsException() {
 

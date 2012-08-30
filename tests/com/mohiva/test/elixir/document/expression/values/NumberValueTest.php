@@ -21,7 +21,6 @@ namespace com\mohiva\test\elixir\document\expression\values;
 use com\mohiva\elixir\Config;
 use com\mohiva\elixir\document\expression\EncoderFactory;
 use com\mohiva\elixir\document\expression\ValueContext;
-use com\mohiva\elixir\document\expression\DefaultValueFactory;
 use com\mohiva\elixir\document\expression\values\NumberValue;
 use com\mohiva\common\exceptions\UnexpectedValueException;
 
@@ -163,7 +162,7 @@ class NumberValueTest extends AbstractValueTest {
 	/**
 	 * Test if the `toObject` method throws an `InvalidCastException`.
 	 *
-	 * @expectedException com\mohiva\elixir\document\exceptions\InvalidCastException
+	 * @expectedException \com\mohiva\elixir\document\exceptions\InvalidCastException
 	 */
 	public function testToObjectThrowsException() {
 
@@ -174,7 +173,7 @@ class NumberValueTest extends AbstractValueTest {
 	/**
 	 * Test if the `toArray` method throws an `InvalidCastException`.
 	 *
-	 * @expectedException com\mohiva\elixir\document\exceptions\InvalidCastException
+	 * @expectedException \com\mohiva\elixir\document\exceptions\InvalidCastException
 	 */
 	public function testToArrayThrowsException() {
 

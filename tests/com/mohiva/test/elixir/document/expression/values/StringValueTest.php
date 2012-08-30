@@ -22,7 +22,6 @@ use com\mohiva\elixir\Config;
 use com\mohiva\elixir\document\expression\DefaultEncoderFactory;
 use com\mohiva\elixir\document\expression\EncoderFactory;
 use com\mohiva\elixir\document\expression\ValueContext;
-use com\mohiva\elixir\document\expression\DefaultValueFactory;
 use com\mohiva\elixir\document\expression\values\StringValue;
 
 /**
@@ -184,7 +183,7 @@ class StringValueTest extends AbstractValueTest {
 	/**
 	 * Test if the `toObject` method throws an `InvalidCastException`.
 	 *
-	 * @expectedException com\mohiva\elixir\document\exceptions\InvalidCastException
+	 * @expectedException \com\mohiva\elixir\document\exceptions\InvalidCastException
 	 */
 	public function testToObjectThrowsException() {
 
@@ -195,7 +194,7 @@ class StringValueTest extends AbstractValueTest {
 	/**
 	 * Test if the `toArray` method throws an `InvalidCastException`.
 	 *
-	 * @expectedException com\mohiva\elixir\document\exceptions\InvalidCastException
+	 * @expectedException \com\mohiva\elixir\document\exceptions\InvalidCastException
 	 */
 	public function testToArrayThrowsException() {
 
@@ -216,7 +215,7 @@ class StringValueTest extends AbstractValueTest {
 	/**
 	 * Test if the `toNumber` method throws an `InvalidCastException` if the string isn't numeric.
 	 *
-	 * @expectedException com\mohiva\elixir\document\exceptions\InvalidCastException
+	 * @expectedException \com\mohiva\elixir\document\exceptions\InvalidCastException
 	 */
 	public function testToNumberThrowsException() {
 

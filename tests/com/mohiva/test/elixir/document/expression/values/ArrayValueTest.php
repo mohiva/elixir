@@ -208,7 +208,7 @@ class ArrayValueTest extends AbstractValueTest {
 	/**
 	 * Test if the `toString` method throws an `InvalidCastException`.
 	 *
-	 * @expectedException com\mohiva\elixir\document\exceptions\InvalidCastException
+	 * @expectedException \com\mohiva\elixir\document\exceptions\InvalidCastException
 	 */
 	public function testToStringThrowsException() {
 
@@ -219,7 +219,7 @@ class ArrayValueTest extends AbstractValueTest {
 	/**
 	 * Test if the `toNumber` method throws an `InvalidCastException`.
 	 *
-	 * @expectedException com\mohiva\elixir\document\exceptions\InvalidCastException
+	 * @expectedException \com\mohiva\elixir\document\exceptions\InvalidCastException
 	 */
 	public function testToNumberThrowsException() {
 
@@ -230,7 +230,7 @@ class ArrayValueTest extends AbstractValueTest {
 	/**
 	 * Test if the `toBool` method throws an `InvalidCastException`.
 	 *
-	 * @expectedException com\mohiva\elixir\document\exceptions\InvalidCastException
+	 * @expectedException \com\mohiva\elixir\document\exceptions\InvalidCastException
 	 */
 	public function testToBoolThrowsException() {
 

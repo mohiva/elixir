@@ -23,7 +23,6 @@ use com\mohiva\common\exceptions\UnexpectedValueException;
 use com\mohiva\elixir\document\expression\EncoderFactory;
 use com\mohiva\elixir\document\expression\ValueContext;
 use com\mohiva\elixir\document\expression\DefaultEncoderFactory;
-use com\mohiva\elixir\document\expression\DefaultValueFactory;
 use com\mohiva\elixir\document\expression\values\NullValue;
 
 /**
@@ -145,7 +144,7 @@ class NullValueTest extends AbstractValueTest {
 	/**
 	 * Test if the `toObject` method throws an `InvalidCastException`.
 	 *
-	 * @expectedException com\mohiva\elixir\document\exceptions\InvalidCastException
+	 * @expectedException \com\mohiva\elixir\document\exceptions\InvalidCastException
 	 */
 	public function testToObjectThrowsException() {
 
@@ -156,7 +155,7 @@ class NullValueTest extends AbstractValueTest {
 	/**
 	 * Test if the `toArray` method throws an `InvalidCastException`.
 	 *
-	 * @expectedException com\mohiva\elixir\document\exceptions\InvalidCastException
+	 * @expectedException \com\mohiva\elixir\document\exceptions\InvalidCastException
 	 */
 	public function testToArrayThrowsException() {
 
@@ -167,7 +166,7 @@ class NullValueTest extends AbstractValueTest {
 	/**
 	 * Test if the `toString` method throws an `InvalidCastException`.
 	 *
-	 * @expectedException com\mohiva\elixir\document\exceptions\InvalidCastException
+	 * @expectedException \com\mohiva\elixir\document\exceptions\InvalidCastException
 	 */
 	public function testToStringThrowsException() {
 
@@ -178,7 +177,7 @@ class NullValueTest extends AbstractValueTest {
 	/**
 	 * Test if the `toNumber` method throws an `InvalidCastException`.
 	 *
-	 * @expectedException com\mohiva\elixir\document\exceptions\InvalidCastException
+	 * @expectedException \com\mohiva\elixir\document\exceptions\InvalidCastException
 	 */
 	public function testToNumberThrowsException() {
 
@@ -189,7 +188,7 @@ class NullValueTest extends AbstractValueTest {
 	/**
 	 * Test if the `toBool` method throws an `InvalidCastException`.
 	 *
-	 * @expectedException com\mohiva\elixir\document\exceptions\InvalidCastException
+	 * @expectedException \com\mohiva\elixir\document\exceptions\InvalidCastException
 	 */
 	public function testToBoolThrowsException() {
 
