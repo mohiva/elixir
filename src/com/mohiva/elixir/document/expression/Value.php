@@ -18,6 +18,8 @@
  */
 namespace com\mohiva\elixir\document\expression;
 
+use com\mohiva\elixir\document\exceptions\InvalidCastException;
+
 /**
  * Interface for the expression value objects.
  *
@@ -84,8 +86,7 @@ interface Value {
 	 * Casts the value to an object value.
 	 *
 	 * @return values\ObjectValue The value as object value.
-	 * @throws \com\mohiva\elixir\document\exceptions\InvalidCastException if the value can't be
-	 * casted to `ObjectValue`.
+	 * @throws InvalidCastException if the value can't be casted to `ObjectValue`.
 	 */
 	public function toObject();
 
@@ -93,8 +94,7 @@ interface Value {
 	 * Casts the value to an array value.
 	 *
 	 * @return values\ArrayValue The value as array value.
-	 * @throws \com\mohiva\elixir\document\exceptions\InvalidCastException if the value can't be
-	 * casted to `ArrayValue`.
+	 * @throws InvalidCastException if the value can't be casted to `ArrayValue`.
 	 */
 	public function toArray();
 
@@ -102,8 +102,7 @@ interface Value {
 	 * Casts the value to a string value.
 	 *
 	 * @return values\StringValue The value as string value.
-	 * @throws \com\mohiva\elixir\document\exceptions\InvalidCastException if the value can't be
-	 * casted to `StringValue`.
+	 * @throws InvalidCastException if the value can't be casted to `StringValue`.
 	 */
 	public function toString();
 
@@ -111,8 +110,7 @@ interface Value {
 	 * Casts the value to a number value.
 	 *
 	 * @return values\NumberValue The value as number value.
-	 * @throws \com\mohiva\elixir\document\exceptions\InvalidCastException if the value can't be
-	 * casted to `NumberValue`.
+	 * @throws InvalidCastException if the value can't be casted to `NumberValue`.
 	 */
 	public function toNumber();
 
@@ -120,8 +118,7 @@ interface Value {
 	 * Casts the value to an boolean value.
 	 *
 	 * @return values\BooleanValue The value as boolean value.
-	 * @throws \com\mohiva\elixir\document\exceptions\InvalidCastException if the value can't be
-	 * casted to `BooleanValue`.
+	 * @throws InvalidCastException if the value can't be casted to `BooleanValue`.
 	 */
 	public function toBool();
 }
