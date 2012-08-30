@@ -18,6 +18,9 @@
  */
 namespace com\mohiva\elixir;
 
+use com\mohiva\elixir\document\expression\EncoderFactory;
+use com\mohiva\elixir\document\expression\ValueFactory;
+
 /**
  * Config object for an elixir document.
  *
@@ -46,20 +49,27 @@ class Config {
 
 	/**
 	 * The encoder factory which creates the instances of the encoder objects based
-	 * on the given encoding strategy.
+	 * on the given escaping strategy.
 	 *
 	 * @var EncoderFactory
 	 */
 	private $encoderFactory = null;
 
 	/**
-	 * The global encoding strategy for unsafe values.
+	 * The global escaping strategy for unsafe values.
 	 *
-	 * If set to null then auto encoding for unsafe values is disabled.
+	 * If set to null then auto escaping for unsafe values is disabled.
 	 *
 	 * @var string
 	 */
-	private $encodingStrategy = null;
+	private $escapingStrategy = null;
+
+	/**
+	 * Indicates if the strict mode is enabled or not.
+	 *
+	 * @var bool
+	 */
+	private $strictMode = false;
 
 	/**
 	 * Sets the charset of the document.
@@ -86,7 +96,7 @@ class Config {
 	 *
 	 * @param ValueFactory $valueFactory The value factory.
 	 */
-	public function setValueFactory($valueFactory) {
+	public function setValueFactory(ValueFactory $valueFactory) {
 
 		$this->valueFactory = $valueFactory;
 	}
@@ -106,7 +116,7 @@ class Config {
 	 *
 	 * @param EncoderFactory $encoderFactory The encoder factory.
 	 */
-	public function setEncoderFactory($encoderFactory) {
+	public function setEncoderFactory(EncoderFactory $encoderFactory) {
 
 		$this->encoderFactory = $encoderFactory;
 	}
@@ -122,22 +132,42 @@ class Config {
 	}
 
 	/**
-	 * Sets the global encoding strategy for unsafe values.
+	 * Sets the global escaping strategy for unsafe values.
 	 *
-	 * @param string $strategy The global encoding strategy or null to deactivate auto encoding for unsafe values.
+	 * @param string $strategy The global escaping strategy or null to deactivate auto escaping for unsafe values.
 	 */
-	public function setEncodingStrategy($strategy) {
+	public function setEscapingStrategy($strategy) {
 
-		$this->encodingStrategy = $strategy;
+		$this->escapingStrategy = $strategy;
 	}
 
 	/**
-	 * Gets the global encoding strategy for unsafe values.
+	 * Gets the global escaping strategy for unsafe values.
 	 *
-	 * @return string The global encoding strategy or null if the auto encoding for unsafe values is disabled.
+	 * @return string The global escaping strategy or null if the auto escaping for unsafe values is disabled.
 	 */
-	public function getEncodingStrategy() {
+	public function getEscapingStrategy() {
 
-		return $this->encodingStrategy;
+		return $this->escapingStrategy;
+	}
+
+	/**
+	 * Sets if the strict mode should be enabled or not.
+	 *
+	 * @param boolean $strictMode True if the strict mode should be enabled, false otherwise.
+	 */
+	public function setStrictMode($strictMode) {
+
+		$this->strictMode = $strictMode;
+	}
+
+	/**
+	 * Indicates if the strict mode is enabled or not.
+	 *
+	 * @return boolean True if the strict mode is enabled, false otherwise.
+	 */
+	public function isStrictMode() {
+
+		return $this->strictMode;
 	}
 }

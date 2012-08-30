@@ -10,19 +10,19 @@
  * https://github.com/mohiva/elixir/blob/master/LICENSE.textile
  *
  * @category  Mohiva/Elixir
- * @package   Mohiva/Elixir
+ * @package   Mohiva/Elixir/Document/Expression
  * @author    Christian Kaps <christian.kaps@mohiva.com>
  * @copyright Copyright (c) 2007-2012 Christian Kaps (http://www.mohiva.com)
  * @license   https://github.com/mohiva/elixir/blob/master/LICENSE.textile New BSD License
  * @link      https://github.com/mohiva/elixir
  */
-namespace com\mohiva\elixir;
+namespace com\mohiva\elixir\document\expression;
 
 /**
  * Stores context based information about a value.
  *
  * @category  Mohiva/Elixir
- * @package   Mohiva/Elixir
+ * @package   Mohiva/Elixir/Document/Expression
  * @author    Christian Kaps <christian.kaps@mohiva.com>
  * @copyright Copyright (c) 2007-2012 Christian Kaps (http://www.mohiva.com)
  * @license   https://github.com/mohiva/elixir/blob/master/LICENSE.textile New BSD License
@@ -31,14 +31,14 @@ namespace com\mohiva\elixir;
 class ValueContext {
 
 	/**
-	 * Indicates that the value is defined in document. This value needn't be encoded.
+	 * Indicates that a value is defined in a document. This type of values needn't be escaped.
 	 *
 	 * @var int
 	 */
 	const DOC = 1;
 
 	/**
-	 * Indicates that the value comes from outside the document. This value should be encoded.
+	 * Indicates that a value comes from outside the document. This type of values should be escaped.
 	 *
 	 * @var int
 	 */
@@ -47,16 +47,18 @@ class ValueContext {
 	/**
 	 * The context in which the variable is defined.
 	 *
+	 * This is defined as unsafe by default.
+	 *
 	 * @var int
 	 */
 	private $context = self::USER;
 
 	/**
-	 * The context based encoding strategy for unsafe values.
+	 * The context based escaping strategy for unsafe values.
 	 *
 	 * @var string
 	 */
-	private $encodingStrategy = null;
+	private $escapingStrategy = null;
 
 	/**
 	 * Sets the context in which the variable is defined.
@@ -79,22 +81,22 @@ class ValueContext {
 	}
 
 	/**
-	 * Sets the context based encoding strategy for unsafe values.
+	 * Sets the context based escaping strategy for unsafe values.
 	 *
-	 * @param string $strategy The context based encoding strategy for unsafe values.
+	 * @param string $strategy The context based escaping strategy for unsafe values.
 	 */
-	public function setEncodingStrategy($strategy) {
+	public function setEscapingStrategy($strategy) {
 
-		$this->encodingStrategy = $strategy;
+		$this->escapingStrategy = $strategy;
 	}
 
 	/**
-	 * Gets the context based encoding strategy for unsafe values.
+	 * Gets the context based escaping strategy for unsafe values.
 	 *
-	 * @return string The context based encoding strategy for unsafe values.
+	 * @return string The context based escaping strategy for unsafe values.
 	 */
-	public function getEncodingStrategy() {
+	public function getEscapingStrategy() {
 
-		return $this->encodingStrategy;
+		return $this->escapingStrategy;
 	}
 }

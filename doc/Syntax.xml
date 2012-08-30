@@ -9,9 +9,9 @@
 
 	</ex:Raw>
 
-	<!--% A Elixir comment, it should be removed %-->
+	<!--% An Elixir comment, it should be removed %-->
 
-	<!-- A normal comment, it should be preserved -->
+	<!-- A normal XML comment, it should be preserved -->
 
 	<ex:Set name="var1"><inner /></ex:Set>
 	<ex:Set name="var2" value="{% [(3 * index.toNumber()) => 1, 2, (3 * 4 + (1 + 2))] %}" />
@@ -20,56 +20,198 @@
 	<ex:For var="user" in="{% users %}">
 		<ex:Set name="name" value="{% user.name.whenNull('Default value') ?: 'Jon Doe' %}" />
 
-		<!--
-		Encoding will be ignored here, because the encode() method doesn't manipulate the value directly.
-		It defines only the encoding strategy which will be used when the value is inserted into the template.
-		And in this example the value will not directly be inserted into template, because the toLower() method
-		returns a new Value object. Also note: the encode method should only be called as the last method.
-		 -->
-		{% name.encode('html').toLower() %} <!-- Doesn't work as expected -->
-		{% name.toLower().encode('html') %} <!-- It works as expected -->
+		<!-- Escaping(aka Output Encoding)
+		================================================================================================================
+		Escaping describes the technique to ensure that characters which come from an unsafe context,
+		are treated as safe for inclusion into an Elixir document. While dealing with multiple output
+		formats in Elixir, it is possible to define different escaping strategies depending on the
+		document context. A list of all bundled strategies can be found under the point: [Escaping Strategies]
 
-		<!--
-		The same counts for the raw method. It should always be called as the last method before
-		the value is inserted into the template.
+		The next section gives you an overview about the different ways on how escaping works in an Elixir document.
+		In this section we talk about safe and unsafe values. For a description about this type of values, please look
+		into the [appropriate section].
+
+		Global escaping(aka Automatic escaping):
+		================
+		If enabled, all values which are not safe be default are escaped with the defined escaping strategy.
+		If no global escaping strategy is set then it uses the RAW strategy by default.
+
+		Block escaping
+		==============
+		With this method it is possible to enable escaping for a section of a document.
 		-->
-		{% name.raw().toLower() %} <!-- Doesn't work as expected -->
-		{% name.toLower().raw() %} <!-- It works as expected -->
-
-		<!-- Encodes all unsafe values in a block -->
-		<ex:Encode strategy="html">
-			{% name.encode('html') %}     <!-- Encoded as html -->
-			{% tag.encode('xml') %}       <!-- Encoded as xml -->
-			{% name %}                    <!-- Encoded as html -->
-			{% name.raw() %}              <!-- Not encoded because it is marked as safe -->
-		</ex:Encode>
-
-		<!-- Calling encode() without an strategy uses the global encoding strategy -->
-		{% name.encode() %}
-
-		<!-- Calling encode()  -->
-
-
+		<ex:Escape strategy="html">
+			Escapes all unsafe values in this block using the HTML strategy
+		</ex:Escape>
 
 		<!--
-		Safe values:
-		============
-		- All values which are defined directly in the template are automatically save and they will never be
-		  encoded automatically. This doesn't mean that it isn't possible to encode such values. If you call
-		  the encode() method on a safe value, it is also possible to encode it.
-		- Values which are marked as raw.
+		Expression escaping
+		===================
+		With this method you can escape the complete content of an expression.
 		-->
-		{% 1 %}
+		{%:html 'Escapes all unsafe values in this expression using the HTML strategy' %}
+
+		<!--
+		Value escaping
+		==============
+		As the title says, with this method you can escape only a single value in an expression.
+		-->
+		{% 'Escapes only this value using the HTML strategy':html %}
+		<!--
+		Different strategies can also be mixed inside an expression.
+		-->
+		{% 'Escapes using the HTML strategy':html _ 'Escapes using the JS strategy':js %}
+
+		<!--
+		Escaping rules
+		==============
+		Needless to say, it is possible to mix all of these different methods. For such scenario their exist
+		the following simple rule: The inner overwrites the outer strategy.
+		-->
+		<ex:Escape strategy="html"> <!-- Overwrites the global rule -->
+			{%:html name %}     <!-- Escaped as html -->
+			{%:xml tag %}       <!-- Escaped as xml -->
+			{% name %}          <!-- Escaped as html -->
+			{%:raw name %}      <!-- Not escaped, because it is marked as safe -->
+			{%:raw name:js %}   <!-- Escape as js -->
+		</ex:Escape>
+
+		<!--
+		Escaping strategies
+		===================
+		The following escaping strategies are bundled with elixir:
+		raw: Treats the values as it is
+		html: Makes the value HTML save
+		xml: Makes the value XML save
+		-->
+
+		<!--
+		Safe values
+		===========
+		- All values which are defined directly in the document are automatically save and they will never be
+		  escaped automatically. This doesn't mean that it isn't possible to escape such values. If you define
+		  a escaping strategy for a safe value, it is also possible to escape it. See the section [Escaping save values]
+		  fore more details.
+		-->
+		{% 'Lucky Luke' %}
 		{%
 			name = 'Lucky Luke'
 			name.toLower()
 		%}
-		{% var[1].raw() %}
+
+		<!--
+		- All number values, regardless if it's defined in the document or it comes from user input.
+		-->
+		{% 1 %}
+		{% 1.1 %}
+		{% val %} <!-- If val is a numeric value -->
+
+		<!--
+		- All boolean values, regardless if it's defined in the document or it comes from user input.
+		-->
+		{% true %}
+		{% false %}
+		{% val %} <!-- If val is a boolean value -->
+
+		<!--
+		- All null values, regardless if it's defined in the document or it comes from user input.
+		-->
+		{% null %}
+		{% val %} <!-- If val is a null value -->
+
+		<!--
+		- Blocks which are marked as raw
+		-->
+		<ex:Escape strategy="raw">
+			{% name %}
+		</ex:Escape>
+
+		<!--
+		- Expressions which are marked as raw
+		-->
+		{%:raw name %}
+
+		<!--
+		- Values which are marked as raw
+		-->
+		{% name:raw _ ' is crazy' %}
 
 		<!--
 		Unsafe values:
 		==============
+		- All values which comes from outside the document and which not safe by default.
+		-->
+		{% name %}
 
+		<!--
+		Escaping save values
+		====================
+		For the sake of consistency it is possible to escape a value which is safe by default. But this works only
+		for manually escaping. Auto escaping doesn't work for safe values by design.
+
+		Escapes a save value inside a block:
+		-->
+		<ex:Escape strategy="html">
+			'Lucky Luke'
+		</ex:Escape>
+
+		<!--
+		Escapes save values inside an expression:
+		-->
+		{%:html 'Lucky Luke' _ ' is crazy' %}
+
+		<!--
+		Escapes a save value inside an expression:
+		-->
+		{% 'Lucky Luke':html %}
+
+		<!-- Document Escaping
+		================================================================================================================
+		Sometimes it is necessary to tell Elixir that it should ignore parts which would otherwise be handled as Elixir
+		syntax. For example if you will try to output an expression block, you can use single or double quotes to escape
+		this syntax.
+		-->
+		{% '{% 'Lucky Luke' %}' %}
+		{% "{% 'Lucky Luke' %}" %}
+
+		<!--
+		For bigger sections or to escape helper methods, you can use the `raw` element helper.
+		-->
+		<ex:Raw>
+			<ex:Foreach key="k" value="v" in="{% users %}">
+				{% k %} {% v %}
+			</ex:Foreach>
+		</ex:Raw>
+
+		<!-- Strict mode
+		================================================================================================================
+		If the strict mode is enabled, the engine behaves as follows:
+		- Prints the string null for null values
+		- Throws an exception if try to access a null value
+		- Dumps arrays or objects if try to output an array or an object
+		- Throws exceptions on errors
+
+		If the strict mode is disabled, the engine behaves as follows:
+		- Prints an empty string for null values
+		- Prints an empty string if try to access a null value
+		- Prints an empty string if try to output an array or an object
+		- Prints an empty string if an exception was caught
+		-->
+
+		<!-- Type casting for expression values
+		=======================================
+		Expression values can be casted to other types. The following table shows the implemented casting rules.
+
+		- object -> object, array
+		- array -> object, array
+		- string -> string, number, boolean
+		- number -> string, number, boolean
+		- boolean -> string, number, boolean
+
+		When casting a string to a number then this works only if the string is a numeric value. Otherwise
+		an InvalidCastException will be thrown.
+
+		If you try to cast a type to a not supported type then an InvalidCastException will be thrown.
 		-->
 
 		<!-- Values are always returned as new object -->
@@ -187,17 +329,10 @@ string => StringValue
 boolean => BooleanValue
 xml => XMLValue
 
-Values should only be autoboxed if an explicit method call follows after the value.
-
-Autoboxed:
-var.methodCall()
-
-Not autoboxed:
-var
-
 Every object has specific methods to work with the value:
 ArrayValue: join, merge, length, sort, keys, values, contains
-ScalarValue: split, replace, format, upper, lower, reverse, length
+StringValue: split, replace, upper, lower, reverse, length
+NumberValue: format
 
 It should be possible to register own value classes so that users can register its own implementations:
 class CustomArrayValue extends ArrayValue {

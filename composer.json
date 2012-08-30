@@ -14,7 +14,11 @@
         "mohiva/manitou": "dev-master",
         "mohiva/pyramid": "dev-master"
     },
+	"require-dev": {
+		"phake/phake": "dev-master"
+	},
 	"autoload": {
 		"psr-0": {"com\\mohiva\\elixir": "src/"}
-	}
+	},
+	"minimum-stability": "dev"
 }

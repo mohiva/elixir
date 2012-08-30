@@ -10,27 +10,31 @@
  * https://github.com/mohiva/elixir/blob/master/LICENSE.textile
  *
  * @category  Mohiva/Elixir
- * @package   Mohiva/Elixir
+ * @package   Mohiva/Elixir/Document/Expression/Encoders
  * @author    Christian Kaps <christian.kaps@mohiva.com>
  * @copyright Copyright (c) 2007-2012 Christian Kaps (http://www.mohiva.com)
  * @license   https://github.com/mohiva/elixir/blob/master/LICENSE.textile New BSD License
  * @link      https://github.com/mohiva/elixir
  */
-namespace com\mohiva\elixir\encoders;
+namespace com\mohiva\elixir\document\expression\encoders;
 
-use com\mohiva\elixir\Encoder;
+use com\mohiva\elixir\document\Expression\Encoder;
 
 /**
- * Makes the given value XML safe.
+ * Makes the given value HTML safe.
+ *
+ * This is a simple solution only for the sake of consistency. A better approach would be to implement
+ * the OWASP ESAPI escaping library.
  *
  * @category  Mohiva/Elixir
- * @package   Mohiva/Elixir
+ * @package   Mohiva/Elixir/Document/Expression/Encoders
  * @author    Christian Kaps <christian.kaps@mohiva.com>
  * @copyright Copyright (c) 2007-2012 Christian Kaps (http://www.mohiva.com)
  * @license   https://github.com/mohiva/elixir/blob/master/LICENSE.textile New BSD License
  * @link      https://github.com/mohiva/elixir
+ * @link      https://www.owasp.org/index.php/XSS_%28Cross_Site_Scripting%29_Prevention_Cheat_Sheet#RULE_.231_-_HTML_Escape_Before_Inserting_Untrusted_Data_into_HTML_Element_Content
  */
-class XMLEncoder implements Encoder {
+class HTMLEncoder implements Encoder {
 
 	/**
 	 * Encodes the given value,
@@ -41,6 +45,6 @@ class XMLEncoder implements Encoder {
 	 */
 	public function encode($value, $charset) {
 
-		return htmlspecialchars($value, ENT_XML1, $charset, false);
+		return htmlspecialchars($value, ENT_QUOTES | ENT_SUBSTITUTE, $charset);
 	}
 }

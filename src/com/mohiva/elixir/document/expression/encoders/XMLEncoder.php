@@ -10,25 +10,27 @@
  * https://github.com/mohiva/elixir/blob/master/LICENSE.textile
  *
  * @category  Mohiva/Elixir
- * @package   Mohiva/Elixir
+ * @package   Mohiva/Elixir/Document/Expression/Encoders
  * @author    Christian Kaps <christian.kaps@mohiva.com>
  * @copyright Copyright (c) 2007-2012 Christian Kaps (http://www.mohiva.com)
  * @license   https://github.com/mohiva/elixir/blob/master/LICENSE.textile New BSD License
  * @link      https://github.com/mohiva/elixir
  */
-namespace com\mohiva\elixir;
+namespace com\mohiva\elixir\document\expression\encoders;
+
+use com\mohiva\elixir\document\Expression\Encoder;
 
 /**
- * Interface for the encoder objects.
+ * Makes the given value XML safe.
  *
  * @category  Mohiva/Elixir
- * @package   Mohiva/Elixir
+ * @package   Mohiva/Elixir/Document/Expression/Encoders
  * @author    Christian Kaps <christian.kaps@mohiva.com>
  * @copyright Copyright (c) 2007-2012 Christian Kaps (http://www.mohiva.com)
  * @license   https://github.com/mohiva/elixir/blob/master/LICENSE.textile New BSD License
  * @link      https://github.com/mohiva/elixir
  */
-interface Encoder {
+class XMLEncoder implements Encoder {
 
 	/**
 	 * Encodes the given value,
@@ -37,5 +39,8 @@ interface Encoder {
 	 * @param string $charset The charset to use.
 	 * @return string The encoded value.
 	 */
-	public function encode($value, $charset);
+	public function encode($value, $charset) {
+
+		return htmlspecialchars($value, ENT_XML1, $charset, false);
+	}
 }

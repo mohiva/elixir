@@ -10,24 +10,24 @@
  * https://github.com/mohiva/elixir/blob/master/LICENSE.textile
  *
  * @category  Mohiva/Elixir
- * @package   Mohiva/Elixir/Values
+ * @package   Mohiva/Elixir/Document/Expression/Values
  * @author    Christian Kaps <christian.kaps@mohiva.com>
  * @copyright Copyright (c) 2007-2012 Christian Kaps (http://www.mohiva.com)
  * @license   https://github.com/mohiva/elixir/blob/master/LICENSE.textile New BSD License
  * @link      https://github.com/mohiva/elixir
  */
-namespace com\mohiva\elixir\values;
+namespace com\mohiva\elixir\document\expression\values;
 
 use com\mohiva\elixir\Config;
-use com\mohiva\elixir\Value;
-use com\mohiva\elixir\ValueContext;
+use com\mohiva\elixir\document\expression\Value;
+use com\mohiva\elixir\document\expression\ValueContext;
 use com\mohiva\common\exceptions\UnexpectedValueException;
 
 /**
  * Represents an object value.
  *
  * @category  Mohiva/Elixir
- * @package   Mohiva/Elixir/Values
+ * @package   Mohiva/Elixir/Document/Expression/Values
  * @author    Christian Kaps <christian.kaps@mohiva.com>
  * @copyright Copyright (c) 2007-2012 Christian Kaps (http://www.mohiva.com)
  * @license   https://github.com/mohiva/elixir/blob/master/LICENSE.textile New BSD License
@@ -38,14 +38,14 @@ class ObjectValue extends AbstractValue {
 	/**
 	 * The class constructor.
 	 *
-	 * @param object|null $value The object value.
+	 * @param object $value The object value.
 	 * @param ValueContext $context Context based information about the value.
 	 * @param Config $config The document config.
-	 * @throws UnexpectedValueException if value isn't null or an object value.
+	 * @throws UnexpectedValueException if value isn't an object value.
 	 */
 	public function __construct($value, ValueContext $context, Config $config) {
 
-		if ($value !== null && !is_object($value)) {
+		if (!is_object($value)) {
 			throw new UnexpectedValueException('Object value expected but ' . gettype($value) . ' value given');
 		}
 
@@ -59,10 +59,52 @@ class ObjectValue extends AbstractValue {
 	 */
 	public function __toString() {
 
-		$value = var_export($this->value, true);
-		$value = htmlentities($value, ENT_QUOTES, $this->config->getCharset());
+		if (!$this->config->isStrictMode()) {
+			return '';
+		}
 
-		return $value;
+		$strategy = parent::getEscapingStrategy();
+		$value = var_export($this->value, true);
+
+		return parent::encodeValue($value, $strategy);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * Objects are safe if they are defined in a document.
+	 *
+	 * @return boolean True if the value is saved, false otherwise.
+	 */
+	public function isSave() {
+
+		if ($this->context->getContext() === ValueContext::DOC) {
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @return ObjectValue The value as object value.
+	 */
+	public function toObject() {
+
+		return $this->config->getValueFactory()->createObjectValue($this->value, $this->context, $this->config);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @return ArrayValue The value as array value.
+	 */
+	public function toArray() {
+
+		$value = (array) $this->value;
+
+		return $this->config->getValueFactory()->createArrayValue($value, $this->context, $this->config);
 	}
 
 	/**
@@ -75,9 +117,7 @@ class ObjectValue extends AbstractValue {
 	 */
 	public function getByProperty($property) {
 
-		if ($this->value === null) {
-			throw new UnexpectedValueException('Try to get a property of a non object');
-		} else if (!isset($this->value->{$property})) {
+		if (!property_exists($this->value, $property)) {
 			throw new UnexpectedValueException('Property `' . $property . '` does not exists in object');
 		}
 

@@ -10,41 +10,36 @@
  * https://github.com/mohiva/elixir/blob/master/LICENSE.textile
  *
  * @category  Mohiva/Elixir
- * @package   Mohiva/Elixir
+ * @package   Mohiva/Elixir/Document/Expression
  * @author    Christian Kaps <christian.kaps@mohiva.com>
  * @copyright Copyright (c) 2007-2012 Christian Kaps (http://www.mohiva.com)
  * @license   https://github.com/mohiva/elixir/blob/master/LICENSE.textile New BSD License
  * @link      https://github.com/mohiva/elixir
  */
-namespace com\mohiva\elixir\encoders;
-
-use com\mohiva\elixir\Encoder;
+namespace com\mohiva\elixir\document\expression;
 
 /**
- * Makes the given value HTML safe.
- *
- * This is a simple solution only for the sake of consistency. A better approach would be to implement
- * the OWASP ESAPI escaping library.
+ * Interface for the factory which creates the `Encoder` objects based on the given strategy.
  *
  * @category  Mohiva/Elixir
- * @package   Mohiva/Elixir
+ * @package   Mohiva/Elixir/Document/Expression
  * @author    Christian Kaps <christian.kaps@mohiva.com>
  * @copyright Copyright (c) 2007-2012 Christian Kaps (http://www.mohiva.com)
  * @license   https://github.com/mohiva/elixir/blob/master/LICENSE.textile New BSD License
  * @link      https://github.com/mohiva/elixir
- * @link      https://www.owasp.org/index.php/XSS_%28Cross_Site_Scripting%29_Prevention_Cheat_Sheet#RULE_.231_-_HTML_Escape_Before_Inserting_Untrusted_Data_into_HTML_Element_Content
  */
-class HTMLEncoder implements Encoder {
+interface EncoderFactory {
 
 	/**
-	 * Encodes the given value,
-	 *
-	 * @param string $value The value to encode.
-	 * @param string $charset The charset to use.
-	 * @return string The encoded value.
+	 * Encoding strategies.
 	 */
-	public function encode($value, $charset) {
+	const STRATEGY_RAW = 'raw';
 
-		return htmlspecialchars($value, ENT_QUOTES | ENT_SUBSTITUTE, $charset);
-	}
+	/**
+	 * Gets the encoder for the given strategy.
+	 *
+	 * @param string $strategy The encoder strategy.
+	 * @return Encoder The encoder for the given strategy.
+	 */
+	public function getEncoder($strategy);
 }

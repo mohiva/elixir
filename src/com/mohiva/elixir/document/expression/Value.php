@@ -10,19 +10,19 @@
  * https://github.com/mohiva/elixir/blob/master/LICENSE.textile
  *
  * @category  Mohiva/Elixir
- * @package   Mohiva/Elixir
+ * @package   Mohiva/Elixir/Document/Expression
  * @author    Christian Kaps <christian.kaps@mohiva.com>
  * @copyright Copyright (c) 2007-2012 Christian Kaps (http://www.mohiva.com)
  * @license   https://github.com/mohiva/elixir/blob/master/LICENSE.textile New BSD License
  * @link      https://github.com/mohiva/elixir
  */
-namespace com\mohiva\elixir;
+namespace com\mohiva\elixir\document\expression;
 
 /**
- * Interface for the value objects.
+ * Interface for the expression value objects.
  *
  * @category  Mohiva/Elixir
- * @package   Mohiva/Elixir
+ * @package   Mohiva/Elixir/Document/Expression
  * @author    Christian Kaps <christian.kaps@mohiva.com>
  * @copyright Copyright (c) 2007-2012 Christian Kaps (http://www.mohiva.com)
  * @license   https://github.com/mohiva/elixir/blob/master/LICENSE.textile New BSD License
@@ -36,24 +36,6 @@ interface Value {
 	 * @return string The string representation of the value.
 	 */
 	public function __toString();
-
-	/**
-	 * Sets the strategy to use to encode this value.
-	 *
-	 * This method doesn't encode the value. It sets only the strategy which should be used
-	 * to encode the value when it is inserted into the template.
-	 *
-	 * @param string $strategy The strategy to use for encoding.
-	 * @return Value This instance to provide a fluent interface.
-	 */
-	public function encode($strategy);
-
-	/**
-	 * This method is the opposite to the encode method. It resets the encoding strategy for this value.
-	 *
-	 * @return Value This instance to provide a fluent interface.
-	 */
-	public function raw();
 
 	/**
 	 * If the current object value is null then the new set value will be used for further processing.
@@ -82,10 +64,28 @@ interface Value {
 	public function isNull();
 
 	/**
+	 * Indicates if the value is empty or not.
+	 *
+	 * This method uses PHPs empty() language construct. Please consult the documentation for the
+	 * definition of which values are empty for which types.
+	 *
+	 * @return mixed True if the value is empty, false otherwise.
+	 */
+	public function isEmpty();
+
+	/**
+	 * Indicates if the value is save or not.
+	 *
+	 * @return boolean True if the value is saved, false otherwise.
+	 */
+	public function isSave();
+
+	/**
 	 * Casts the value to an object value.
 	 *
 	 * @return values\ObjectValue The value as object value.
-	 * @throws values\exceptions\InvalidCastException if the value can't be casted to `ObjectValue`.
+	 * @throws \com\mohiva\elixir\document\exceptions\InvalidCastException if the value can't be
+	 * casted to `ObjectValue`.
 	 */
 	public function toObject();
 
@@ -93,7 +93,8 @@ interface Value {
 	 * Casts the value to an array value.
 	 *
 	 * @return values\ArrayValue The value as array value.
-	 * @throws values\exceptions\InvalidCastException if the value can't be casted to `ArrayValue`.
+	 * @throws \com\mohiva\elixir\document\exceptions\InvalidCastException if the value can't be
+	 * casted to `ArrayValue`.
 	 */
 	public function toArray();
 
@@ -101,7 +102,8 @@ interface Value {
 	 * Casts the value to a string value.
 	 *
 	 * @return values\StringValue The value as string value.
-	 * @throws values\exceptions\InvalidCastException if the value can't be casted to `StringValue`.
+	 * @throws \com\mohiva\elixir\document\exceptions\InvalidCastException if the value can't be
+	 * casted to `StringValue`.
 	 */
 	public function toString();
 
@@ -109,7 +111,8 @@ interface Value {
 	 * Casts the value to a number value.
 	 *
 	 * @return values\NumberValue The value as number value.
-	 * @throws values\exceptions\InvalidCastException if the value can't be casted to `NumberValue`.
+	 * @throws \com\mohiva\elixir\document\exceptions\InvalidCastException if the value can't be
+	 * casted to `NumberValue`.
 	 */
 	public function toNumber();
 
@@ -117,7 +120,8 @@ interface Value {
 	 * Casts the value to an boolean value.
 	 *
 	 * @return values\BooleanValue The value as boolean value.
-	 * @throws values\exceptions\InvalidCastException if the value can't be casted to `BooleanValue`.
+	 * @throws \com\mohiva\elixir\document\exceptions\InvalidCastException if the value can't be
+	 * casted to `BooleanValue`.
 	 */
 	public function toBool();
 }

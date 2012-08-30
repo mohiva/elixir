@@ -10,18 +10,19 @@
  * https://github.com/mohiva/elixir/blob/master/LICENSE.textile
  *
  * @category  Mohiva/Elixir
- * @package   Mohiva/Elixir/Values
+ * @package   Mohiva/Elixir/Document/Expression/Values
  * @author    Christian Kaps <christian.kaps@mohiva.com>
  * @copyright Copyright (c) 2007-2012 Christian Kaps (http://www.mohiva.com)
  * @license   https://github.com/mohiva/elixir/blob/master/LICENSE.textile New BSD License
  * @link      https://github.com/mohiva/elixir
  */
-namespace com\mohiva\elixir\values;
+namespace com\mohiva\elixir\document\expression\values;
 
 use com\mohiva\elixir\Config;
-use com\mohiva\elixir\Value;
-use com\mohiva\elixir\ValueContext;
-use com\mohiva\elixir\values\exceptions\InvalidCastException;
+use com\mohiva\elixir\document\expression\Value;
+use com\mohiva\elixir\document\expression\ValueContext;
+use com\mohiva\elixir\document\expression\EncoderFactory;
+use com\mohiva\elixir\document\exceptions\InvalidCastException;
 use com\mohiva\common\exceptions\UnexpectedValueException;
 use com\mohiva\common\exceptions\BadMethodCallException;
 
@@ -29,7 +30,7 @@ use com\mohiva\common\exceptions\BadMethodCallException;
  * Abstract value class.
  *
  * @category  Mohiva/Elixir
- * @package   Mohiva/Elixir/Values
+ * @package   Mohiva/Elixir/Document/Expression/Values
  * @author    Christian Kaps <christian.kaps@mohiva.com>
  * @copyright Copyright (c) 2007-2012 Christian Kaps (http://www.mohiva.com)
  * @license   https://github.com/mohiva/elixir/blob/master/LICENSE.textile New BSD License
@@ -57,13 +58,6 @@ abstract class AbstractValue implements Value {
 	 * @var Config
 	 */
 	protected $config = null;
-
-	/**
-	 * The encoding strategy to use for value encoding.
-	 *
-	 * @var string
-	 */
-	protected $encodingStrategy;
 
 	/**
 	 * The class constructor.
@@ -103,52 +97,12 @@ abstract class AbstractValue implements Value {
 	/**
 	 * {@inheritDoc}
 	 *
-	 * @return string The string representation of the value.
-	 */
-	public function __toString() {
-
-		// Context is safe
-		if ($this->context->getContext() == ValueContext::DOC) {
-			return (string) $this->value;
-		}
-
-		// Get the encoding strategy
-
-		$encoder = $this->config->getEncoderFactory()->getEncoder('');
-	}
-
-	/**
-	 * {@inheritDoc}
-	 *
-	 * @param string $strategy The strategy to use for encoding.
-	 * @return Value This instance to provide a fluent interface.
-	 */
-	public function encode($strategy) {
-
-		$this->context->setEncodingStrategy($strategy);
-
-		return $this;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 *
-	 * @return Value This instance to provide a fluent interface.
-	 */
-	public function raw() {
-
-		return $this;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 *
 	 * @param Value $value The value to use if the object value is null.
 	 * @return Value If the object value is null then the given value, otherwise this instance.
 	 */
 	public function whenNull(Value $value) {
 
-		if ($this->value === null) {
+		if ($this->isNull()) {
 			return $value;
 		}
 
@@ -163,7 +117,7 @@ abstract class AbstractValue implements Value {
 	 */
 	public function whenEmpty(Value $value) {
 
-		if (empty($this->value)) {
+		if ($this->isEmpty()) {
 			return $value;
 		}
 
@@ -183,12 +137,22 @@ abstract class AbstractValue implements Value {
 	/**
 	 * {@inheritDoc}
 	 *
+	 * @return boolean True if the value is empty, false otherwise.
+	 */
+	public function isEmpty() {
+
+		return empty($this->value);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 *
 	 * @return ObjectValue The value as object value.
 	 * @throws InvalidCastException if the value can't be casted to `ObjectValue`.
 	 */
 	public function toObject() {
 
-		throw new InvalidCastException('Type `' . gettype($this->value) . '` cannot be casted to `ObjectValue`');
+		throw new InvalidCastException('Type `' . gettype($this->value) . '` cannot be casted to `object`');
 	}
 
 	/**
@@ -199,7 +163,7 @@ abstract class AbstractValue implements Value {
 	 */
 	public function toArray() {
 
-		throw new InvalidCastException('Type `' . gettype($this->value) . '` cannot be casted to `ArrayValue`');
+		throw new InvalidCastException('Type `' . gettype($this->value) . '` cannot be casted to `array`');
 	}
 
 	/**
@@ -210,7 +174,7 @@ abstract class AbstractValue implements Value {
 	 */
 	public function toString() {
 
-		throw new InvalidCastException('Type `' . gettype($this->value) . '` cannot be casted to `StringValue`');
+		throw new InvalidCastException('Type `' . gettype($this->value) . '` cannot be casted to `string`');
 	}
 
 	/**
@@ -221,7 +185,7 @@ abstract class AbstractValue implements Value {
 	 */
 	public function toNumber() {
 
-		throw new InvalidCastException('Type `' . gettype($this->value) . '` cannot be casted to `NumberValue`');
+		throw new InvalidCastException('Type `' . gettype($this->value) . '` cannot be casted to `number`');
 	}
 
 	/**
@@ -232,16 +196,51 @@ abstract class AbstractValue implements Value {
 	 */
 	public function toBool() {
 
-		throw new InvalidCastException('Type `' . gettype($this->value) . '` cannot be casted to `BooleanValue`');
+		throw new InvalidCastException('Type `' . gettype($this->value) . '` cannot be casted to `boolean`');
 	}
 
 	/**
-	 * Gets the encoding strategy.
+	 * Encodes the given value with the given escaping strategy.
 	 *
-	 * @param string $strategy The strategy set
+	 * @param mixed $value the value to encode.
+	 * @param string $strategy The strategy to use to encode the value.
+	 * @return string The encodes value as string.
 	 */
-	private function getEncodingStrategy($strategy) {
+	protected function encodeValue($value, $strategy) {
 
+		$encoder = $this->config->getEncoderFactory()->getEncoder($strategy);
 
+		return $encoder->encode($value, $this->config->getCharset());
+	}
+
+	/**
+	 * Gets the escaping strategy for this value.
+	 *
+	 * The resolution rule for the escaping strategy is defined as follow:
+	 * - First it checks if a context based strategy is defined
+	 * - Then it checks if the global strategy is defined
+	 * - Otherwise it returns the RAW strategy
+	 *
+	 * @return string The escaping strategy to use for this value.
+	 */
+	protected function getEscapingStrategy() {
+
+		// Force raw encoding for save values, but only if no
+		// context based escaping strategy is defined
+		if ($this->isSave() && $this->context->getEscapingStrategy() === null) {
+			return EncoderFactory::STRATEGY_RAW;
+		}
+
+		$contextStrategy = $this->context->getEscapingStrategy();
+		if ($contextStrategy !== null) {
+			return $contextStrategy;
+		}
+
+		$globalStrategy = $this->config->getEscapingStrategy();
+		if ($globalStrategy !== null) {
+			return $globalStrategy;
+		}
+
+		return EncoderFactory::STRATEGY_RAW;
 	}
 }
