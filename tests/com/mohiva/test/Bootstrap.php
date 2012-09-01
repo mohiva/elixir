@@ -98,7 +98,7 @@ class Bootstrap {
 	 */
 	private static function setupIncludePath() {
 
-		$rootDir = realpath(dirname(__FILE__) . '/../../../../..');
+		$rootDir = realpath(dirname(__FILE__) . '/../../../..');
 		self::$srcDir = realpath("{$rootDir}/src");
 		self::$testDir = realpath("{$rootDir}/tests");
 		self::$vendorDir = realpath("{$rootDir}/vendor");
