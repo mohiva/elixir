@@ -46,7 +46,7 @@ class NumberValue extends AbstractValue {
 	public function __construct($value, ValueContext $context, Config $config) {
 
 		if (!is_numeric($value)) {
-			throw new UnexpectedValueException('Number value expected but ' . gettype($value) . ' value given');
+			throw new UnexpectedValueException('Numeric value expected but ' . gettype($value) . ' value given');
 		}
 
 		parent::__construct($value, $context, $config);
