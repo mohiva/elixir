@@ -10,37 +10,45 @@
  * https://github.com/mohiva/elixir/blob/master/LICENSE.textile
  *
  * @category  Mohiva/Elixir
- * @package   Mohiva/Elixir/Document/Expression/Encoders
+ * @package   Mohiva/Elixir/Test
  * @author    Christian Kaps <christian.kaps@mohiva.com>
  * @copyright Copyright (c) 2007-2012 Christian Kaps (http://www.mohiva.com)
  * @license   https://github.com/mohiva/elixir/blob/master/LICENSE.textile New BSD License
  * @link      https://github.com/mohiva/elixir
  */
-namespace com\mohiva\elixir\document\expression\encoders;
+namespace com\mohiva\test\elixir\document\expression;
 
-use com\mohiva\elixir\document\expression\Encoder;
+use com\mohiva\elixir\document\expression\encoders\XMLEncoder;
 
 /**
- * Makes the given value XML safe.
+ * Unit test case for the Mohiva Elixir project.
  *
  * @category  Mohiva/Elixir
- * @package   Mohiva/Elixir/Document/Expression/Encoders
+ * @package   Mohiva/Elixir/Test
  * @author    Christian Kaps <christian.kaps@mohiva.com>
  * @copyright Copyright (c) 2007-2012 Christian Kaps (http://www.mohiva.com)
  * @license   https://github.com/mohiva/elixir/blob/master/LICENSE.textile New BSD License
  * @link      https://github.com/mohiva/elixir
  */
-class XMLEncoder implements Encoder {
+class XMLEncoderTest extends \PHPUnit_Framework_TestCase {
 
 	/**
-	 * Encodes the given value,
-	 *
-	 * @param string $value The value to encode.
-	 * @param string $charset The charset to use.
-	 * @return string The encoded value.
+	 * Test if the `encode` method doesn't double encode a value.
 	 */
-	public function encode($value, $charset) {
+	public function testEncoderDoesNotDoubleEncode() {
 
-		return htmlentities($value, ENT_XHTML, $charset, false);
+		$encoder = new XMLEncoder();
+
+		$this->assertSame('&amp;', $encoder->encode('&amp;', 'UTF-8'));
+	}
+
+	/**
+	 * Test if the `encode` method encodes the ampersand into &amp;.
+	 */
+	public function testEncodeAmpersand() {
+
+		$encoder = new XMLEncoder();
+
+		$this->assertSame('&amp;', $encoder->encode('&', 'UTF-8'));
 	}
 }

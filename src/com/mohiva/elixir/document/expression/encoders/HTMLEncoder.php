@@ -18,7 +18,7 @@
  */
 namespace com\mohiva\elixir\document\expression\encoders;
 
-use com\mohiva\elixir\document\Expression\Encoder;
+use com\mohiva\elixir\document\expression\Encoder;
 
 /**
  * Makes the given value HTML safe.

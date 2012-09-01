@@ -18,7 +18,7 @@
  */
 namespace com\mohiva\elixir\document\expression\encoders;
 
-use com\mohiva\elixir\document\Expression\Encoder;
+use com\mohiva\elixir\document\expression\Encoder;
 
 /**
  * An encoder for the RAW strategy which does return the value unchanged.

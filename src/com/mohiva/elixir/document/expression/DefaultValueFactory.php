@@ -51,7 +51,7 @@ class DefaultValueFactory implements ValueFactory {
 	 */
 	public function getByValue($value, ValueContext $context, Config $config) {
 
-		$lowerValue = strtolower($value);
+		$lowerValue = is_string($value) ? strtolower($value) : null;
 		if (is_null($value) || $lowerValue === 'null') {
 			// TODO Consider if a null string value from outside should be treated as null
 			return $this->createNullValue($context, $config);
