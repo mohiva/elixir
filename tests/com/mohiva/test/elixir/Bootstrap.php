@@ -19,7 +19,6 @@
 namespace com\mohiva\test\elixir;
 
 use com\mohiva\common\io\ClassAutoloader;
-use com\mohiva\common\io\IncludePath;
 
 /**
  * Bootstrap class for the Mohiva Elixir unit test suite.
@@ -109,10 +108,6 @@ class Bootstrap {
 		$path = array(
 			self::$srcDir,
 			self::$testDir,
-			self::$vendorDir . '/mohiva/common/src',
-			self::$vendorDir . '/mohiva/manitou/src',
-			self::$vendorDir . '/mohiva/pyramid/src',
-			self::$vendorDir . '/phake/phake/src',
 			get_include_path()
 		);
 		self::$includePath = set_include_path(implode(PATH_SEPARATOR, $path));
@@ -124,13 +119,10 @@ class Bootstrap {
 	private static function setupClassAutoloader() {
 
 		/** @noinspection PhpIncludeInspection */
-		require_once 'com/mohiva/common/io/ClassAutoloader.php';
+		require_once 'vendor/autoload.php';
 
 		$autoloader = new ClassAutoloader();
-		$autoloader->setPolicy(ClassAutoloader::POLICY_EXCEPTION);
-		$autoloader->registerNamespace('com\mohiva');
-		$autoloader->registerNamespace('Phake');
-		$autoloader->register();
+		$autoloader->register(true, false);
 	}
 }
 
