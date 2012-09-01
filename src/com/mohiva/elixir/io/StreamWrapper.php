@@ -330,8 +330,10 @@ class StreamWrapper {
 	/**
 	 * Retrieve information about a file resource.
 	 *
+	 * @return array Should return as many elements as stat() does. Unknown or unavailable values should be set
+	 * to a rational value (usually 0).
+	 *
 	 * @see http://www.php.net/manual/en/streamwrapper.url-stat.php
-	 * @return array
 	 */
 	public function stream_stat() {
 
@@ -351,7 +353,38 @@ class StreamWrapper {
 			'blocks' => 1
 		);
 
-		return array_merge(array_values($stat), $stat);
+		return $stat;
+	}
+
+	/**
+	 * Retrieve information about a file.
+	 *
+	 * @param string $path The file path or URL to stat.
+	 * @param int $flags Holds additional flags set by the streams API.
+	 * @return array Should return as many elements as stat() does. Unknown or unavailable values should be set
+	 * to a rational value (usually 0).
+	 *
+	 * @see http://php.net/manual/de/streamwrapper.url-stat.php
+	 */
+	public function url_stat($path, $flags) {
+
+		$stat = array(
+			'dev' => 1,
+			'ino' => 1,
+			'mode' => 1,
+			'nlink' => 1,
+			'uid' => 1,
+			'gid' => 1,
+			'rdev' => 1,
+			'size' => 1,
+			'atime' => 1,
+			'mtime' => 1,
+			'ctime' => 1,
+			'blksize' => 1,
+			'blocks' => 1
+		);
+
+		return $stat;
 	}
 
 	/**
