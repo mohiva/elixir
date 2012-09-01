@@ -46,6 +46,8 @@ class DefaultEncoderFactory implements EncoderFactory {
 	/**
 	 * The list with supported encoders.
 	 *
+	 * This is used to support lazy initialising.
+	 *
 	 * @var Closure[]
 	 */
 	private $encoders = [];
