@@ -320,14 +320,14 @@ _  CONCAT
 && AND
 
 Every value is passed to an value object(autoboxing). this object contains methods like isNull(),
-toNumber(), toArray(), toObject(), toString(), toBool(), toXML(), ... by default. Values are passed
+toNumber(), toArray(), toObject(), toString(), toBool(), ... by default. Values are passed
 to specific objects by the type of the value:
 array  => ArrayValue
 object => ObjectValue
 int, float => NumberValue
 string => StringValue
 boolean => BooleanValue
-xml => XMLValue
+null => NullValue
 
 Every object has specific methods to work with the value:
 ArrayValue: join, merge, length, sort, keys, values, contains
@@ -339,7 +339,7 @@ class CustomArrayValue extends ArrayValue {
 
 }
 
-class CustomValueFactory extends ValueFactory {
+class CustomValueFactory implements ValueFactory {
 
     public function createArrayValue($value) {
 
