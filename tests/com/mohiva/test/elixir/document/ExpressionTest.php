@@ -43,14 +43,16 @@ class ExpressionTest extends \PHPUnit_Framework_TestCase {
 		$line = mt_rand(1, 100);
 		$path = sha1(microtime(true));
 		$content = sha1(microtime(true));
+		$attribute = sha1(microtime(true));
 		$node = $this->getMock('\com\mohiva\pyramid\Node');
-		$expression = new Expression($id, $code, $line, $path, $content, $node);
+		$expression = new Expression($id, $code, $line, $path, $content, $attribute, $node);
 
 		$this->assertSame($id, $expression->getId());
 		$this->assertSame($code, $expression->getCode());
 		$this->assertSame($line, $expression->getLine());
 		$this->assertSame($path, $expression->getPath());
 		$this->assertSame($content, $expression->getContent());
+		$this->assertSame($attribute, $expression->getAttribute());
 		$this->assertSame($node, $expression->getNode());
 	}
 }

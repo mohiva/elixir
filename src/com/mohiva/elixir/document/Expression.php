@@ -68,6 +68,13 @@ class Expression {
 	private $content = null;
 
 	/**
+	 * The attribute name or null if the expression wasn't found inside an attribute value.
+	 *
+	 * @var array
+	 */
+	private $attribute = null;
+
+	/**
 	 * The expression node.
 	 *
 	 * @var ExpressionNode
@@ -82,15 +89,17 @@ class Expression {
 	 * @param int $line The line of the source file in which the expression is located.
 	 * @param string $path The path to this expression in the source file.
 	 * @param string $content The expression content without the expression opener and closer.
+	 * @param string $attribute The attribute name or null if the expression wasn't found inside an attribute value.
 	 * @param ExpressionNode $node The expression node.
 	 */
-	public function __construct($id, $code, $line, $path, $content, ExpressionNode $node) {
+	public function __construct($id, $code, $line, $path, $content, $attribute, ExpressionNode $node) {
 
 		$this->id = $id;
 		$this->code = $code;
 		$this->line = $line;
 		$this->path = $path;
 		$this->content = $content;
+		$this->attribute = $attribute;
 		$this->node = $node;
 	}
 
@@ -142,6 +151,16 @@ class Expression {
 	public function getContent() {
 
 		return $this->content;
+	}
+
+	/**
+	 * Returns the attribute name or null if the expression wasn't found inside an attribute value.
+	 *
+	 * @return array The attribute name or null if the expression wasn't found inside an attribute value.
+	 */
+	public function getAttribute() {
+
+		return $this->attribute;
 	}
 
 	/**
