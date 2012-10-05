@@ -102,6 +102,7 @@ class ArrayValueOperand implements Operand {
 	 * @param Grammar $grammar The grammar of the parser.
 	 * @param TokenStream $stream The token stream to parse.
 	 * @return string The parsed content.
+	 * @throws SyntaxErrorException if the content cannot be parsed.
 	 */
 	private function parseArrayContent(Grammar $grammar, TokenStream $stream) {
 
@@ -114,7 +115,7 @@ class ArrayValueOperand implements Operand {
 				$current = $stream->current();
 				$offset = $current ? $current->getOffset() : strlen($stream->getSource());
 				$near = substr($stream->getSource(), 0, $offset);
-				throw new SyntaxErrorException('Syntax error in array definition near: ' . $near, null, $e);
+				throw new SyntaxErrorException('Syntax error in array definition near: ' . $near, 0, $e);
 			}
 
 			$current = $stream->current();
