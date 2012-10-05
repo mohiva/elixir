@@ -18,11 +18,10 @@
  */
 namespace com\mohiva\test\elixir\document\expression\operands;
 
-use com\mohiva\pyramid\example\Lexer;
-use com\mohiva\pyramid\Grammar;
 use com\mohiva\pyramid\Token;
-use com\mohiva\pyramid\example\operands\ParenthesesOperand;
-use com\mohiva\pyramid\example\operands\NumberOperand;
+use com\mohiva\elixir\document\expression\Lexer;
+use com\mohiva\elixir\document\expression\Grammar;
+use com\mohiva\elixir\document\expression\operands\ParenthesesOperand;
 use com\mohiva\common\parser\TokenStream;
 
 /**
@@ -44,15 +43,12 @@ class ParenthesesOperandTest extends \PHPUnit_Framework_TestCase {
 
 		$tokenStream = new TokenStream();
 		$tokenStream->push(new Token(Lexer::T_OPEN_PARENTHESIS, '(', 1));
-		$tokenStream->push(new Token(Lexer::T_NUMBER, 100, 1));
+		$tokenStream->push(new Token(Lexer::T_VALUE, 100, 1));
 		$tokenStream->push(new Token(Lexer::T_CLOSE_PARENTHESIS, ')', 1));
 		$tokenStream->rewind();
 
-		$grammar = new Grammar();
-		$grammar->addOperand(new NumberOperand());
-
 		$operand = new ParenthesesOperand();
-		$node = $operand->parse($grammar, $tokenStream);
+		$node = $operand->parse(new Grammar(), $tokenStream);
 
 		$this->assertInstanceOf('\com\mohiva\pyramid\Node', $node);
 	}
@@ -67,15 +63,12 @@ class ParenthesesOperandTest extends \PHPUnit_Framework_TestCase {
 
 		$tokenStream = new TokenStream();
 		$tokenStream->push(new Token(Lexer::T_OPEN_PARENTHESIS, '(', 1));
-		$tokenStream->push(new Token(Lexer::T_NUMBER, 100, 1));
-		$tokenStream->push(new Token(Lexer::T_NUMBER, 100, 1));
+		$tokenStream->push(new Token(Lexer::T_VALUE, 100, 1));
+		$tokenStream->push(new Token(Lexer::T_VALUE, 100, 1));
 		$tokenStream->rewind();
 
-		$grammar = new Grammar();
-		$grammar->addOperand(new NumberOperand());
-
 		$operand = new ParenthesesOperand();
-		$operand->parse($grammar, $tokenStream);
+		$operand->parse(new Grammar(), $tokenStream);
 	}
 
 	/**
@@ -88,13 +81,10 @@ class ParenthesesOperandTest extends \PHPUnit_Framework_TestCase {
 
 		$tokenStream = new TokenStream();
 		$tokenStream->push(new Token(Lexer::T_OPEN_PARENTHESIS, '(', 1));
-		$tokenStream->push(new Token(Lexer::T_NUMBER, 100, 1));
+		$tokenStream->push(new Token(Lexer::T_VALUE, 100, 1));
 		$tokenStream->rewind();
 
-		$grammar = new Grammar();
-		$grammar->addOperand(new NumberOperand());
-
 		$operand = new ParenthesesOperand();
-		$operand->parse($grammar, $tokenStream);
+		$operand->parse(new Grammar(), $tokenStream);
 	}
 }

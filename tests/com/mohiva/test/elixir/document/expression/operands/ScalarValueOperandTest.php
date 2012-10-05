@@ -18,11 +18,11 @@
  */
 namespace com\mohiva\test\elixir\document\expression\operands;
 
-use com\mohiva\pyramid\Grammar;
 use com\mohiva\pyramid\Token;
-use com\mohiva\common\parser\TokenStream;
 use com\mohiva\elixir\document\expression\Lexer;
+use com\mohiva\elixir\document\expression\Grammar;
 use com\mohiva\elixir\document\expression\operands\ScalarValueOperand;
+use com\mohiva\common\parser\TokenStream;
 
 /**
  * Unit test case for the Mohiva Elixir project.
