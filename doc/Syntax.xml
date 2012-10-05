@@ -139,7 +139,7 @@
 		<!--
 		Unsafe values:
 		==============
-		- All values which comes from outside the document and which not safe by default.
+		- All values which comes from outside the document and which are not safe by default.
 		-->
 		{% name %}
 
