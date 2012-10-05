@@ -29,8 +29,6 @@ use com\mohiva\manitou\generators\php\PHPMethod;
 use com\mohiva\manitou\generators\php\PHPClass;
 use com\mohiva\manitou\generators\php\PHPFile;
 use com\mohiva\manitou\generators\php\PHPNamespace;
-use com\mohiva\elixir\document\helpers\CallableHelper;
-use com\mohiva\elixir\document\helpers\CompilableHelper;
 use com\mohiva\elixir\document\helpers\AttributeHelper;
 use com\mohiva\elixir\document\helpers\ElementHelper;
 use com\mohiva\elixir\document\exceptions\UnexpectedHelperTypeException;
@@ -135,16 +133,16 @@ class Compiler {
 	}
 
 	/**
-	 * Register a block id for the given node.
+	 * Register a block ID for the given node.
 	 *
-	 * @param string $blockId The id of the block to register.
+	 * @param string $blockId The ID of the block to register.
 	 * @param string $nodeId The node on which the block is located.
-	 * @throws IDAlreadyRegisteredException if the given id is already registered for a block.
+	 * @throws IDAlreadyRegisteredException if the given ID is already registered for a block.
 	 */
 	public function registerBlock($blockId, $nodeId) {
 
 		if (isset($this->blockMap[$blockId])) {
-			throw new IDAlreadyRegisteredException("A block with the id `{$blockId}` is already registered");
+			throw new IDAlreadyRegisteredException("A block with the ID `{$blockId}` is already registered");
 		}
 
 		$this->blockMap[$blockId] = $nodeId;
@@ -366,13 +364,13 @@ class Compiler {
 	 */
 	private function compileExpression(Expression $expression, $string) {
 
-		// Replace the first occurence of the expression content with the associated method call
+		// Replace the first occurrence of the expression content with the associated method call
 		// Escape all ' characters, because we use it for string concatenation
 		$content = addcslashes($expression->getContent(), "'");
 		$idValue = new PHPValue($expression->getId(), PHPValue::TYPE_STRING);
 		$search = '{%' . $content . '%}';
 		$replace = "' . \$this->processExpression({$idValue}, \$vars) . '";
-		$string = substr_replace($string, $replace, strpos($string, $search), mb_strlen($search));
+		$string = substr_replace($string, $replace, strpos($string, $search), strlen($search));
 
 		// Compile the expression
 		$docBlock = new PHPDocBlock;

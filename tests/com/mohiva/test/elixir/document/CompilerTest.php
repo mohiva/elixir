@@ -214,7 +214,6 @@ class CompilerTest extends \PHPUnit_Framework_TestCase {
 
 		$compiler = new Compiler(__NAMESPACE__, $className, '\stdClass', 'Test class');
 		$content = $compiler->compile($tree);
-		echo $content;
 		file_put_contents($fileName, $content);
 
 		/** @noinspection PhpIncludeInspection */

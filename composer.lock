@@ -2,30 +2,184 @@
     "hash": "851b1de9a771df6394023c1085655fd6",
     "packages": [
         {
-            "package": "mohiva/common",
+            "name": "mohiva/common",
             "version": "dev-master",
-            "source-reference": "1dbbacb162bcf83040e8021cd8934e7a78aab4cd",
-            "commit-date": "1346336493"
+            "source": {
+                "type": "git",
+                "url": "git://github.com/mohiva/common.git",
+                "reference": "1dbbacb162bcf83040e8021cd8934e7a78aab4cd"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://github.com/mohiva/common/zipball/1dbbacb162bcf83040e8021cd8934e7a78aab4cd",
+                "reference": "1dbbacb162bcf83040e8021cd8934e7a78aab4cd",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.4"
+            },
+            "time": "1346336493",
+            "type": "library",
+            "installation-source": "source",
+            "autoload": {
+                "psr-0": {
+                    "com\\mohiva\\common": "src/"
+                }
+            },
+            "license": [
+                "New BSD"
+            ],
+            "authors": [
+                {
+                    "name": "Christian Kaps",
+                    "email": "christian.kaps@mohiva.com",
+                    "homepage": null,
+                    "role": null
+                }
+            ],
+            "description": "A PHP library which provides functionality shared by some mohiva projects",
+            "homepage": "https://github.com/mohiva/common",
+            "keywords": [
+                "library"
+            ]
         },
         {
-            "package": "mohiva/manitou",
+            "name": "mohiva/manitou",
             "version": "dev-master",
-            "source-reference": "3725324fd8618511b676ead613b847b37e3e134e",
-            "commit-date": "1341606837"
+            "source": {
+                "type": "git",
+                "url": "git://github.com/mohiva/manitou.git",
+                "reference": "3725324fd8618511b676ead613b847b37e3e134e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://github.com/mohiva/manitou/zipball/3725324fd8618511b676ead613b847b37e3e134e",
+                "reference": "3725324fd8618511b676ead613b847b37e3e134e",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.4",
+                "mohiva/common": "dev-master"
+            },
+            "time": "1341606837",
+            "type": "library",
+            "installation-source": "source",
+            "autoload": {
+                "psr-0": {
+                    "com\\mohiva\\manitou": "src/"
+                }
+            },
+            "license": [
+                "New BSD"
+            ],
+            "authors": [
+                {
+                    "name": "Christian Kaps",
+                    "email": "christian.kaps@mohiva.com",
+                    "homepage": null,
+                    "role": null
+                }
+            ],
+            "description": "A code generator written in PHP",
+            "homepage": "https://github.com/mohiva/manitou",
+            "keywords": [
+                "generator",
+                "code"
+            ]
         },
         {
-            "package": "mohiva/pyramid",
+            "name": "mohiva/pyramid",
             "version": "dev-master",
-            "source-reference": "af17fad6ecd752aef2fe95a9363ef8595ba18836",
-            "commit-date": "1341606761"
+            "source": {
+                "type": "git",
+                "url": "git://github.com/mohiva/pyramid.git",
+                "reference": "af17fad6ecd752aef2fe95a9363ef8595ba18836"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://github.com/mohiva/pyramid/zipball/af17fad6ecd752aef2fe95a9363ef8595ba18836",
+                "reference": "af17fad6ecd752aef2fe95a9363ef8595ba18836",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.4",
+                "mohiva/common": "dev-master"
+            },
+            "time": "1341606761",
+            "type": "library",
+            "installation-source": "source",
+            "autoload": {
+                "psr-0": {
+                    "com\\mohiva\\pyramid": "src/"
+                }
+            },
+            "license": [
+                "New BSD"
+            ],
+            "authors": [
+                {
+                    "name": "Christian Kaps",
+                    "email": "christian.kaps@mohiva.com",
+                    "homepage": null,
+                    "role": null
+                }
+            ],
+            "description": "An operator precedence parser based on the “Precedence climbing” algorithm",
+            "homepage": "https://github.com/mohiva/pyramid",
+            "keywords": [
+                "parser",
+                "precedence",
+                "climbing",
+                "operator"
+            ]
         }
     ],
     "packages-dev": [
         {
-            "package": "phake/phake",
+            "name": "phake/phake",
             "version": "dev-master",
-            "source-reference": "23b75dc6710e621ac23157b0890b588062043100",
-            "commit-date": "1344450214"
+            "source": {
+                "type": "git",
+                "url": "git://github.com/mlively/Phake.git",
+                "reference": "23b75dc6710e621ac23157b0890b588062043100"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://github.com/mlively/Phake/zipball/23b75dc6710e621ac23157b0890b588062043100",
+                "reference": "23b75dc6710e621ac23157b0890b588062043100",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.2.0"
+            },
+            "time": "1344450214",
+            "type": "library",
+            "installation-source": "source",
+            "autoload": {
+                "classmap": [
+                    "src"
+                ]
+            },
+            "include-path": [
+                "src"
+            ],
+            "license": [
+                "BSD"
+            ],
+            "authors": [
+                {
+                    "name": "Mike Lively",
+                    "email": "m@digitalsandwich.com",
+                    "homepage": null,
+                    "role": null
+                }
+            ],
+            "description": "The Phake mock testing library",
+            "homepage": "https://github.com/mlively/Phake",
+            "keywords": [
+                "testing",
+                "mock"
+            ]
         }
     ],
     "aliases": [

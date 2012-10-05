@@ -20,8 +20,6 @@ class InnerHelper extends ElementHelper {
 	 */
 	public function compile(Compiler $compiler, Node $node) {
 
-		print_r($node);
-
 		return new PHPRawCode();
 	}
 }
