@@ -54,6 +54,23 @@ class ParenthesesOperandTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	/**
+	 * Test if the node has outer parenthesis.
+	 */
+	public function testNodeHasOuterParenthesis() {
+
+		$tokenStream = new TokenStream();
+		$tokenStream->push(new Token(Lexer::T_OPEN_PARENTHESIS, '(', 1));
+		$tokenStream->push(new Token(Lexer::T_VALUE, 100, 1));
+		$tokenStream->push(new Token(Lexer::T_CLOSE_PARENTHESIS, ')', 1));
+		$tokenStream->rewind();
+
+		$operand = new ParenthesesOperand();
+		$node = $operand->parse(new Grammar(), $tokenStream);
+
+		$this->assertSame('(100)', $node->evaluate());
+	}
+
+	/**
 	 * Test if the `parse` method throws an exception if the closing parentheses is missing
 	 * and the end of the stream isn't reached.
 	 *

@@ -19,6 +19,7 @@
 namespace com\mohiva\elixir\document\expression\operands;
 
 use com\mohiva\elixir\document\expression\Lexer;
+use com\mohiva\elixir\document\expression\nodes\OperandNode;
 use com\mohiva\common\exceptions\SyntaxErrorException;
 use com\mohiva\common\parser\TokenStream;
 use com\mohiva\pyramid\Token;
@@ -55,7 +56,7 @@ class ParenthesesOperand implements Operand {
 	 * @param Grammar $grammar The grammar of the parser.
 	 * @param TokenStream $stream The token stream to parse.
 	 * @return Node The node between the parentheses.
-	 * @throws \com\mohiva\common\exceptions\SyntaxErrorException if an unexpected token will be found.
+	 * @throws SyntaxErrorException if an unexpected token will be found.
 	 */
 	public function parse(Grammar $grammar, TokenStream $stream) {
 
@@ -64,16 +65,19 @@ class ParenthesesOperand implements Operand {
 		$parser = new Parser($grammar);
 		$node = $parser->parse($stream);
 
-		$stream->expect(array(Lexer::T_CLOSE_PARENTHESIS), function(Token $current = null) {
+		$stream->expect(array(Lexer::T_CLOSE_PARENTHESIS), function(Token $current = null) use ($stream) {
+			/* @var TokenStream $stream */
 			if ($current) {
-				$message = "Expected `)`; got `{$current->getValue()}`";
+				$near = substr($stream->getSource(), 0, $current->getOffset());
+				$message = "Expected `)`; got `{$current->getValue()}`; near: " . $near;
 			} else {
-				$message = "Expected `)` but end of stream reached";
+				$near = substr($stream->getSource(), 0, strlen($stream->getSource()));
+				$message = "Expected `)` but end of stream reached; near: " . $near;
 			}
 
 			throw new SyntaxErrorException($message);
 		});
 
-		return $node;
+		return new OperandNode('(' . $node->evaluate() . ')');
 	}
 }
