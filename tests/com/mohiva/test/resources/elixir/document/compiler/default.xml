@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<test:Root xmlns:test="urn:com.mohiva.test.resources.elixir.document.helpers">
+	<test:Inner test="{% 2 + 2 %}" />
+
+	<test test:Locale="test {% 1 + 1 %} {% 2 + 2 %} test" />
+
+	{%
+	'test' _ 'test®ÿÿÿÿÿÿ'
+	%}
+
+	{%
+	'test' _ 'test'
+	%}
+
+	{% '{% test %}' %}
+
+	<tag test="{% 1 + 1 %}" />
+
+</test:Root>

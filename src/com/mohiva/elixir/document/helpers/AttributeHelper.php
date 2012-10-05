@@ -105,6 +105,16 @@ abstract class AttributeHelper implements Helper {
 	}
 
 	/**
+	 * Sets The value of the attribute.
+	 *
+	 * @param string $value The value of the attribute.
+	 */
+	public function setValue($value) {
+
+		$this->value = $value;
+	}
+
+	/**
 	 * Gets the line number of the source file in which the helper is located.
 	 *
 	 * @return int The line number of the source file in which the helper is located.

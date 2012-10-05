@@ -208,7 +208,7 @@ class Compiler {
 		$this->compileHelpers($node);
 
 		// Compile the expressions
-		$content = $this->compileExpressions($node->getExpressions(), $content);
+		$content = $this->compileNodeExpressions($node->getExpressions(), $content);
 
 		// Compile the children
 		$content = $this->compileChildren($node, $content);
@@ -238,10 +238,10 @@ class Compiler {
 		foreach ($node->getChildren() as $child) {
 			/* @var Node $child */
 			$id = $child->getId();
-			$placeholder = "<__node__>{$id}</__node__>";
 			$idValue = new PHPValue($id, PHPValue::TYPE_STRING);
-			$content = str_replace($placeholder, "' . \$this->processHelperStack({$idValue}, \$vars) . '", $content);
-
+			$pattern = '@<' . Lexer::NODE_PLACEHOLDER . ' id="' . $id . '"\s*/>@';
+			$replace = "' . \$this->processHelperStack({$idValue}, \$vars) . '";
+			$content = preg_replace($pattern, $replace, $content, 1);
 			$this->compileNode($child);
 		}
 
@@ -258,6 +258,7 @@ class Compiler {
 
 		foreach ($node->getHelpers() as $helper) {
 			/* @var Helper $helper */
+			$helper = $this->compileHelperExpressions($helper);
 
 			// Add helper to the stack
 			$this->helperStack[$node->getId()][] = $helper->getId();
@@ -273,98 +274,127 @@ class Compiler {
 			$method->setVisibility(PHPMember::VISIBILITY_PUBLIC);
 			$method->setDocBlock($docBlock);
 			$method->addParameter($param);
-
-			if ($helper instanceof CompilableHelper) {
-				/* @var helpers\CompilableHelper $helper */
-				$this->compileCompilableHelper($method, $node, $helper);
-			} else if ($helper instanceof CallableHelper) {
-				/* @var helpers\CallableHelper $helper */
-				$this->compileCallableHelper($method, $node, $helper);
-			} else {
-				$class = get_class($helper);
-				throw new UnexpectedHelperTypeException(
-					"The helper `{$class}` must implement the CompilableHelper or the CallableHelper interface"
-				);
-			}
+			$method->setBody($helper->compile($this, $node));
 
 			$this->class->addMethod($method);
 		}
 	}
 
 	/**
-	 * Creates the body of the helper method.
-	 *
-	 * @param PHPMethod $method The method for which the body should be created.
-	 * @param Node $node The node on which the helper is located.
-	 * @param helpers\CompilableHelper $helper The helper to compile.
-	 */
-	private function compileCompilableHelper(PHPMethod $method, Node $node, CompilableHelper $helper) {
-
-		$method->setBody($helper->compile($this, $node));
-	}
-
-	/**
-	 * Create the body of the helper method.
-	 *
-	 * @param PHPMethod $method The method for which the body should be created.
-	 * @param Node $node The node on which the helper is located.
-	 * @param helpers\CallableHelper $helper The helper to compile.
-	 * @throws UnexpectedHelperTypeException if the helper isn't a attribute or a element helper.
-	 */
-	private function compileCallableHelper(PHPMethod $method, Node $node, CallableHelper $helper) {
-
-		/* @var Helper $helper */
-		$class = get_class($helper);
-		$body = new PHPRawCode();
-		$nodeIdVal = new PHPValue($node->getId(), PHPValue::TYPE_STRING);
-		$helpIdVal = new PHPValue($helper->getId(), PHPValue::TYPE_STRING);
-		$helpLineVal = new PHPValue($helper->getLine(), PHPValue::TYPE_INTEGER);
-		$helpPathVal = new PHPValue($helper->getPath(), PHPValue::TYPE_STRING);
-		$helpVarsVal = new PHPValue(array(), PHPValue::TYPE_ARRAY);
-		$body->addLine("\$nodeId = {$nodeIdVal};");
-		$body->addLine("\$helpId = {$helpIdVal};");
-		$body->addLine("\$helpLine = {$helpLineVal};");
-		$body->addLine("\$helpPath = {$helpPathVal};");
-		$body->addLine("\$helpVars = {$helpVarsVal};");
-		if ($helper instanceof AttributeHelper) {
-			/* @var helpers\AttributeHelper $helper */
-			$helpValueVal = new PHPValue($helper->getValue(), PHPValue::TYPE_STRING);
-			$helpValueVal = $this->compileExpressions($helper->getExpressions(), $helpValueVal);
-			$body->addLine("\$helpValue = {$helpValueVal};");
-			$body->addLine();
-			$body->addLine("\$helper = new {$class}(\$helpId, \$helpValue, \$helpVars, \$helpLine, \$helpPath);");
-		} else if ($helper instanceof ElementHelper) {
-			/* @var helpers\ElementHelper $helper */
-			$helpAttrVal = new PHPValue($helper->getAttributes(), PHPValue::TYPE_ARRAY);
-			$helpAttrVal = $this->compileExpressions($helper->getExpressions(), $helpAttrVal);
-			$body->addLine("\$helpAttr = {$helpAttrVal};");
-			$body->addLine();
-			$body->addLine("\$helper = new {$class}(\$helpId, \$helpAttr, \$helpVars, \$helpLine, \$helpPath);");
-		} else {
-			throw new UnexpectedHelperTypeException(
-				"The helper `{$class}` must be of type AttributeHelper or a ElementHelper"
-			);
-		}
-
-		$body->addLine("\$content = \$helper->process(\$this, {$nodeIdVal}, \$vars);");
-		$body->addLine();
-		$body->addLine('return $content;');
-		$method->setBody($body);
-	}
-
-	/**
-	 * Replace all placeholders in the given string with the result of the expression compiler.
+	 * Compile the given node expressions.
 	 *
 	 * @param array $expressions The expressions to compile.
-	 * @param string $string The string in which the placeholders should be replaced.
-	 * @return string The string with all replaced placeholders.
+	 * @param string $string The string in which the expressions should be replaced.
+	 * @return string The string with all replaced expressions.
 	 */
-	private function compileExpressions(array $expressions, $string) {
+	private function compileNodeExpressions(array $expressions, $string) {
 
 		foreach ($expressions as $expression) {
-			$compilation = null;
-			$string = str_replace($expression['placeholder'], "' .  {$compilation}  . '", $string);
+			/* @var \com\mohiva\elixir\document\Expression $expression */
+			$string = $this->compileExpression($expression, $string);
 		}
+
+		return $string;
+	}
+
+	/**
+	 * Compile the helper expressions.
+	 *
+	 * @param Helper $helper The helper for which the expressions should be compiled.
+	 * @return Helper The helper with the compiled expressions.
+	 */
+	private function compileHelperExpressions(Helper $helper) {
+
+		if ($helper instanceof ElementHelper) {
+			$helper->setAttributes($this->compileElementHelperExpressions(
+				$helper->getExpressions(),
+				$helper->getAttributes()
+			));
+		} else if ($helper instanceof AttributeHelper) {
+			$helper->setValue($this->compileAttributeHelperExpressions(
+				$helper->getExpressions(),
+				$helper->getValue()
+			));
+		}
+
+		return $helper;
+	}
+
+	/**
+	 * Compile the given element helper expressions.
+	 *
+	 * @param array $expressions The expressions to compile.
+	 * @param array $attributes The attributes in which the expressions should be replaced.
+	 * @return array The attributes with all replaced expressions.
+	 */
+	private function compileElementHelperExpressions(array $expressions, array $attributes) {
+
+		foreach ($expressions as $expression) {
+			/* @var \com\mohiva\elixir\document\Expression $expression */
+			$value = $attributes[$expression->getAttribute()];
+			$value = $this->compileExpression($expression, $value);
+			$attributes[$expression->getAttribute()] = $value;
+		}
+
+		return $attributes;
+	}
+
+	/**
+	 * Compile the given attribute helper expressions.
+	 *
+	 * @param array $expressions The expressions to compile.
+	 * @param string $value The attribute value in which the expressions should be replaced.
+	 * @return string The attribute value with all replaced expressions.
+	 */
+	private function compileAttributeHelperExpressions(array $expressions, $value) {
+
+		foreach ($expressions as $expression) {
+			/* @var \com\mohiva\elixir\document\Expression $expression */
+			$value = $this->compileExpression($expression, $value);
+		}
+
+		return $value;
+	}
+
+	/**
+	 * Create a method for the given expression and replace the expression in the given string with the method
+	 * call to this created expression method.
+	 *
+	 * @param Expression $expression The expression to compile.
+	 * @param string $string The string in which the expression should be replaced.
+	 * @return string The string with the replaced expression.
+	 */
+	private function compileExpression(Expression $expression, $string) {
+
+		// Replace the first occurence of the expression content with the associated method call
+		// Escape all ' characters, because we use it for string concatenation
+		$content = addcslashes($expression->getContent(), "'");
+		$idValue = new PHPValue($expression->getId(), PHPValue::TYPE_STRING);
+		$search = '{%' . $content . '%}';
+		$replace = "' . \$this->processExpression({$idValue}, \$vars) . '";
+		$string = substr_replace($string, $replace, strpos($string, $search), mb_strlen($search));
+
+		// Compile the expression
+		$docBlock = new PHPDocBlock;
+		$docBlock->addAnnotation('@line ' . $expression->getLine());
+		$docBlock->addAnnotation('@path ' . str_replace('/', '\\', $expression->getPath()));
+
+		$body = new PHPRawCode();
+		$body->addLine('$vars = clone $vars;');
+		$body->addLine();
+		$body->addLine("\$exp = {$expression->getNode()->evaluate()};");
+		$body->addLine();
+		$body->addLine('return $exp;');
+
+		$param = new PHPParameter('vars', 'Variables');
+
+		$method = new PHPMethod('expression_' . $expression->getId());
+		$method->setVisibility(PHPMember::VISIBILITY_PUBLIC);
+		$method->setDocBlock($docBlock);
+		$method->addParameter($param);
+		$method->setBody($body);
+
+		$this->class->addMethod($method);
 
 		return $string;
 	}

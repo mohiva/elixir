@@ -97,11 +97,21 @@ abstract class ElementHelper implements Helper {
 	/**
 	 * Gets a list with all attributes available for this helper.
 	 *
-	 * @return array A list with all attributes available for this helper.
+	 * @return Expression[] A list with all attributes available for this helper.
 	 */
 	public function getAttributes() {
 
 		return $this->attributes;
+	}
+
+	/**
+	 * Sets a list with all attributes available for this helper.
+	 *
+	 * @param Expression[] $attributes A list with all attributes available for this helper.
+	 */
+	public function setAttributes(array $attributes) {
+
+		$this->attributes = $attributes;
 	}
 
 	/**

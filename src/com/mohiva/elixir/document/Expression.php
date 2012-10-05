@@ -156,7 +156,7 @@ class Expression {
 	/**
 	 * Returns the attribute name or null if the expression wasn't found inside an attribute value.
 	 *
-	 * @return array The attribute name or null if the expression wasn't found inside an attribute value.
+	 * @return string The attribute name or null if the expression wasn't found inside an attribute value.
 	 */
 	public function getAttribute() {
 

@@ -18,6 +18,7 @@
  */
 namespace com\mohiva\test\elixir\document;
 
+use com\mohiva\test\elixir\Bootstrap;
 use com\mohiva\pyramid\Parser as ExpressionParser;
 use com\mohiva\common\xml\XMLDocument;
 use com\mohiva\common\lang\ReflectionClass;
@@ -31,6 +32,7 @@ use com\mohiva\elixir\document\expression\Grammar as ExpressionGrammar;
 use com\mohiva\elixir\document\Lexer as DocumentLexer;
 use com\mohiva\elixir\document\Parser as DocumentParser;
 use com\mohiva\elixir\document\Compiler;
+use com\mohiva\elixir\document\Lexer;
 use com\mohiva\elixir\io\StreamWrapper;
 use com\mohiva\elixir\io\CacheContainer;
 
@@ -168,6 +170,17 @@ class CompilerTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	/**
+	 * Test if the compiler replaces all child node placeholders with the helper stack calls.
+	 */
+	public function testCompileReplacesAllChildNodePlaceholders() {
+
+		$class = $this->createReflectionClassFixture();
+		$content = file_get_contents($class->getFileName());
+
+		$this->assertNotContains(Lexer::NODE_PLACEHOLDER, $content);
+	}
+
+	/**
 	 * Data provider which returns a Compiler instance.
 	 *
 	 * @return array An array containing a Compiler instance.
@@ -191,7 +204,7 @@ class CompilerTest extends \PHPUnit_Framework_TestCase {
 		$fileName = 'elixir://test' . $hash;
 
 		$doc = new XMLDocument();
-		$doc->loadXML('<root />');
+		$doc->load(Bootstrap::$resourceDir . '/elixir/document/compiler/default.xml');
 
 		$lexer = new DocumentLexer();
 		$stream = $lexer->scan($doc);
@@ -201,7 +214,7 @@ class CompilerTest extends \PHPUnit_Framework_TestCase {
 
 		$compiler = new Compiler(__NAMESPACE__, $className, '\stdClass', 'Test class');
 		$content = $compiler->compile($tree);
-
+		echo $content;
 		file_put_contents($fileName, $content);
 
 		/** @noinspection PhpIncludeInspection */
