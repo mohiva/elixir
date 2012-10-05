@@ -137,11 +137,11 @@ class LexerTest extends \PHPUnit_Framework_TestCase {
 	public function testSingleQuotedStringSyntax() {
 
 		$lexer = new Lexer();
-		$stream = $lexer->scan(" '\\'key\\\\':va\\'l\\'ue\\'' ");
+		$stream = $lexer->scan(" '\\'key\\\\' => va\\'l\\'ue\\'' ");
 
 		$actual = $this->buildActualTokens($stream);
 		$expected = array(
-			array(Lexer::T_VALUE => "'\\'key\\\\':va\\'l\\'ue\\''")
+			array(Lexer::T_VALUE => "'\\'key\\\\' => va\\'l\\'ue\\''")
 		);
 		$this->assertSame($expected, $actual);
 	}
@@ -152,11 +152,11 @@ class LexerTest extends \PHPUnit_Framework_TestCase {
 	public function testDoubleQuotedStringSyntax() {
 
 		$lexer = new Lexer();
-		$stream = $lexer->scan(' "\"key\":va\"l\"ue\"" ');
+		$stream = $lexer->scan(' "\"key\" => va\"l\"ue\"" ');
 
 		$actual = $this->buildActualTokens($stream);
 		$expected = array(
-			array(Lexer::T_VALUE => '"\"key\":va\"l\"ue\""')
+			array(Lexer::T_VALUE => '"\"key\" => va\"l\"ue\""')
 		);
 		$this->assertSame($expected, $actual);
 	}
@@ -167,13 +167,13 @@ class LexerTest extends \PHPUnit_Framework_TestCase {
 	public function testArraySyntax() {
 
 		$lexer = new Lexer();
-		$stream = $lexer->scan(' [key1:"val\"ue", 0 : 1, 1, [1,2]] ');
+		$stream = $lexer->scan(' [key1 => "val\"ue", 0 : 1, 1, [1,2]] ');
 
 		$actual = $this->buildActualTokens($stream);
 		$expected = array(
 			array(Lexer::T_OPEN_ARRAY => '['),
 			array(Lexer::T_NAME => 'key1'),
-			array(Lexer::T_COLON => ':'),
+			array(Lexer::T_DOUBLE_ARROW => '=>'),
 			array(Lexer::T_VALUE => '"val\"ue"'),
 			array(Lexer::T_COMMA => ','),
 			array(Lexer::T_VALUE => '0'),

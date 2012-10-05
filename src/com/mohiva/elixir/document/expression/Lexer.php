@@ -49,9 +49,10 @@ class Lexer {
 	const T_QUESTION_MARK     = 107;  // ?
 	const T_COLON             = 108;  // :
 	const T_DOUBLE_COLON      = 109;  // ::
-	const T_NS_SEPARATOR      = 110;  // \
-	const T_VALUE             = 111;  // "",'',1,0.1,true,false,null
-	const T_NAME              = 112;  // [a-zA-Z0-9_]
+	const T_DOUBLE_ARROW      = 110;  // =>
+	const T_NS_SEPARATOR      = 111;  // \
+	const T_VALUE             = 112;  // "",'',1,0.1,true,false,null
+	const T_NAME              = 113;  // [a-zA-Z0-9_]
 
 	const T_NOT               = 201;  // !
 	const T_PLUS              = 202;  // +
@@ -81,7 +82,7 @@ class Lexer {
 		'("(?:[^"\\\]|\\\["\']|\\\)*")',
 		'([0-9]+\.?[0-9]*)',
 		'([A-Za-z0-9_]+)',
-		'(\:\:|==|!=|>=|<=|&&|\|\|)',
+		'(\:\:|==|!=|>=|<=|=>|&&|\|\|)',
 		'(.)'
 	);
 
@@ -91,33 +92,34 @@ class Lexer {
 	 * @var int[]
 	 */
 	private $constTokenMap = array(
-		'('         => self::T_OPEN_PARENTHESIS,
-		')'         => self::T_CLOSE_PARENTHESIS,
-		'['         => self::T_OPEN_ARRAY,
-		']'         => self::T_CLOSE_ARRAY,
-		'.'         => self::T_POINT,
-		','         => self::T_COMMA,
-		'?'         => self::T_QUESTION_MARK,
-		':'         => self::T_COLON,
-		'::'        => self::T_DOUBLE_COLON,
-		'\\'        => self::T_NS_SEPARATOR,
-		'!'         => self::T_NOT,
-		'+'         => self::T_PLUS ,
-		'-'         => self::T_MINUS,
-		'*'         => self::T_MUL,
-		'/'         => self::T_DIV,
-		'%'         => self::T_MOD,
-		'^'         => self::T_POWER,
-		'='         => self::T_ASSIGN,
-		'_'         => self::T_CONCAT,
-		'=='        => self::T_EQUAL,
-		'!='        => self::T_NOT_EQUAL,
-		'<'         => self::T_LESS,
-		'<='        => self::T_LESS_EQUAL,
-		'>'         => self::T_GREATER,
-		'>='        => self::T_GREATER_EQUAL,
-		'||'        => self::T_OR,
-		'&&'        => self::T_AND
+		'('  => self::T_OPEN_PARENTHESIS,
+		')'  => self::T_CLOSE_PARENTHESIS,
+		'['  => self::T_OPEN_ARRAY,
+		']'  => self::T_CLOSE_ARRAY,
+		'.'  => self::T_POINT,
+		','  => self::T_COMMA,
+		'?'  => self::T_QUESTION_MARK,
+		':'  => self::T_COLON,
+		'::' => self::T_DOUBLE_COLON,
+		'=>' => self::T_DOUBLE_ARROW,
+		'\\' => self::T_NS_SEPARATOR,
+		'!'  => self::T_NOT,
+		'+'  => self::T_PLUS ,
+		'-'  => self::T_MINUS,
+		'*'  => self::T_MUL,
+		'/'  => self::T_DIV,
+		'%'  => self::T_MOD,
+		'^'  => self::T_POWER,
+		'='  => self::T_ASSIGN,
+		'_'  => self::T_CONCAT,
+		'==' => self::T_EQUAL,
+		'!=' => self::T_NOT_EQUAL,
+		'<'  => self::T_LESS,
+		'<=' => self::T_LESS_EQUAL,
+		'>'  => self::T_GREATER,
+		'>=' => self::T_GREATER_EQUAL,
+		'||' => self::T_OR,
+		'&&' => self::T_AND
 	);
 
 	/**

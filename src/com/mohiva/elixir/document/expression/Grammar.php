@@ -41,6 +41,7 @@ use com\mohiva\elixir\document\expression\nodes\BinaryModNode;
 use com\mohiva\elixir\document\expression\nodes\BinaryPowerNode;
 use com\mohiva\elixir\document\expression\operands\ParenthesesOperand;
 use com\mohiva\elixir\document\expression\operands\ScalarValueOperand;
+use com\mohiva\elixir\document\expression\operands\ArrayValueOperand;
 
 /**
  * The parser grammar for the Elixir expressions.
@@ -148,5 +149,6 @@ class Grammar extends ParserGrammar {
 
 		$this->addOperand(new ParenthesesOperand());
 		$this->addOperand(new ScalarValueOperand());
+		$this->addOperand(new ArrayValueOperand());
 	}
 }
