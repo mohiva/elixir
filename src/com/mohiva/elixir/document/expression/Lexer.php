@@ -70,11 +70,6 @@ class Lexer {
 	const T_GREATER_EQUAL     = 215;  // >=
 	const T_OR                = 216;  // ||
 	const T_AND               = 217;  // &&
-	const T_STRING_CAST       = 218;  // (string)
-	const T_INT_CAST          = 219;  // (int)
-	const T_FLOAT_CAST        = 220;  // (float)
-	const T_BOOL_CAST         = 221;  // (bool)
-	const T_XML_CAST          = 222;  // (xml)
 
 	/**
 	 * The lexemes to find the tokens.
@@ -87,7 +82,6 @@ class Lexer {
 		'([0-9]+\.?[0-9]*)',
 		'([A-Za-z0-9_]+)',
 		'(\:\:|==|!=|>=|<=|&&|\|\|)',
-		'(\(string\)|\(int\)|\(float\)|\(bool\)|\(xml\))',
 		'(.)'
 	);
 
@@ -123,12 +117,7 @@ class Lexer {
 		'>'         => self::T_GREATER,
 		'>='        => self::T_GREATER_EQUAL,
 		'||'        => self::T_OR,
-		'&&'        => self::T_AND,
-		'(string)'  => self::T_STRING_CAST,
-		'(int)'     => self::T_INT_CAST,
-		'(float)'   => self::T_FLOAT_CAST,
-		'(bool)'    => self::T_BOOL_CAST,
-		'(xml)'     => self::T_XML_CAST
+		'&&'        => self::T_AND
 	);
 
 	/**

@@ -73,7 +73,7 @@
 			{%:xml tag %}       <!-- Escaped as xml -->
 			{% name %}          <!-- Escaped as html -->
 			{%:raw name %}      <!-- Not escaped, because it is marked as safe -->
-			{%:raw name:js %}   <!-- Escape as js -->
+			{%:raw name.js %}   <!-- Escape as js -->
 		</ex:Escape>
 
 		<!--

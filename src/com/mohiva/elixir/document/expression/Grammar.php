@@ -52,11 +52,6 @@ use com\mohiva\elixir\document\expression\operands\ScalarValueOperand;
  * Lexer::O_NOT,           70
  * Lexer::O_PLUS,          150
  * Lexer::O_MINUS,         150
- * Lexer::O_STRING_CAST,   80
- * Lexer::O_INT_CAST,      80
- * Lexer::O_FLOAT_CAST,    80
- * Lexer::O_BOOL_CAST,     80
- * Lexer::O_XML_CAST,      80
  *
  * Binary
  * ================================
@@ -72,10 +67,10 @@ use com\mohiva\elixir\document\expression\operands\ScalarValueOperand;
  * Lexer::O_PLUS,          50,  LEFT
  * Lexer::O_MINUS,         50,  LEFT
  * Lexer::O_CONCAT         60,  LEFT
- * Lexer::O_MUL,           90,  LEFT
- * Lexer::O_DIV,           90,  LEFT
- * Lexer::O_MOD,           90,  LEFT
- * Lexer::O_POWER,         100, RIGHT
+ * Lexer::O_MUL,           80,  LEFT
+ * Lexer::O_DIV,           80,  LEFT
+ * Lexer::O_MOD,           80,  LEFT
+ * Lexer::O_POWER,         90,  RIGHT
  *
  * Note: unary +/- operators must have higher precedence as all binary operators
  * http://www.antlr.org/pipermail/antlr-dev/2009-April/002255.html
@@ -138,16 +133,16 @@ class Grammar extends ParserGrammar {
 		$this->addOperator(new BinaryOperator(Lexer::T_CONCAT, 60, BinaryOperator::LEFT,
 			function($left, $right) { return new BinaryConcatNode($left, $right); }
 		));
-		$this->addOperator(new BinaryOperator(Lexer::T_MUL, 90, BinaryOperator::LEFT,
+		$this->addOperator(new BinaryOperator(Lexer::T_MUL, 80, BinaryOperator::LEFT,
 			function($left, $right) { return new BinaryMulNode($left, $right); }
 		));
-		$this->addOperator(new BinaryOperator(Lexer::T_DIV, 90, BinaryOperator::LEFT,
+		$this->addOperator(new BinaryOperator(Lexer::T_DIV, 80, BinaryOperator::LEFT,
 			function($left, $right) { return new BinaryDivNode($left, $right); }
 		));
-		$this->addOperator(new BinaryOperator(Lexer::T_MOD, 90, BinaryOperator::LEFT,
+		$this->addOperator(new BinaryOperator(Lexer::T_MOD, 80, BinaryOperator::LEFT,
 			function($left, $right) { return new BinaryModNode($left, $right); }
 		));
-		$this->addOperator(new BinaryOperator(Lexer::T_POWER, 100, BinaryOperator::RIGHT,
+		$this->addOperator(new BinaryOperator(Lexer::T_POWER, 90, BinaryOperator::RIGHT,
 			function($left, $right) { return new BinaryPowerNode($left, $right); }
 		));
 
