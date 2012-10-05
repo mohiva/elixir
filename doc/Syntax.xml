@@ -152,7 +152,7 @@
 		Escapes a save value inside a block:
 		-->
 		<ex:Escape strategy="html">
-			'Lucky Luke'
+			{% 'Lucky Luke' %}
 		</ex:Escape>
 
 		<!--
@@ -328,6 +328,13 @@ int, float => NumberValue
 string => StringValue
 boolean => BooleanValue
 null => NullValue
+
+Autoboxing:
+(1+1).round()
+[1, 2, 3].slice()
+1.1.toString()
+1.toString()
+{% 1 + 1.round(1 + 1.round(5:raw, 2)):raw + [1].toNumber() %}
 
 Every object has specific methods to work with the value:
 ArrayValue: join, merge, length, sort, keys, values, contains
