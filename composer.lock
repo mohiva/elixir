@@ -18,7 +18,6 @@
             "require": {
                 "php": ">=5.4"
             },
-            "time": "1346336493",
             "type": "library",
             "installation-source": "source",
             "autoload": {
@@ -26,22 +25,7 @@
                     "com\\mohiva\\common": "src/"
                 }
             },
-            "license": [
-                "New BSD"
-            ],
-            "authors": [
-                {
-                    "name": "Christian Kaps",
-                    "email": "christian.kaps@mohiva.com",
-                    "homepage": null,
-                    "role": null
-                }
-            ],
-            "description": "A PHP library which provides functionality shared by some mohiva projects",
-            "homepage": "https://github.com/mohiva/common",
-            "keywords": [
-                "library"
-            ]
+            "time": "1346336493"
         },
         {
             "name": "mohiva/manitou",
@@ -61,7 +45,6 @@
                 "php": ">=5.4",
                 "mohiva/common": "dev-master"
             },
-            "time": "1341606837",
             "type": "library",
             "installation-source": "source",
             "autoload": {
@@ -85,7 +68,8 @@
             "keywords": [
                 "generator",
                 "code"
-            ]
+            ],
+            "time": "1341606837"
         },
         {
             "name": "mohiva/pyramid",
@@ -93,19 +77,19 @@
             "source": {
                 "type": "git",
                 "url": "git://github.com/mohiva/pyramid.git",
-                "reference": "af17fad6ecd752aef2fe95a9363ef8595ba18836"
+                "reference": "0c9fedf7b0edb2b7715bcb05e6acaae1b3e95d9f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/mohiva/pyramid/zipball/af17fad6ecd752aef2fe95a9363ef8595ba18836",
-                "reference": "af17fad6ecd752aef2fe95a9363ef8595ba18836",
+                "url": "https://github.com/mohiva/pyramid/zipball/0c9fedf7b0edb2b7715bcb05e6acaae1b3e95d9f",
+                "reference": "0c9fedf7b0edb2b7715bcb05e6acaae1b3e95d9f",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.4",
                 "mohiva/common": "dev-master"
             },
-            "time": "1341606761",
+            "time": "1349533768",
             "type": "library",
             "installation-source": "source",
             "autoload": {
@@ -119,9 +103,7 @@
             "authors": [
                 {
                     "name": "Christian Kaps",
-                    "email": "christian.kaps@mohiva.com",
-                    "homepage": null,
-                    "role": null
+                    "email": "christian.kaps@mohiva.com"
                 }
             ],
             "description": "An operator precedence parser based on the “Precedence climbing” algorithm",
@@ -152,7 +134,6 @@
             "require": {
                 "php": ">=5.2.0"
             },
-            "time": "1344450214",
             "type": "library",
             "installation-source": "source",
             "autoload": {
@@ -163,23 +144,7 @@
             "include-path": [
                 "src"
             ],
-            "license": [
-                "BSD"
-            ],
-            "authors": [
-                {
-                    "name": "Mike Lively",
-                    "email": "m@digitalsandwich.com",
-                    "homepage": null,
-                    "role": null
-                }
-            ],
-            "description": "The Phake mock testing library",
-            "homepage": "https://github.com/mlively/Phake",
-            "keywords": [
-                "testing",
-                "mock"
-            ]
+            "time": "1344450214"
         }
     ],
     "aliases": [

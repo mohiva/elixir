@@ -46,13 +46,11 @@ class Lexer {
 	const T_CLOSE_ARRAY       = 104;  // ]
 	const T_POINT             = 105;  // .
 	const T_COMMA             = 106;  // ,
-	const T_QUESTION_MARK     = 107;  // ?
-	const T_COLON             = 108;  // :
-	const T_DOUBLE_COLON      = 109;  // ::
-	const T_DOUBLE_ARROW      = 110;  // =>
-	const T_NS_SEPARATOR      = 111;  // \
-	const T_VALUE             = 112;  // "",'',1,0.1,true,false,null
-	const T_NAME              = 113;  // [a-zA-Z0-9_]
+	const T_DOUBLE_COLON      = 107;  // ::
+	const T_DOUBLE_ARROW      = 108;  // =>
+	const T_NS_SEPARATOR      = 109;  // \
+	const T_VALUE             = 110;  // "",'',1,0.1,true,false,null
+	const T_NAME              = 111;  // [a-zA-Z0-9_]
 
 	const T_NOT               = 201;  // !
 	const T_PLUS              = 202;  // +
@@ -71,6 +69,8 @@ class Lexer {
 	const T_GREATER_EQUAL     = 215;  // >=
 	const T_OR                = 216;  // ||
 	const T_AND               = 217;  // &&
+	const T_QUESTION_MARK     = 218;  // ?
+	const T_COLON             = 219;  // :
 
 	/**
 	 * The lexemes to find the tokens.
@@ -98,8 +98,6 @@ class Lexer {
 		']'  => self::T_CLOSE_ARRAY,
 		'.'  => self::T_POINT,
 		','  => self::T_COMMA,
-		'?'  => self::T_QUESTION_MARK,
-		':'  => self::T_COLON,
 		'::' => self::T_DOUBLE_COLON,
 		'=>' => self::T_DOUBLE_ARROW,
 		'\\' => self::T_NS_SEPARATOR,
@@ -119,7 +117,9 @@ class Lexer {
 		'>'  => self::T_GREATER,
 		'>=' => self::T_GREATER_EQUAL,
 		'||' => self::T_OR,
-		'&&' => self::T_AND
+		'&&' => self::T_AND,
+		'?'  => self::T_QUESTION_MARK,
+		':'  => self::T_COLON
 	);
 
 	/**

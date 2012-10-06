@@ -12,6 +12,8 @@
 	'test' _ 'test'
 	%}
 
+	{% 1 == 1 ? 100 : 200 ? true : false %}
+
 	{% '{% test %}' %}
 
 	<tag test="{% 1 + 1 %}" />
