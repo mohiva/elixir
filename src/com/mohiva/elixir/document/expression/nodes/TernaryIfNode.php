@@ -42,8 +42,13 @@ class TernaryIfNode extends TernaryOperatorNode {
 
 		$raw = new PHPRawCode();
 		$raw->openScope('function() use ($vars) {');
-		$raw->openScope('if (' . $this->conditionNode->evaluate() . ') {');
-		$raw->addLine('return ' . $this->ifNode->evaluate() . ';');
+		$raw->addLine('$condition = ' . $this->conditionNode->evaluate() . ';');
+		$raw->openScope('if ($condition) {');
+		if ($this->ifNode === null) {
+			$raw->addLine('return $condition;');
+		} else {
+			$raw->addLine('return ' . $this->ifNode->evaluate() . ';');
+		}
 		$raw->openScope('} else {', true);
 		$raw->addLine('return ' . $this->elseNode->evaluate() . ';');
 		$raw->closeScope('}');

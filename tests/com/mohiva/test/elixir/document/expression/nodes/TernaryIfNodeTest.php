@@ -34,9 +34,9 @@ use com\mohiva\elixir\document\expression\nodes\TernaryIfNode;
 class TernaryIfNodeTest extends \PHPUnit_Framework_TestCase {
 
 	/**
-	 * Test if the `evaluate` method returns the correct value for the operation.
+	 * Test if the `evaluate` method returns the correct value for the full form.
 	 */
-	public function testEvaluate() {
+	public function testEvaluateForFullForm() {
 
 		$condition = mt_rand(1, 100);
 		$if = mt_rand(1, 100);
@@ -44,8 +44,30 @@ class TernaryIfNodeTest extends \PHPUnit_Framework_TestCase {
 		$node = new TernaryIfNode(new OperandNode($condition), new OperandNode($if), new OperandNode($else));
 
 		$expected  = "function() use (\$vars) {" . PHP_EOL;
-		$expected .= "\tif ({$condition}) {" . PHP_EOL;
+		$expected .= "\t\$condition = " . $condition . ";" . PHP_EOL;
+		$expected .= "\tif (\$condition) {" . PHP_EOL;
 		$expected .= "\t\treturn {$if};" . PHP_EOL;
+		$expected .= "\t} else {" . PHP_EOL;
+		$expected .= "\t\treturn {$else};" . PHP_EOL;
+		$expected .= "\t}" . PHP_EOL;
+		$expected .= "}";
+
+		$this->assertSame($expected, $node->evaluate());
+	}
+
+	/**
+	 * Test if the `evaluate` method returns the correct value for the shorthand form.
+	 */
+	public function testEvaluateForShorthandForm() {
+
+		$condition = mt_rand(1, 100);
+		$else = mt_rand(1, 100);
+		$node = new TernaryIfNode(new OperandNode($condition), null, new OperandNode($else));
+
+		$expected  = "function() use (\$vars) {" . PHP_EOL;
+		$expected .= "\t\$condition = " . $condition . ";" . PHP_EOL;
+		$expected .= "\tif (\$condition) {" . PHP_EOL;
+		$expected .= "\t\treturn \$condition;" . PHP_EOL;
 		$expected .= "\t} else {" . PHP_EOL;
 		$expected .= "\t\treturn {$else};" . PHP_EOL;
 		$expected .= "\t}" . PHP_EOL;

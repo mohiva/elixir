@@ -77,19 +77,19 @@
             "source": {
                 "type": "git",
                 "url": "git://github.com/mohiva/pyramid.git",
-                "reference": "0c9fedf7b0edb2b7715bcb05e6acaae1b3e95d9f"
+                "reference": "0637e1115fab0937cdc55ca8c3b46b91bc7dcef3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/mohiva/pyramid/zipball/0c9fedf7b0edb2b7715bcb05e6acaae1b3e95d9f",
-                "reference": "0c9fedf7b0edb2b7715bcb05e6acaae1b3e95d9f",
+                "url": "https://github.com/mohiva/pyramid/zipball/0637e1115fab0937cdc55ca8c3b46b91bc7dcef3",
+                "reference": "0637e1115fab0937cdc55ca8c3b46b91bc7dcef3",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.4",
                 "mohiva/common": "dev-master"
             },
-            "time": "1349533768",
+            "time": "1349612972",
             "type": "library",
             "installation-source": "source",
             "autoload": {

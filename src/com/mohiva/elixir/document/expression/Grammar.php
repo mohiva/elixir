@@ -152,7 +152,7 @@ class Grammar extends ParserGrammar {
 		$this->addOperator(new BinaryOperator(Lexer::T_POWER, 100, BinaryOperator::RIGHT,
 			function($left, $right) { return new BinaryPowerNode($left, $right); }
 		));
-		$this->addOperator(new TernaryOperator(Lexer::T_QUESTION_MARK, Lexer::T_COLON, 20, TernaryOperator::RIGHT,
+		$this->addOperator(new TernaryOperator(Lexer::T_QUESTION_MARK, Lexer::T_COLON, 20, TernaryOperator::RIGHT, true,
 			function($condition, $if, $else) { return new TernaryIfNode($condition, $if, $else); }
 		));
 
