@@ -18,6 +18,7 @@
  */
 namespace com\mohiva\test\elixir\document;
 
+use Phake;
 use com\mohiva\elixir\document\Node;
 
 /**
@@ -101,7 +102,7 @@ class NodeTest extends \PHPUnit_Framework_TestCase {
 	public function testHelperAccessors() {
 
 		/* @var \com\mohiva\elixir\document\Helper $helper */
-		$helper = $this->getMock('\com\mohiva\elixir\document\Helper', array(), array(), '', false);
+		$helper = Phake::mock('\com\mohiva\elixir\document\Helper');
 		$node = new Node('root', 1, '<xml></xml>', 1, '/root');
 		$node->addHelper($helper);
 
@@ -114,7 +115,7 @@ class NodeTest extends \PHPUnit_Framework_TestCase {
 	public function testExpressionAccessors() {
 
 		/* @var \com\mohiva\elixir\document\Expression $expression */
-		$expression = $this->getMock('\com\mohiva\elixir\document\Expression', array(), array(), '', false);
+		$expression = Phake::mock('\com\mohiva\elixir\document\Expression');
 		$node = new Node('root', 1, '<xml></xml>', 1, '/root');
 		$node->addExpressions(array($expression));
 

@@ -18,6 +18,7 @@
  */
 namespace com\mohiva\test\elixir\document;
 
+use Phake;
 use com\mohiva\elixir\document\Expression;
 
 /**
@@ -44,7 +45,7 @@ class ExpressionTest extends \PHPUnit_Framework_TestCase {
 		$path = sha1(microtime(true));
 		$content = sha1(microtime(true));
 		$attribute = sha1(microtime(true));
-		$node = $this->getMock('\com\mohiva\pyramid\Node');
+		$node = Phake::mock('\com\mohiva\pyramid\Node');
 		$expression = new Expression($id, $code, $line, $path, $content, $attribute, $node);
 
 		$this->assertSame($id, $expression->getId());

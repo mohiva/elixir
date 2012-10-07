@@ -18,6 +18,8 @@
  */
 namespace com\mohiva\test\elixir\document\helpers;
 
+use Phake;
+
 /**
  * Unit test case for the Mohiva Elixir project.
  *
@@ -65,7 +67,7 @@ class AttributeHelperTest extends \PHPUnit_Framework_TestCase {
 		);
 
 		/* @var \com\mohiva\elixir\document\Expression $expression */
-		$expression = $this->getMock('\com\mohiva\elixir\document\Expression', array(), array(), '', false);
+		$expression = Phake::mock('\com\mohiva\elixir\document\Expression');
 
 		$helper->addExpressions(array($expression));
 

@@ -18,6 +18,7 @@
  */
 namespace com\mohiva\test\elixir\document;
 
+use Phake;
 use com\mohiva\test\elixir\Bootstrap;
 use com\mohiva\common\exceptions\SyntaxErrorException;
 use com\mohiva\common\parser\TokenStream;
@@ -282,19 +283,19 @@ class ParserTest extends \PHPUnit_Framework_TestCase {
 	 */
 	public function testParserSetsCorrectRootNodeExpression() {
 
-		/* @var \PHPUnit_Framework_MockObject_MockObject $expressionLexer */
 		/* @var \com\mohiva\elixir\document\expression\Lexer $expressionLexer */
-		$expressionLexer = $this->getMock('\com\mohiva\elixir\document\expression\Lexer', array(), array(), '', false);
-		$expressionLexer->expects($this->any())
-			->method('scan')
-			->will($this->returnValue(new TokenStream()));
-
-		/* @var \PHPUnit_Framework_MockObject_MockObject $expressionParser */
 		/* @var \com\mohiva\pyramid\Parser $expressionParser */
-		$expressionParser = $this->getMock('\com\mohiva\pyramid\Parser', array(), array(), '', false);
-		$expressionParser->expects($this->any())
-			->method('parse')
-			->will($this->returnValue($this->getMock('\com\mohiva\pyramid\Node')));
+		$expressionLexer = Phake::mock('\com\mohiva\elixir\document\expression\Lexer');
+		$expressionParser = Phake::mock('\com\mohiva\pyramid\Parser');
+		$node = Phake::mock('\com\mohiva\pyramid\Node');
+
+		/** @noinspection PhpParamsInspection */
+		/** @noinspection PhpUndefinedMethodInspection */
+		Phake::when($expressionLexer)->scan(Phake::anyParameters())->thenReturn(new TokenStream());
+
+		/** @noinspection PhpParamsInspection */
+		/** @noinspection PhpUndefinedMethodInspection */
+		Phake::when($expressionParser)->parse(Phake::anyParameters())->thenReturn($node);
 
 		$doc = new XMLDocument();
 		$doc->load(Bootstrap::$resourceDir . '/elixir/document/parser/root_node_expression.xml');
@@ -313,19 +314,19 @@ class ParserTest extends \PHPUnit_Framework_TestCase {
 	 */
 	public function testParserSetsCorrectElementNodeExpression() {
 
-		/* @var \PHPUnit_Framework_MockObject_MockObject $expressionLexer */
 		/* @var \com\mohiva\elixir\document\expression\Lexer $expressionLexer */
-		$expressionLexer = $this->getMock('\com\mohiva\elixir\document\expression\Lexer', array(), array(), '', false);
-		$expressionLexer->expects($this->any())
-			->method('scan')
-			->will($this->returnValue(new TokenStream()));
-
-		/* @var \PHPUnit_Framework_MockObject_MockObject $expressionParser */
 		/* @var \com\mohiva\pyramid\Parser $expressionParser */
-		$expressionParser = $this->getMock('\com\mohiva\pyramid\Parser', array(), array(), '', false);
-		$expressionParser->expects($this->any())
-			->method('parse')
-			->will($this->returnValue($this->getMock('\com\mohiva\pyramid\Node')));
+		$expressionLexer = Phake::mock('\com\mohiva\elixir\document\expression\Lexer');
+		$expressionParser = Phake::mock('\com\mohiva\pyramid\Parser');
+		$node = Phake::mock('\com\mohiva\pyramid\Node');
+
+		/** @noinspection PhpParamsInspection */
+		/** @noinspection PhpUndefinedMethodInspection */
+		Phake::when($expressionLexer)->scan(Phake::anyParameters())->thenReturn(new TokenStream());
+
+		/** @noinspection PhpParamsInspection */
+		/** @noinspection PhpUndefinedMethodInspection */
+		Phake::when($expressionParser)->parse(Phake::anyParameters())->thenReturn($node);
 
 		$doc = new XMLDocument();
 		$doc->load(Bootstrap::$resourceDir . '/elixir/document/parser/element_node_expression.xml');
@@ -345,19 +346,19 @@ class ParserTest extends \PHPUnit_Framework_TestCase {
 	 */
 	public function testParserSetsCorrectAttributeHelperExpression() {
 
-		/* @var \PHPUnit_Framework_MockObject_MockObject $expressionLexer */
 		/* @var \com\mohiva\elixir\document\expression\Lexer $expressionLexer */
-		$expressionLexer = $this->getMock('\com\mohiva\elixir\document\expression\Lexer', array(), array(), '', false);
-		$expressionLexer->expects($this->any())
-			->method('scan')
-			->will($this->returnValue(new TokenStream()));
-
-		/* @var \PHPUnit_Framework_MockObject_MockObject $expressionParser */
 		/* @var \com\mohiva\pyramid\Parser $expressionParser */
-		$expressionParser = $this->getMock('\com\mohiva\pyramid\Parser', array(), array(), '', false);
-		$expressionParser->expects($this->any())
-			->method('parse')
-			->will($this->returnValue($this->getMock('\com\mohiva\pyramid\Node')));
+		$expressionLexer = Phake::mock('\com\mohiva\elixir\document\expression\Lexer');
+		$expressionParser = Phake::mock('\com\mohiva\pyramid\Parser');
+		$node = Phake::mock('\com\mohiva\pyramid\Node');
+
+		/** @noinspection PhpParamsInspection */
+		/** @noinspection PhpUndefinedMethodInspection */
+		Phake::when($expressionLexer)->scan(Phake::anyParameters())->thenReturn(new TokenStream());
+
+		/** @noinspection PhpParamsInspection */
+		/** @noinspection PhpUndefinedMethodInspection */
+		Phake::when($expressionParser)->parse(Phake::anyParameters())->thenReturn($node);
 
 		$doc = new XMLDocument();
 		$doc->load(Bootstrap::$resourceDir . '/elixir/document/parser/attribute_helper_expression.xml');
@@ -377,19 +378,19 @@ class ParserTest extends \PHPUnit_Framework_TestCase {
 	 */
 	public function testParserSetsCorrectElementHelperExpression() {
 
-		/* @var \PHPUnit_Framework_MockObject_MockObject $expressionLexer */
 		/* @var \com\mohiva\elixir\document\expression\Lexer $expressionLexer */
-		$expressionLexer = $this->getMock('\com\mohiva\elixir\document\expression\Lexer', array(), array(), '', false);
-		$expressionLexer->expects($this->any())
-			->method('scan')
-			->will($this->returnValue(new TokenStream()));
-
-		/* @var \PHPUnit_Framework_MockObject_MockObject $expressionParser */
 		/* @var \com\mohiva\pyramid\Parser $expressionParser */
-		$expressionParser = $this->getMock('\com\mohiva\pyramid\Parser', array(), array(), '', false);
-		$expressionParser->expects($this->any())
-			->method('parse')
-			->will($this->returnValue($this->getMock('\com\mohiva\pyramid\Node')));
+		$expressionLexer = Phake::mock('\com\mohiva\elixir\document\expression\Lexer');
+		$expressionParser = Phake::mock('\com\mohiva\pyramid\Parser');
+		$node = Phake::mock('\com\mohiva\pyramid\Node');
+
+		/** @noinspection PhpParamsInspection */
+		/** @noinspection PhpUndefinedMethodInspection */
+		Phake::when($expressionLexer)->scan(Phake::anyParameters())->thenReturn(new TokenStream());
+
+		/** @noinspection PhpParamsInspection */
+		/** @noinspection PhpUndefinedMethodInspection */
+		Phake::when($expressionParser)->parse(Phake::anyParameters())->thenReturn($node);
 
 		$doc = new XMLDocument();
 		$doc->load(Bootstrap::$resourceDir . '/elixir/document/parser/element_helper_expression.xml');
@@ -409,19 +410,19 @@ class ParserTest extends \PHPUnit_Framework_TestCase {
 	 */
 	public function testThrowsExceptionIfExpressionOpenerWasExpectedButOtherTokenWasFound() {
 
-		/* @var \PHPUnit_Framework_MockObject_MockObject $expressionLexer */
 		/* @var \com\mohiva\elixir\document\expression\Lexer $expressionLexer */
-		$expressionLexer = $this->getMock('\com\mohiva\elixir\document\expression\Lexer', array(), array(), '', false);
-		$expressionLexer->expects($this->any())
-			->method('scan')
-			->will($this->returnValue(new TokenStream()));
-
-		/* @var \PHPUnit_Framework_MockObject_MockObject $expressionParser */
 		/* @var \com\mohiva\pyramid\Parser $expressionParser */
-		$expressionParser = $this->getMock('\com\mohiva\pyramid\Parser', array(), array(), '', false);
-		$expressionParser->expects($this->any())
-			->method('parse')
-			->will($this->returnValue($this->getMock('\com\mohiva\pyramid\Node')));
+		$expressionLexer = Phake::mock('\com\mohiva\elixir\document\expression\Lexer');
+		$expressionParser = Phake::mock('\com\mohiva\pyramid\Parser');
+		$node = Phake::mock('\com\mohiva\pyramid\Node');
+
+		/** @noinspection PhpParamsInspection */
+		/** @noinspection PhpUndefinedMethodInspection */
+		Phake::when($expressionLexer)->scan(Phake::anyParameters())->thenReturn(new TokenStream());
+
+		/** @noinspection PhpParamsInspection */
+		/** @noinspection PhpUndefinedMethodInspection */
+		Phake::when($expressionParser)->parse(Phake::anyParameters())->thenReturn($node);
 
 		$doc = new XMLDocument();
 		$doc->load(Bootstrap::$resourceDir . '/elixir/document/parser/missing_expression_opener_1.xml');
@@ -443,19 +444,19 @@ class ParserTest extends \PHPUnit_Framework_TestCase {
 	 */
 	public function testThrowsExceptionIfExpressionCloserWasExpectedButOtherTokenWasFound() {
 
-		/* @var \PHPUnit_Framework_MockObject_MockObject $expressionLexer */
 		/* @var \com\mohiva\elixir\document\expression\Lexer $expressionLexer */
-		$expressionLexer = $this->getMock('\com\mohiva\elixir\document\expression\Lexer', array(), array(), '', false);
-		$expressionLexer->expects($this->any())
-			->method('scan')
-			->will($this->returnValue(new TokenStream()));
-
-		/* @var \PHPUnit_Framework_MockObject_MockObject $expressionParser */
 		/* @var \com\mohiva\pyramid\Parser $expressionParser */
-		$expressionParser = $this->getMock('\com\mohiva\pyramid\Parser', array(), array(), '', false);
-		$expressionParser->expects($this->any())
-			->method('parse')
-			->will($this->returnValue($this->getMock('\com\mohiva\pyramid\Node')));
+		$expressionLexer = Phake::mock('\com\mohiva\elixir\document\expression\Lexer');
+		$expressionParser = Phake::mock('\com\mohiva\pyramid\Parser');
+		$node = Phake::mock('\com\mohiva\pyramid\Node');
+
+		/** @noinspection PhpParamsInspection */
+		/** @noinspection PhpUndefinedMethodInspection */
+		Phake::when($expressionLexer)->scan(Phake::anyParameters())->thenReturn(new TokenStream());
+
+		/** @noinspection PhpParamsInspection */
+		/** @noinspection PhpUndefinedMethodInspection */
+		Phake::when($expressionParser)->parse(Phake::anyParameters())->thenReturn($node);
 
 		$doc = new XMLDocument();
 		$doc->load(Bootstrap::$resourceDir . '/elixir/document/parser/missing_expression_closer_1.xml');
@@ -477,19 +478,19 @@ class ParserTest extends \PHPUnit_Framework_TestCase {
 	 */
 	public function testThrowsExceptionIfExpressionCloserWasExpectedButEndOfStreamWasReached() {
 
-		/* @var \PHPUnit_Framework_MockObject_MockObject $expressionLexer */
 		/* @var \com\mohiva\elixir\document\expression\Lexer $expressionLexer */
-		$expressionLexer = $this->getMock('\com\mohiva\elixir\document\expression\Lexer', array(), array(), '', false);
-		$expressionLexer->expects($this->any())
-			->method('scan')
-			->will($this->returnValue(new TokenStream()));
-
-		/* @var \PHPUnit_Framework_MockObject_MockObject $expressionParser */
 		/* @var \com\mohiva\pyramid\Parser $expressionParser */
-		$expressionParser = $this->getMock('\com\mohiva\pyramid\Parser', array(), array(), '', false);
-		$expressionParser->expects($this->any())
-			->method('parse')
-			->will($this->returnValue($this->getMock('\com\mohiva\pyramid\Node')));
+		$expressionLexer = Phake::mock('\com\mohiva\elixir\document\expression\Lexer');
+		$expressionParser = Phake::mock('\com\mohiva\pyramid\Parser');
+		$node = Phake::mock('\com\mohiva\pyramid\Node');
+
+		/** @noinspection PhpParamsInspection */
+		/** @noinspection PhpUndefinedMethodInspection */
+		Phake::when($expressionLexer)->scan(Phake::anyParameters())->thenReturn(new TokenStream());
+
+		/** @noinspection PhpParamsInspection */
+		/** @noinspection PhpUndefinedMethodInspection */
+		Phake::when($expressionParser)->parse(Phake::anyParameters())->thenReturn($node);
 
 		$doc = new XMLDocument();
 		$doc->load(Bootstrap::$resourceDir . '/elixir/document/parser/missing_expression_closer_2.xml');
@@ -511,19 +512,19 @@ class ParserTest extends \PHPUnit_Framework_TestCase {
 	 */
 	public function testMultipleExpressionTokens() {
 
-		/* @var \PHPUnit_Framework_MockObject_MockObject $expressionLexer */
 		/* @var \com\mohiva\elixir\document\expression\Lexer $expressionLexer */
-		$expressionLexer = $this->getMock('\com\mohiva\elixir\document\expression\Lexer', array(), array(), '', false);
-		$expressionLexer->expects($this->any())
-			->method('scan')
-			->will($this->returnValue(new TokenStream()));
-
-		/* @var \PHPUnit_Framework_MockObject_MockObject $expressionParser */
 		/* @var \com\mohiva\pyramid\Parser $expressionParser */
-		$expressionParser = $this->getMock('\com\mohiva\pyramid\Parser', array(), array(), '', false);
-		$expressionParser->expects($this->any())
-			->method('parse')
-			->will($this->returnValue($this->getMock('\com\mohiva\pyramid\Node')));
+		$expressionLexer = Phake::mock('\com\mohiva\elixir\document\expression\Lexer');
+		$expressionParser = Phake::mock('\com\mohiva\pyramid\Parser');
+		$node = Phake::mock('\com\mohiva\pyramid\Node');
+
+		/** @noinspection PhpParamsInspection */
+		/** @noinspection PhpUndefinedMethodInspection */
+		Phake::when($expressionLexer)->scan(Phake::anyParameters())->thenReturn(new TokenStream());
+
+		/** @noinspection PhpParamsInspection */
+		/** @noinspection PhpUndefinedMethodInspection */
+		Phake::when($expressionParser)->parse(Phake::anyParameters())->thenReturn($node);
 
 		$doc = new XMLDocument();
 		$doc->load(Bootstrap::$resourceDir . '/elixir/document/parser/multiple_expression_tokens.xml');
@@ -542,19 +543,19 @@ class ParserTest extends \PHPUnit_Framework_TestCase {
 	 */
 	public function testThrowsExceptionOnElementNodeInsideExpression() {
 
-		/* @var \PHPUnit_Framework_MockObject_MockObject $expressionLexer */
 		/* @var \com\mohiva\elixir\document\expression\Lexer $expressionLexer */
-		$expressionLexer = $this->getMock('\com\mohiva\elixir\document\expression\Lexer', array(), array(), '', false);
-		$expressionLexer->expects($this->any())
-			->method('scan')
-			->will($this->returnValue(new TokenStream()));
-
-		/* @var \PHPUnit_Framework_MockObject_MockObject $expressionParser */
 		/* @var \com\mohiva\pyramid\Parser $expressionParser */
-		$expressionParser = $this->getMock('\com\mohiva\pyramid\Parser', array(), array(), '', false);
-		$expressionParser->expects($this->any())
-			->method('parse')
-			->will($this->returnValue($this->getMock('\com\mohiva\pyramid\Node')));
+		$expressionLexer = Phake::mock('\com\mohiva\elixir\document\expression\Lexer');
+		$expressionParser = Phake::mock('\com\mohiva\pyramid\Parser');
+		$node = Phake::mock('\com\mohiva\pyramid\Node');
+
+		/** @noinspection PhpParamsInspection */
+		/** @noinspection PhpUndefinedMethodInspection */
+		Phake::when($expressionLexer)->scan(Phake::anyParameters())->thenReturn(new TokenStream());
+
+		/** @noinspection PhpParamsInspection */
+		/** @noinspection PhpUndefinedMethodInspection */
+		Phake::when($expressionParser)->parse(Phake::anyParameters())->thenReturn($node);
 
 		$doc = new XMLDocument();
 		$doc->load(Bootstrap::$resourceDir . '/elixir/document/parser/expression_element_node.xml');
@@ -576,19 +577,19 @@ class ParserTest extends \PHPUnit_Framework_TestCase {
 	 */
 	public function testThrowsExceptionOnCommentInsideExpression() {
 
-		/* @var \PHPUnit_Framework_MockObject_MockObject $expressionLexer */
 		/* @var \com\mohiva\elixir\document\expression\Lexer $expressionLexer */
-		$expressionLexer = $this->getMock('\com\mohiva\elixir\document\expression\Lexer', array(), array(), '', false);
-		$expressionLexer->expects($this->any())
-			->method('scan')
-			->will($this->returnValue(new TokenStream()));
-
-		/* @var \PHPUnit_Framework_MockObject_MockObject $expressionParser */
 		/* @var \com\mohiva\pyramid\Parser $expressionParser */
-		$expressionParser = $this->getMock('\com\mohiva\pyramid\Parser', array(), array(), '', false);
-		$expressionParser->expects($this->any())
-			->method('parse')
-			->will($this->returnValue($this->getMock('\com\mohiva\pyramid\Node')));
+		$expressionLexer = Phake::mock('\com\mohiva\elixir\document\expression\Lexer');
+		$expressionParser = Phake::mock('\com\mohiva\pyramid\Parser');
+		$node = Phake::mock('\com\mohiva\pyramid\Node');
+
+		/** @noinspection PhpParamsInspection */
+		/** @noinspection PhpUndefinedMethodInspection */
+		Phake::when($expressionLexer)->scan(Phake::anyParameters())->thenReturn(new TokenStream());
+
+		/** @noinspection PhpParamsInspection */
+		/** @noinspection PhpUndefinedMethodInspection */
+		Phake::when($expressionParser)->parse(Phake::anyParameters())->thenReturn($node);
 
 		$doc = new XMLDocument();
 		$doc->load(Bootstrap::$resourceDir . '/elixir/document/parser/expression_comment.xml');
@@ -610,19 +611,19 @@ class ParserTest extends \PHPUnit_Framework_TestCase {
 	 */
 	public function testThrowsExceptionOnCdataInsideExpression() {
 
-		/* @var \PHPUnit_Framework_MockObject_MockObject $expressionLexer */
 		/* @var \com\mohiva\elixir\document\expression\Lexer $expressionLexer */
-		$expressionLexer = $this->getMock('\com\mohiva\elixir\document\expression\Lexer', array(), array(), '', false);
-		$expressionLexer->expects($this->any())
-			->method('scan')
-			->will($this->returnValue(new TokenStream()));
-
-		/* @var \PHPUnit_Framework_MockObject_MockObject $expressionParser */
 		/* @var \com\mohiva\pyramid\Parser $expressionParser */
-		$expressionParser = $this->getMock('\com\mohiva\pyramid\Parser', array(), array(), '', false);
-		$expressionParser->expects($this->any())
-			->method('parse')
-			->will($this->returnValue($this->getMock('\com\mohiva\pyramid\Node')));
+		$expressionLexer = Phake::mock('\com\mohiva\elixir\document\expression\Lexer');
+		$expressionParser = Phake::mock('\com\mohiva\pyramid\Parser');
+		$node = Phake::mock('\com\mohiva\pyramid\Node');
+
+		/** @noinspection PhpParamsInspection */
+		/** @noinspection PhpUndefinedMethodInspection */
+		Phake::when($expressionLexer)->scan(Phake::anyParameters())->thenReturn(new TokenStream());
+
+		/** @noinspection PhpParamsInspection */
+		/** @noinspection PhpUndefinedMethodInspection */
+		Phake::when($expressionParser)->parse(Phake::anyParameters())->thenReturn($node);
 
 		$doc = new XMLDocument();
 		$doc->load(Bootstrap::$resourceDir . '/elixir/document/parser/expression_cdata.xml');
@@ -644,19 +645,19 @@ class ParserTest extends \PHPUnit_Framework_TestCase {
 	 */
 	public function testThrowsExceptionOnProcessingInstructionInsideExpression() {
 
-		/* @var \PHPUnit_Framework_MockObject_MockObject $expressionLexer */
 		/* @var \com\mohiva\elixir\document\expression\Lexer $expressionLexer */
-		$expressionLexer = $this->getMock('\com\mohiva\elixir\document\expression\Lexer', array(), array(), '', false);
-		$expressionLexer->expects($this->any())
-			->method('scan')
-			->will($this->returnValue(new TokenStream()));
-
-		/* @var \PHPUnit_Framework_MockObject_MockObject $expressionParser */
 		/* @var \com\mohiva\pyramid\Parser $expressionParser */
-		$expressionParser = $this->getMock('\com\mohiva\pyramid\Parser', array(), array(), '', false);
-		$expressionParser->expects($this->any())
-			->method('parse')
-			->will($this->returnValue($this->getMock('\com\mohiva\pyramid\Node')));
+		$expressionLexer = Phake::mock('\com\mohiva\elixir\document\expression\Lexer');
+		$expressionParser = Phake::mock('\com\mohiva\pyramid\Parser');
+		$node = Phake::mock('\com\mohiva\pyramid\Node');
+
+		/** @noinspection PhpParamsInspection */
+		/** @noinspection PhpUndefinedMethodInspection */
+		Phake::when($expressionLexer)->scan(Phake::anyParameters())->thenReturn(new TokenStream());
+
+		/** @noinspection PhpParamsInspection */
+		/** @noinspection PhpUndefinedMethodInspection */
+		Phake::when($expressionParser)->parse(Phake::anyParameters())->thenReturn($node);
 
 		$doc = new XMLDocument();
 		$doc->load(Bootstrap::$resourceDir . '/elixir/document/parser/expression_pi.xml');
@@ -679,19 +680,18 @@ class ParserTest extends \PHPUnit_Framework_TestCase {
 	 */
 	public function testParserSetsLineNumberForCaughtExceptionFromMohivaPyramid() {
 
-		/* @var \PHPUnit_Framework_MockObject_MockObject $expressionLexer */
 		/* @var \com\mohiva\elixir\document\expression\Lexer $expressionLexer */
-		$expressionLexer = $this->getMock('\com\mohiva\elixir\document\expression\Lexer', array(), array(), '', false);
-		$expressionLexer->expects($this->any())
-			->method('scan')
-			->will($this->returnValue(new TokenStream()));
-
-		/* @var \PHPUnit_Framework_MockObject_MockObject $expressionParser */
 		/* @var \com\mohiva\pyramid\Parser $expressionParser */
-		$expressionParser = $this->getMock('\com\mohiva\pyramid\Parser', array(), array(), '', false);
-		$expressionParser->expects($this->any())
-			->method('parse')
-			->will($this->throwException(new SyntaxErrorException()));
+		$expressionLexer = Phake::mock('\com\mohiva\elixir\document\expression\Lexer');
+		$expressionParser = Phake::mock('\com\mohiva\pyramid\Parser');
+
+		/** @noinspection PhpParamsInspection */
+		/** @noinspection PhpUndefinedMethodInspection */
+		Phake::when($expressionLexer)->scan(Phake::anyParameters())->thenReturn(new TokenStream());
+
+		/** @noinspection PhpParamsInspection */
+		/** @noinspection PhpUndefinedMethodInspection */
+		Phake::when($expressionParser)->parse(Phake::anyParameters())->thenThrow(new SyntaxErrorException());
 
 		$doc = new XMLDocument();
 		$doc->loadXML('<root>{% %}</root>');
@@ -853,12 +853,12 @@ class ParserTest extends \PHPUnit_Framework_TestCase {
 	 */
 	public function testThrowsInvalidTokenException() {
 
-		/* @var \PHPUnit_Framework_MockObject_MockObject $token */
 		/* @var \com\mohiva\common\parser\Token $token */
-		$token = $this->getMock('\com\mohiva\common\parser\Token', array(), array(), '', false);
-		$token->expects($this->any())
-			->method('getCode')
-			->will($this->returnValue(100));
+		$token = Phake::mock('\com\mohiva\common\parser\Token');
+
+		/** @noinspection PhpParamsInspection */
+		/** @noinspection PhpUndefinedMethodInspection */
+		Phake::when($token)->getCode()->thenReturn(100);
 
 		$stream = new TokenStream();
 		$stream->push($token);
