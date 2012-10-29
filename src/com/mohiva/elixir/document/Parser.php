@@ -335,7 +335,7 @@ class Parser {
 			$expression = new Expression(
 				sha1($path),
 				$token->getCode(),
-				$token->getLine(),
+				$opener->getLine(),
 				$path,
 				$content,
 				$token->getAttribute(),
