@@ -97,6 +97,7 @@ class Compiler {
 		$this->namespace = new PHPNamespace($namespace);
 		$this->namespace->addClass($this->class);
 		$this->namespace->addUseStatement(new PHPUse(__NAMESPACE__ . '\Variables'));
+		$this->namespace->addUseStatement(new PHPUse(__NAMESPACE__ . '\expression\ValueContext'));
 
 		$this->file = new PHPFile();
 		$this->file->addNamespace($this->namespace);
@@ -195,11 +196,10 @@ class Compiler {
 		$docBlock->addAnnotation('@line ' . $node->getLine());
 		$docBlock->addAnnotation('@path ' . str_replace('/', '\\', $node->getPath()));
 
-		$param = new PHPParameter('vars', 'Variables');
-
 		$method = new PHPMethod('node_' . $node->getId());
 		$method->setDocBlock($docBlock);
-		$method->addParameter($param);
+		$method->addParameter(new PHPParameter('vars', 'Variables'));
+		$method->addParameter(new PHPParameter('valueContext', 'ValueContext'));
 		$this->class->addMethod($method);
 
 		// Compile the helpers
@@ -213,10 +213,6 @@ class Compiler {
 
 		// Add the content to the method body
 		$body = new PHPRawCode();
-		if ($node->getChildren()) {
-			$body->addLine('$vars = clone $vars;');
-			$body->addLine();
-		}
 		$body->addLine("\$content = '{$content}';");
 		$body->addLine();
 		$body->addLine('return $content;');
@@ -238,7 +234,7 @@ class Compiler {
 			$id = $child->getId();
 			$idValue = new PHPValue($id, PHPValue::TYPE_STRING);
 			$pattern = '@<' . Lexer::NODE_PLACEHOLDER . ' id="' . $id . '"\s*/>@';
-			$replace = "' . \$this->processHelperStack({$idValue}, \$vars) . '";
+			$replace = "' . \$this->processHelperStack({$idValue}, \$vars, \$valueContext) . '";
 			$content = preg_replace($pattern, $replace, $content, 1);
 			$this->compileNode($child);
 		}
@@ -266,12 +262,11 @@ class Compiler {
 			$docBlock->addAnnotation('@line ' . $helper->getLine());
 			$docBlock->addAnnotation('@path ' . str_replace('/', '\\', $helper->getPath()));
 
-			$param = new PHPParameter('vars', 'Variables');
-
 			$method = new PHPMethod('helper_' . $helper->getId());
 			$method->setVisibility(PHPMember::VISIBILITY_PUBLIC);
 			$method->setDocBlock($docBlock);
-			$method->addParameter($param);
+			$method->addParameter(new PHPParameter('vars', 'Variables'));
+			$method->addParameter(new PHPParameter('valueContext', 'ValueContext'));
 			$method->setBody($helper->compile($this, $node));
 
 			$this->class->addMethod($method);
@@ -369,7 +364,7 @@ class Compiler {
 		$content = addcslashes($expression->getContent(), "'");
 		$idValue = new PHPValue($expression->getId(), PHPValue::TYPE_STRING);
 		$search = '{%' . $content . '%}';
-		$replace = "' . \$this->processExpression({$idValue}, \$vars) . '";
+		$replace = "' . \$this->processExpression({$idValue}, \$vars, \$valueContext) . '";
 		$string = substr_replace($string, $replace, strpos($string, $search), strlen($search));
 
 		// Compile the expression
@@ -378,18 +373,16 @@ class Compiler {
 		$docBlock->addAnnotation('@path ' . str_replace('/', '\\', $expression->getPath()));
 
 		$body = new PHPRawCode();
-		$body->addLine('$vars = clone $vars;');
 		$body->addLine();
 		$body->addLine("\$exp = {$expression->getNode()->evaluate()};");
 		$body->addLine();
 		$body->addLine('return $exp;');
 
-		$param = new PHPParameter('vars', 'Variables');
-
 		$method = new PHPMethod('expression_' . $expression->getId());
 		$method->setVisibility(PHPMember::VISIBILITY_PUBLIC);
 		$method->setDocBlock($docBlock);
-		$method->addParameter($param);
+		$method->addParameter(new PHPParameter('vars', 'Variables'));
+		$method->addParameter(new PHPParameter('valueContext', 'ValueContext'));
 		$method->setBody($body);
 
 		$this->class->addMethod($method);

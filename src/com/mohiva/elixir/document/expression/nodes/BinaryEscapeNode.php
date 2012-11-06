@@ -18,11 +18,11 @@
  */
 namespace com\mohiva\elixir\document\expression\nodes;
 
-use com\mohiva\pyramid\nodes\TernaryOperatorNode;
+use com\mohiva\pyramid\nodes\BinaryOperatorNode;
 use com\mohiva\manitou\generators\php\PHPRawCode;
 
 /**
- * Represents a ternary if operation.
+ * Represents an binary escape.
  *
  * @category  Mohiva/Elixir
  * @package   Mohiva/Elixir/Document/Expression/Nodes
@@ -31,7 +31,7 @@ use com\mohiva\manitou\generators\php\PHPRawCode;
  * @license   https://github.com/mohiva/elixir/blob/master/LICENSE.textile New BSD License
  * @link      https://github.com/mohiva/elixir
  */
-class TernaryIfNode extends TernaryOperatorNode {
+class BinaryEscapeNode extends BinaryOperatorNode {
 
 	/**
 	 * Evaluates the node.
@@ -40,20 +40,14 @@ class TernaryIfNode extends TernaryOperatorNode {
 	 */
 	public function evaluate() {
 
-		$raw = new PHPRawCode();
-		$raw->openScope('$this->evaluateClosure(function() use ($valueContext, $vars) {');
-		$raw->addLine('$condition = ' . $this->conditionNode->evaluate() . ';');
-		$raw->openScope('if ($condition) {');
-		if ($this->ifNode === null) {
-			$raw->addLine('return $condition;');
-		} else {
-			$raw->addLine('return ' . $this->ifNode->evaluate() . ';');
-		}
-		$raw->openScope('} else {', true);
-		$raw->addLine('return ' . $this->elseNode->evaluate() . ';');
-		$raw->closeScope('}');
-		$raw->closeScope('})');
+		$code = new PHPRawCode();
+		$code->openScope('$this->evaluateClosure(function() use ($valueContext, $vars) {');
+		$code->addLine('$valueContext = clone $valueContext;');
+		$code->addLine('$valueContext->setEscapingStrategy(\'' . $this->right->evaluate() . '\');');
+		$code->addLine();
+		$code->addLine('return $this->autoboxValue(' . $this->left->evaluate() . ', $valueContext);');
+		$code->closeScope('})');
 
-		return $raw->generate();
+		return $code->generate();
 	}
 }

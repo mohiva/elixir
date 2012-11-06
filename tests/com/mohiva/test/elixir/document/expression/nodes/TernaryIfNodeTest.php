@@ -43,14 +43,14 @@ class TernaryIfNodeTest extends \PHPUnit_Framework_TestCase {
 		$else = mt_rand(1, 100);
 		$node = new TernaryIfNode(new OperandNode($condition), new OperandNode($if), new OperandNode($else));
 
-		$expected  = "function() use (\$vars) {" . PHP_EOL;
+		$expected  = "\$this->evaluateClosure(function() use (\$valueContext, \$vars) {" . PHP_EOL;
 		$expected .= "\t\$condition = " . $condition . ";" . PHP_EOL;
 		$expected .= "\tif (\$condition) {" . PHP_EOL;
 		$expected .= "\t\treturn {$if};" . PHP_EOL;
 		$expected .= "\t} else {" . PHP_EOL;
 		$expected .= "\t\treturn {$else};" . PHP_EOL;
 		$expected .= "\t}" . PHP_EOL;
-		$expected .= "}";
+		$expected .= "})";
 
 		$this->assertSame($expected, $node->evaluate());
 	}
@@ -64,14 +64,14 @@ class TernaryIfNodeTest extends \PHPUnit_Framework_TestCase {
 		$else = mt_rand(1, 100);
 		$node = new TernaryIfNode(new OperandNode($condition), null, new OperandNode($else));
 
-		$expected  = "function() use (\$vars) {" . PHP_EOL;
+		$expected  = "\$this->evaluateClosure(function() use (\$valueContext, \$vars) {" . PHP_EOL;
 		$expected .= "\t\$condition = " . $condition . ";" . PHP_EOL;
 		$expected .= "\tif (\$condition) {" . PHP_EOL;
 		$expected .= "\t\treturn \$condition;" . PHP_EOL;
 		$expected .= "\t} else {" . PHP_EOL;
 		$expected .= "\t\treturn {$else};" . PHP_EOL;
 		$expected .= "\t}" . PHP_EOL;
-		$expected .= "}";
+		$expected .= "})";
 
 		$this->assertSame($expected, $node->evaluate());
 	}

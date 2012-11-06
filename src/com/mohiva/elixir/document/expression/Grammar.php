@@ -25,6 +25,7 @@ use com\mohiva\pyramid\operators\TernaryOperator;
 use com\mohiva\elixir\document\expression\nodes\UnaryPosNode;
 use com\mohiva\elixir\document\expression\nodes\UnaryNegNode;
 use com\mohiva\elixir\document\expression\nodes\UnaryNotNode;
+use com\mohiva\elixir\document\expression\nodes\BinaryEscapeNode;
 use com\mohiva\elixir\document\expression\nodes\BinaryOrNode;
 use com\mohiva\elixir\document\expression\nodes\BinaryAndNode;
 use com\mohiva\elixir\document\expression\nodes\BinaryEqualNode;
@@ -44,6 +45,8 @@ use com\mohiva\elixir\document\expression\nodes\TernaryIfNode;
 use com\mohiva\elixir\document\expression\operands\ParenthesesOperand;
 use com\mohiva\elixir\document\expression\operands\ScalarValueOperand;
 use com\mohiva\elixir\document\expression\operands\ArrayValueOperand;
+use com\mohiva\elixir\document\expression\operands\NamedValueOperand;
+use com\mohiva\elixir\document\expression\operands\EscapeOperand;
 
 /**
  * The parser grammar for the Elixir expressions.
@@ -52,28 +55,29 @@ use com\mohiva\elixir\document\expression\operands\ArrayValueOperand;
  *
  * Unary
  * ====================================
- * O_NOT,                    80
- * O_PLUS,                  150
- * O_MINUS,                 150
+ * T_NOT,                    80
+ * T_PLUS,                  150
+ * T_MINUS,                 150
  *
  * Binary
  * ====================================
- * O_ASSIGN,                 10,  RIGHT
- * O_OR,                     30,  LEFT
- * O_AND,                    40,  LEFT
- * O_EQUAL,                  50,  LEFT
- * O_NOT_EQUAL,              50,  LEFT
- * O_LESS,                   50,  LEFT
- * O_LESS_EQUAL,             50,  LEFT
- * O_GREATER,                50,  LEFT
- * O_GREATER_EQUAL,          50,  LEFT
- * O_PLUS,                   60,  LEFT
- * O_MINUS,                  60,  LEFT
- * O_CONCAT                  70,  LEFT
- * O_MUL,                    90,  LEFT
- * O_DIV,                    90,  LEFT
- * O_MOD,                    90,  LEFT
- * O_POWER,                 100,  RIGHT
+ * T_ASSIGN,                 10,  RIGHT
+ * T_OR,                     30,  LEFT
+ * T_AND,                    40,  LEFT
+ * T_EQUAL,                  50,  LEFT
+ * T_NOT_EQUAL,              50,  LEFT
+ * T_LESS,                   50,  LEFT
+ * T_LESS_EQUAL,             50,  LEFT
+ * T_GREATER,                50,  LEFT
+ * T_GREATER_EQUAL,          50,  LEFT
+ * T_PLUS,                   60,  LEFT
+ * T_MINUS,                  60,  LEFT
+ * T_CONCAT                  70,  LEFT
+ * T_MUL,                    90,  LEFT
+ * T_DIV,                    90,  LEFT
+ * T_MOD,                    90,  LEFT
+ * T_POWER,                 100,  RIGHT
+ * T_PIPE                   110,  LEFT
  *
  * Ternary
  * ====================================
@@ -152,6 +156,9 @@ class Grammar extends ParserGrammar {
 		$this->addOperator(new BinaryOperator(Lexer::T_POWER, 100, BinaryOperator::RIGHT,
 			function($left, $right) { return new BinaryPowerNode($left, $right); }
 		));
+		$this->addOperator(new BinaryOperator(Lexer::T_PIPE, 110, BinaryOperator::LEFT,
+			function($left, $right) { return new BinaryEscapeNode($left, $right); }
+		));
 		$this->addOperator(new TernaryOperator(Lexer::T_QUESTION_MARK, Lexer::T_COLON, 20, TernaryOperator::RIGHT, true,
 			function($condition, $if, $else) { return new TernaryIfNode($condition, $if, $else); }
 		));
@@ -159,5 +166,7 @@ class Grammar extends ParserGrammar {
 		$this->addOperand(new ParenthesesOperand());
 		$this->addOperand(new ScalarValueOperand());
 		$this->addOperand(new ArrayValueOperand());
+		$this->addOperand(new NamedValueOperand());
+		$this->addOperand(new EscapeOperand());
 	}
 }

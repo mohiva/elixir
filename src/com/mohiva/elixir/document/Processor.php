@@ -18,6 +18,7 @@
  */
 namespace com\mohiva\elixir\document;
 
+use Closure;
 use RuntimeException;
 use com\mohiva\elixir\Document;
 use com\mohiva\common\exceptions\BadMethodCallException;
@@ -311,5 +312,16 @@ abstract class Processor {
 		}
 
 		return $processor->{"node_{$nodeId}"}($vars);
+	}
+
+	/**
+	 * Evaluates a closure.
+	 *
+	 * @param Closure $closure The closure to evaluate.
+	 * @return mixed The value of the closure.
+	 */
+	protected function evaluateClosure(Closure $closure) {
+
+		return $closure();
 	}
 }

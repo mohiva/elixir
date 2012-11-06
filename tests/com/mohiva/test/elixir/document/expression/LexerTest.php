@@ -284,6 +284,22 @@ class LexerTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	/**
+	 * Test the pipe token.
+	 */
+	public function testPipeToken() {
+
+		$lexer = new Lexer();
+		$stream = $lexer->scan(' |raw ');
+
+		$actual = $this->buildActualTokens($stream);
+		$expected = array(
+			array(Lexer::T_PIPE => '|'),
+			array(Lexer::T_NAME => 'raw')
+		);
+		$this->assertSame($expected, $actual);
+	}
+
+	/**
 	 * Test the none token.
 	 */
 	public function testNoneToken() {

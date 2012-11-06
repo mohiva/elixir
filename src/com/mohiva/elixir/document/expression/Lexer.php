@@ -51,6 +51,7 @@ class Lexer {
 	const T_NS_SEPARATOR      = 109;  // \
 	const T_VALUE             = 110;  // "",'',1,0.1,true,false,null
 	const T_NAME              = 111;  // [a-zA-Z0-9_]
+	const T_PIPE              = 112;  // |
 
 	const T_NOT               = 201;  // !
 	const T_PLUS              = 202;  // +
@@ -101,6 +102,7 @@ class Lexer {
 		'::' => self::T_DOUBLE_COLON,
 		'=>' => self::T_DOUBLE_ARROW,
 		'\\' => self::T_NS_SEPARATOR,
+		'|'  => self::T_PIPE,
 		'!'  => self::T_NOT,
 		'+'  => self::T_PLUS ,
 		'-'  => self::T_MINUS,

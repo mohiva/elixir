@@ -174,7 +174,9 @@ class CompilerTest extends \PHPUnit_Framework_TestCase {
 	 */
 	public function testCompileReplacesAllChildNodePlaceholders() {
 
+		$start = microtime(true);
 		$class = $this->createReflectionClassFixture();
+		echo microtime(true) - $start;
 		$content = file_get_contents($class->getFileName());
 
 		$this->assertNotContains(Lexer::NODE_PLACEHOLDER, $content);
@@ -204,6 +206,8 @@ class CompilerTest extends \PHPUnit_Framework_TestCase {
 		$fileName = 'elixir://test' . $hash;
 
 		$doc = new XMLDocument();
+		$doc->fixLineNumbers = true;
+		$doc->preserveWhiteSpace = true;
 		$doc->load(Bootstrap::$resourceDir . '/elixir/document/compiler/default.xml');
 
 		$lexer = new DocumentLexer();

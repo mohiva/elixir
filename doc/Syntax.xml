@@ -49,18 +49,18 @@
 		===================
 		With this method you can escape the complete content of an expression.
 		-->
-		{%:html 'Escapes all unsafe values in this expression using the HTML strategy' %}
+		{%|html 'Escapes all unsafe values in this expression using the HTML strategy' %}
 
 		<!--
 		Value escaping
 		==============
 		As the title says, with this method you can escape only a single value in an expression.
 		-->
-		{% 'Escapes only this value using the HTML strategy':html %}
+		{% 'Escapes only this value using the HTML strategy'|html %}
 		<!--
 		Different strategies can also be mixed inside an expression.
 		-->
-		{% 'Escapes using the HTML strategy':html _ 'Escapes using the JS strategy':js %}
+		{% 'Escapes using the HTML strategy'|html _ 'Escapes using the JS strategy'|js %}
 
 		<!--
 		Escaping rules
@@ -69,11 +69,11 @@
 		the following simple rule: The inner overwrites the outer strategy.
 		-->
 		<ex:Escape strategy="html"> <!-- Overwrites the global rule -->
-			{%:html name %}     <!-- Escaped as html -->
-			{%:xml tag %}       <!-- Escaped as xml -->
+			{%|html name %}     <!-- Escaped as html -->
+			{%|xml tag %}       <!-- Escaped as xml -->
 			{% name %}          <!-- Escaped as html -->
-			{%:raw name %}      <!-- Not escaped, because it is marked as safe -->
-			{%:raw name:js %}   <!-- Escape as js -->
+			{%|raw name %}      <!-- Not escaped, because it is marked as safe -->
+			{%|raw name|js %}   <!-- Escape as js -->
 		</ex:Escape>
 
 		<!--
@@ -129,12 +129,12 @@
 		<!--
 		- Expressions which are marked as raw
 		-->
-		{%:raw name %}
+		{%|raw name %}
 
 		<!--
 		- Values which are marked as raw
 		-->
-		{% name:raw _ ' is crazy' %}
+		{% name|raw _ ' is crazy' %}
 
 		<!--
 		Unsafe values:
@@ -158,12 +158,12 @@
 		<!--
 		Escapes save values inside an expression:
 		-->
-		{%:html 'Lucky Luke' _ ' is crazy' %}
+		{%|html 'Lucky Luke' _ ' is crazy' %}
 
 		<!--
 		Escapes a save value inside an expression:
 		-->
-		{% 'Lucky Luke':html %}
+		{% 'Lucky Luke'|html %}
 
 		<!-- Document Escaping
 		================================================================================================================
