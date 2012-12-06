@@ -315,8 +315,8 @@ class Parser {
 		$expressions = array();
 		$stream = $token->getStream();
 		while ($stream->valid()) {
-			if ($stream->current()->getCode() != Lexer::T_EXPRESSION_OPEN &&
-				$stream->current()->getCode() != Lexer::T_EXPRESSION_CLOSE) {
+			$code = $stream->current()->getCode();
+			if ($code != Lexer::T_EXPRESSION_OPEN && $code != Lexer::T_EXPRESSION_CLOSE) {
 				$stream->next();
 				continue;
 			}
@@ -408,14 +408,15 @@ class Parser {
 		while ($stream->valid()) {
 			/* @var ExpressionContentToken $token */
 			$token = $stream->current();
+			$code = $token->getCode();
 			$message = false;
-			if ($token->getCode() == Lexer::T_EXPRESSION_ELEMENT) {
+			if ($code == Lexer::T_EXPRESSION_ELEMENT) {
 				$message = 'Element nodes are not allowed in the content of an expression; ';
-			} else if ($token->getCode() == Lexer::T_EXPRESSION_COMMENT) {
+			} else if ($code == Lexer::T_EXPRESSION_COMMENT) {
 				$message = 'Comments are not allowed in the content of an expression; ';
-			} else if ($token->getCode() == Lexer::T_EXPRESSION_CDATA) {
+			} else if ($code == Lexer::T_EXPRESSION_CDATA) {
 				$message = 'CDATA is not allowed in the content of an expression; ';
-			} else if ($token->getCode() == Lexer::T_EXPRESSION_PI) {
+			} else if ($code == Lexer::T_EXPRESSION_PI) {
 				$message = 'Processing instructions are not allowed in the content of an expression; ';
 			}
 
@@ -424,12 +425,10 @@ class Parser {
 				$exception = new SyntaxErrorException($message);
 				$exception->setLineNo($token->getLine());
 				throw $exception;
-			} else if ($stream->current()->getCode() != Lexer::T_EXPRESSION_CHARS) {
+			} else if ($code != Lexer::T_EXPRESSION_CHARS) {
 				break;
 			}
 
-			/* @var \com\mohiva\elixir\document\tokens\ExpressionContentToken $token */
-			$token = $stream->current();
 			$expression .= $token->getValue();
 			$stream->next();
 		}
