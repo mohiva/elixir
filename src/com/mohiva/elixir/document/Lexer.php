@@ -22,7 +22,6 @@ use DOMAttr;
 use com\mohiva\elixir\document\tokens\ExpressionContentToken;
 use DOMText;
 use DOMComment;
-use com\mohiva\pyramid\Token;
 use com\mohiva\common\xml\XMLDocument;
 use com\mohiva\common\xml\XMLElement;
 use com\mohiva\common\parser\TokenStream;
@@ -500,7 +499,7 @@ class Lexer {
 	/**
 	 * Get the ID of the previous sibling node for the given element.
 	 *
-	 * It returns only the ID if the previous sibling is a elixir node. If the previous
+	 * It returns only the ID if the previous sibling is an elixir node. If the previous
 	 * sibling is a non elixir element then this method returns null.
 	 *
 	 * @param XMLElement $element The current processed element.
@@ -529,8 +528,8 @@ class Lexer {
 	/**
 	 * Get the ID of the next sibling node for the given element.
 	 *
-	 * It returns only the ID if the next sibling is a elixir node. If the next
-	 * sibling is a non elixir element then this method returns null.
+	 * It returns only the ID, if the next sibling is an elixir node. If the next
+	 * sibling is a non elixir element, then this method returns null.
 	 *
 	 * The document will be tokenized from the inside out, so it isn't possible to get the
 	 * original following siblings, because the nodes are all replaced with the placeholder
