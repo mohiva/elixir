@@ -1,0 +1,86 @@
+What are safe values?
+-------------------------
+- Values defined in a template
+- Values from outside which are marked as safe. The responsibility will be passed to the developer.
+- Numbers
+- Boolean true and false
+- null
+
+
+What are unsafe values?
+-------------------------
+- All values from outside which aren't marked as save
+
+Problems:
+-------------------------
+- Not only values alone can be unsafe. Through concatenation it is possible to create unsafe values from apparently secure values.
+
+
+Escape the complete expression or the parts of an expression?
+-------------------------
+Problem: Every part of an expression can have an other escaping strategy.
+
+=raw - Safe values
+!raw - Unsafe values
+
+Example: {% user.name|html ?: 'Jon Doe'|raw %}
+Conclusion: For conditional expressions it is safe to escape every part.
+
+Example: {% 'Mumford & Sons'|html _ ' vs '|raw _ 'Florence & The Machine'|html %}
+Conclusion: In this example it seems that is safe to escape every part of a concatenation.
+
+Example: {% '&'|raw _ 'amp;'|raw %}
+Conclusion: Im not sure! This prints an HTML entity, but the developer has marked it as safe. I think it
+should be safe because it is the same as if I write: {% '&amp;' %}
+
+Example: {% '&'|raw _ 'amp;'|html %}
+Conclusion: In this case it isn't safe to escape every part. Because after concatenation it prints an html entity.
+
+
+Escape two expressions?
+-------------------------
+Problem: It is possible to create unsafe values when concatenating two expressions
+
+Example: {% '&'|raw %}{% 'amp;'|html %}
+Example: {% '&'|raw %}amp{% ';'|html %}
+Conclusion: This is very hard to handle. Such an expression is predestined for a double escaping issue.
+
+
+Removing concatenation?
+-------------------------
+Problem: Concatenation is the root of all evil. If we omit concatenation then the question how values should be
+escaped inside an expression must not be asked. But it isn't so easy to omit this useful feature. There are cases
+in which it isn't possible to emulate such expression.
+
+Possible solutions:
+{% 'Mumford & Sons' _ ' vs ' _ 'Florence & The Machine' %} can be rewritten as:
+{% 'Mumford & Sons' %} vs {% 'Florence & The Machine' %}
+
+Impossible solutions:
+{% user.name ?: 'Mr. ' _ defaultName %}
+
+
+A possible solution?
+-------------------------
+The short form:
+Handle concatenated values inside an expression like single expressions. And tell/teach the developers to avoid
+concatenation whenever possible, because it can lead to security issues.
+
+The long form:
+The escaping of concatenated values cannot work properly without analyzing the result of the concatenation. And
+analyzing the result is a more hopeless and very time consuming job, because of the many different possibilities
+an attacker can attack the application. So we handle every concatenated value as a single expression. This means
+that the concatenated value will be escaped individually. Then we tell the developer that he must pay attention
+when he concatenates values, because this can lead to security errors. So the guiding principle is, before the
+engine makes incalculable errors, we pass the responsibility to the developer.
+
+
+Links:
+-------------------------
+https://developers.google.com/closure/templates/docs/security
+http://code.google.com/p/closure-templates/source/browse/#svn%2Ftrunk%2Fjava%2Fsrc%2Fcom%2Fgoogle%2Ftemplate%2Fsoy%2Fparsepasses%2Fcontextautoesc
+https://github.com/fabpot/Twig/issues/472
+https://github.com/fabpot/Twig/issues/875
+http://blog.astrumfutura.com/2012/03/a-hitchhikers-guide-to-cross-site-scripting-xss-in-php-part-1-how-not-to-use-htmlspecialchars-for-output-escaping/
+http://blog.astrumfutura.com/2012/06/automatic-output-escaping-in-php-and-the-real-future-of-preventing-cross-site-scripting-xss/
+http://blog.astrumfutura.com/2012/09/php-esaper-rfc-consistent-escaping-functionality-for-killing-xss/
