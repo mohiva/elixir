@@ -18,6 +18,7 @@
             "require": {
                 "php": ">=5.4"
             },
+            "time": "2012-08-30 14:21:33",
             "type": "library",
             "installation-source": "source",
             "autoload": {
@@ -25,7 +26,22 @@
                     "com\\mohiva\\common": "src/"
                 }
             },
-            "time": "1346336493"
+            "license": [
+                "New BSD"
+            ],
+            "authors": [
+                {
+                    "name": "Christian Kaps",
+                    "email": "christian.kaps@mohiva.com",
+                    "homepage": null,
+                    "role": null
+                }
+            ],
+            "description": "A PHP library which provides functionality shared by some mohiva projects",
+            "homepage": "https://github.com/mohiva/common",
+            "keywords": [
+                "library"
+            ]
         },
         {
             "name": "mohiva/manitou",
@@ -45,6 +61,7 @@
                 "php": ">=5.4",
                 "mohiva/common": "dev-master"
             },
+            "time": "2012-07-06 20:33:57",
             "type": "library",
             "installation-source": "source",
             "autoload": {
@@ -68,8 +85,7 @@
             "keywords": [
                 "generator",
                 "code"
-            ],
-            "time": "1341606837"
+            ]
         },
         {
             "name": "mohiva/pyramid",
@@ -77,19 +93,19 @@
             "source": {
                 "type": "git",
                 "url": "git://github.com/mohiva/pyramid.git",
-                "reference": "0637e1115fab0937cdc55ca8c3b46b91bc7dcef3"
+                "reference": "62ac711eec3c47f4cee1efa927b2dd70ee6d654d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/mohiva/pyramid/zipball/0637e1115fab0937cdc55ca8c3b46b91bc7dcef3",
-                "reference": "0637e1115fab0937cdc55ca8c3b46b91bc7dcef3",
+                "url": "https://github.com/mohiva/pyramid/archive/62ac711eec3c47f4cee1efa927b2dd70ee6d654d.zip",
+                "reference": "62ac711eec3c47f4cee1efa927b2dd70ee6d654d",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.4",
                 "mohiva/common": "dev-master"
             },
-            "time": "1349612972",
+            "time": "2012-12-06 13:10:50",
             "type": "library",
             "installation-source": "source",
             "autoload": {
@@ -97,6 +113,7 @@
                     "com\\mohiva\\pyramid": "src/"
                 }
             },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "New BSD"
             ],
@@ -123,17 +140,18 @@
             "source": {
                 "type": "git",
                 "url": "git://github.com/mlively/Phake.git",
-                "reference": "23b75dc6710e621ac23157b0890b588062043100"
+                "reference": "047a12475e3319c5decf291bb737e6c4fd042751"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/mlively/Phake/zipball/23b75dc6710e621ac23157b0890b588062043100",
-                "reference": "23b75dc6710e621ac23157b0890b588062043100",
+                "url": "https://github.com/mlively/Phake/archive/047a12475e3319c5decf291bb737e6c4fd042751.zip",
+                "reference": "047a12475e3319c5decf291bb737e6c4fd042751",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.2.0"
             },
+            "time": "2012-12-05 18:39:48",
             "type": "library",
             "installation-source": "source",
             "autoload": {
@@ -141,10 +159,25 @@
                     "src"
                 ]
             },
+            "notification-url": "https://packagist.org/downloads/",
             "include-path": [
                 "src"
             ],
-            "time": "1344450214"
+            "license": [
+                "BSD"
+            ],
+            "authors": [
+                {
+                    "name": "Mike Lively",
+                    "email": "m@digitalsandwich.com"
+                }
+            ],
+            "description": "The Phake mock testing library",
+            "homepage": "https://github.com/mlively/Phake",
+            "keywords": [
+                "testing",
+                "mock"
+            ]
         }
     ],
     "aliases": [
