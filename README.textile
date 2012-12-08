@@ -48,7 +48,7 @@ XML namespaces will be used to declare helpers. The namespace prefix for a helpe
 
 h3. Helpers
 
-As mentioned above we have three kind of helpers. Helpers are normal PHP classes which generates PHP code to embed in the document. Please look at the detailed description of every helper type below.
+Elixir supports three kind of helpers. Helpers are normal PHP classes which must implement one of the three helper interfaces provided with the core. Please look at the following examples, for a detailed description of every type.
 
 h4. Element helpers
 
