@@ -48,7 +48,7 @@ XML namespaces will be used to declare helpers. The namespace prefix for a helpe
 
 h3. Helpers
 
-As mentoined above we have three kind of helpers. Helpers are normal PHP classes which generates PHP code to embed in the document. Please look at the detailed description of every helper type below.
+As mentioned above we have three kind of helpers. Helpers are normal PHP classes which generates PHP code to embed in the document. Please look at the detailed description of every helper type below.
 
 h4. Element helpers
 
@@ -69,7 +69,7 @@ Element helpers can be used for any task. The main task is to influence the cont
 
 h4. Attribute helpers
 
-An attribute helper is a namespaced attribute of a XML tag. It starts with a namespace prefix followed by the helper name and it can have exactly one attribute. Attribute helpers can be mixed with element helpers as well.
+An attribute helper is a namespaced attribute of a XML tag. It starts with a namespace prefix followed by the helper name and it can have exactly one attribute. Attribute helpers can be mixed with element helpers as well. It is also possible to define multiple attribute helpers on a XML tag.
 
 In our example the @Locale@ helper is a attribute helper.
 
@@ -81,6 +81,21 @@ In our example the @Locale@ helper is a attribute helper.
 </pre>
 
 An attribute helper can only influence the XML tag on which it's located. This means it decides on the basis of the value passed to the attribute, if the XML tag should be displayed or not. If the helper decides that the XML tag should be removed then the enclosing content of the XML tag will also be removed.
+
+h4. Expression helpers
+
+As the name says, expression helpers can be used inside expressions, to manipulate the result of such. An element helper starts with a namespace prefix followed by its name. After that parameters can be passed by enclosing it with parentheses. Expression helpers can have as many parameters as necessary.
+
+In our example the @Date@ helper is an expression helper.
+
+<pre lang="xml">
+<?xml version="1.0" encoding="UTF-8"?>
+<dictionary xmlns:ex="http://elixir.mohiva.com">
+    {% ex:Date(date.now, 'd.m.Y') %}
+</dictionary>
+</pre>
+
+As mentioned above element helpers can only influence the value of an expression. It is possible to use multiple expression helpers inside an expression. They can also be chained if necessary.
 
 h2. Installation
 
