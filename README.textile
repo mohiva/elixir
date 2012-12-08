@@ -54,7 +54,8 @@ h4. Element helpers
 
 An element helper is a normal XML tag. It starts with a namespace prefix followed by the helper name and it can have as many attributes as neccessary.
 
-In our example the if/else if/else construct is a combination of three element helpers.
+In our example the @if/else if/else@ construct is a combination of three element helpers.
+
 <pre lang="xml">
 <?xml version="1.0" encoding="UTF-8"?>
 <dictionary xmlns:ex="http://elixir.mohiva.com">
@@ -65,6 +66,21 @@ In our example the if/else if/else construct is a combination of three element h
 </pre>
 
 Element helpers can be used for any task. The main task is to influence the content of the enclosed helper. But it is also possible to manipulate the document itself, just as the @Set@ or the @Extend@ helper accomplish it.
+
+h4. Attribute helpers
+
+An attribute helper is a namespaced attribute of a XML tag. It starts with a namespace prefix followed by the helper name and it can have exactly one attribute. Attribute helpers can be mixed with element helpers as well.
+
+In our example the @Locale@ helper is a attribute helper.
+
+<pre lang="xml">
+<?xml version="1.0" encoding="UTF-8"?>
+<dictionary xmlns:ex="http://elixir.mohiva.com">
+    <sentence ex:Locale="en_US" />
+</dictionary>
+</pre>
+
+An attribute helper can only influence the XML tag on which it's located. This means it decides on the basis of the value passed to the attribute, if the XML tag should be displayed or not. If the helper decides that the XML tag should be removed then the enclosing content of the XML tag will also be removed.
 
 h2. Installation
 
