@@ -84,7 +84,7 @@ An attribute helper can only influence the XML tag on which it's located. This m
 
 h4. Expression helpers
 
-As the name says, expression helpers can be used inside expressions, to manipulate the result of such. An element helper starts with a namespace prefix followed by its name. After that, parameters can be passed by enclosing it with parentheses. Expression helpers can have as many parameters as necessary.
+As the name says, expression helpers can be used inside expressions, to manipulate the result of such. An element helper starts with a namespace prefix followed by its name. After that, parameters can be passed by enclosing it with parentheses and separate it by commas. Expression helpers can have as many parameters as necessary.
 
 In our example the @Date@ helper is an expression helper.
 
@@ -96,6 +96,10 @@ In our example the @Date@ helper is an expression helper.
 </pre>
 
 As mentioned above element helpers can only influence the value of an expression. It is possible to use multiple expression helpers inside an expression. They can also be chained if necessary.
+
+h3. Expressions
+
+Expressions can be consist of simple variables to parse in the document up to complex mathematical calculations.
 
 h2. Installation
 
