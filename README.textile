@@ -8,15 +8,15 @@ The framework provides the core of the language. The core consists of the follow
 
 h3. The grammar
 
-All Elixir documents are valid XML documents. The grammar defines the Syntax for expressions and it defines three kind of helpers which can be used to transform a XML document at runtime. These types of helpers are element, attribute and expression helpers. Attribute helpers can be used to affect existing XML elements. Element helpers can be used to create new content or the affect existing content as well. And last but not least, expression helpers can be used inside expression to transform values.
+All Elixir documents are valid XML documents. The grammar defines the Syntax for expressions and three kind of helpers which can be used to transform a XML document at runtime. These types of helpers are element, attribute and expression helpers. Attribute helpers can be used to affect existing XML elements. Element helpers can be used to create new content or to affect existing content as well. And last but not least, expression helpers can be used inside expression to manipulate the result of it.
 
 h3. The compiler
 
-The compiler compiles down all Elixir documents into plain old PHP classes. This benefits the runtime of an Elixir Document when it comes to caching. Because only the generated PHP classes will be cached. Furthermore it can make the usage of byte code caches like APC.
+The compiler compiles down an Elixir document into a plain old PHP class during runtime. This benefits the runtime of an Elixir Document when it comes to caching, because only the generated PHP classes will be cached. Furthermore it can make the usage of byte code caches like APC.
 
 h3. The cache layer
 
-The core ships with a simple cache layer. It provides an interface to build different kinds of cache adapters. Some cache adapters for caching documents in APC or in plain txt files are already shipped with the core.
+The core ships with a simple cache layer which provides an interface to build different kinds of cache adapters. Some cache adapters, for caching documents in APC's shared memory or in plain php files, are already shipped with the core.
 
 h2. The structure of an Elixir document
 
@@ -29,13 +29,13 @@ The following example shows the structure of a simple Elixir document.
     <sentence id="greeting" ex:Locale="de_DE">Hallo mein Name ist {% user.name %}</sentence>
 
     <ex:If expr="{% system.locale == 'de_DE'">
-
+        <sentence id="date">{% ex:Date(date.now, 'd.m.Y') %}</sentence>
     </ex:If>
     <ex:ElseIf expr="{% system.locale == 'en_US'">
-
+        <sentence id="date">{% ex:Date(date.now, 'm-d-Y') %}</sentence>
     </ex:ElseIf>
     <ex:Else>
-
+        <sentence id="date">{% ex:Date(date.now, 'd/m/y') %}</sentence>
     </ex:Else>
 </dictionary>
 </pre>
@@ -44,7 +44,27 @@ The document is built with the follwing elements.
 
 h3. Namespaces
 
-XML namespaces will be used to declare helpers. The namespace prefix for a helper can be defined as one likes, even the namespace prefix for core helpers. The important thing is the namespace URI. A URI can be a normal URL like in our example or a URN which defines a PHP namespace in the form @urn:com.mohiva.helpers@. As you can see in this example, it is very easy to extend the language with own helpers.
+XML namespaces will be used to declare helpers. The namespace prefix for a helper can be defined as one likes, even the namespace prefix for core helpers. The important thing is the namespace URI. An URI can be a normal URL like in our example or a URN which defines a PHP namespace in the form @urn:com.mohiva.helpers@. So it is very easy to extend the language with own helpers.
+
+h3. Helpers
+
+As mentoined above we have three kind of helpers. Helpers are normal PHP classes which generates PHP code to embed in the document. Please look at the detailed description of every helper type below.
+
+h4. Element helpers
+
+An element helper is a normal XML tag. It starts with a namespace prefix followed by the helper name and it can have as many attributes as neccessary.
+
+In the above example the if/else if/else construct is a combination of three element helpers.
+
+<pre lang="xml">
+<?xml version="1.0" encoding="UTF-8"?>
+<dictionary xmlns:ex="http://elixir.mohiva.com">
+    <ex:If expr="" />
+    <ex:ElseIf expr="" />
+    <ex:Else />
+</dictionary>
+</pre>
+
 
 h2. Installation
 
