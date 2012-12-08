@@ -6,7 +6,7 @@ h2. How does it work
 
 The framework provides the core of the language. The core consists of the following components:
 
-h3. The grammar 
+h3. The grammar
 
 All Elixir documents are valid XML documents. The grammar defines the Syntax for expressions and it defines three kind of helpers which can be used to transform a XML document at runtime. These types of helpers are element, attribute and expression helpers. Attribute helpers can be used to affect existing XML elements. Element helpers can be used to create new content or the affect existing content as well. And last but not least, expression helpers can be used inside expression to transform values.
 
@@ -44,7 +44,7 @@ The document is built with the follwing elements.
 
 h3. Namespaces
 
-XML namespaces will be used to declare helpers. The namespace prefix for a helper can be defined as one likes, even the namespace prefix for core helpers. The important thing is the namespace URI. A URI can be a normal URL like in our example or a URN which defines a PHP namespace in the form @urn:com.mohiva.helpers@.
+XML namespaces will be used to declare helpers. The namespace prefix for a helper can be defined as one likes, even the namespace prefix for core helpers. The important thing is the namespace URI. A URI can be a normal URL like in our example or a URN which defines a PHP namespace in the form @urn:com.mohiva.helpers@. As you can see with this design decision it is very easy to extend the language with own helpers.
 
 h2. Installation
 
