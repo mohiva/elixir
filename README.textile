@@ -44,7 +44,7 @@ The document is built with the follwing elements.
 
 h3. Namespaces
 
-XML namespaces will be used to declare helpers. The namespace prefix for a helper can be defined as one likes, even the namespace prefix for core helpers. The important thing is the namespace URI. A URI can be a normal URL like in our example or a URN which defines a PHP namespace in the form @urn:com.mohiva.helpers@. As you can see with this design decision it is very easy to extend the language with own helpers.
+XML namespaces will be used to declare helpers. The namespace prefix for a helper can be defined as one likes, even the namespace prefix for core helpers. The important thing is the namespace URI. A URI can be a normal URL like in our example or a URN which defines a PHP namespace in the form @urn:com.mohiva.helpers@. As you can see in this example, it is very easy to extend the language with own helpers.
 
 h2. Installation
 
