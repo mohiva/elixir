@@ -2,6 +2,10 @@ h1. Mohiva Elixir "!http://travis-ci.org/mohiva/elixir.png!":http://travis-ci.or
 
 Mohiva Elixir is a framework/language for building dynamic XML documents. Its main purpose is the build XML Documents which can change its structure at runtime based on external parameters. But is is also possible to build a complete template language like Twig with it.
 
+h2. Status
+
+Mohiva Elixir is under heavy development. The most lexical features are implemented. The next milestone is to implement context-aware escaping for expressions.
+
 h2. How does it work
 
 The framework provides the core of the language. The core consists of the following components:
@@ -99,7 +103,16 @@ As mentioned above element helpers can only influence the value of an expression
 
 h3. Expressions
 
-Expressions can be consist of simple variables to parse in the document up to complex mathematical calculations.
+Expressions can be consist of simple variables to parse in the document up to arithmetic calculations. The next short list gives a overview over all implemented expression features.
+
+* Variable interpolation
+* Conditional expressions
+* Logical expressions
+* Arithmetic calculations
+* Helper functions
+* Context-aware escaping
+
+Expression parsing is handled by the the "Mohiva Pyramid":https://github.com/mohiva/pyramid project.
 
 h2. Installation
 
