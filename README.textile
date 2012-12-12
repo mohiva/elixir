@@ -1,4 +1,4 @@
-h1. Mohiva Elixir "!http://travis-ci.org/mohiva/elixir.png!":http://travis-ci.org/mohiva/elixir
+h1. Mohiva Elixir "!https://travis-ci.org/mohiva/elixir.png!":https://travis-ci.org/mohiva/elixir
 
 Mohiva Elixir is a framework/language for building dynamic XML documents. Its main purpose is the build XML Documents which can change its structure at runtime based on external parameters. But is is also possible to build a complete template language like Twig with it.
 
