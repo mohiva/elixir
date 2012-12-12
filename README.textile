@@ -99,7 +99,7 @@ In our example the @Date@ helper is an expression helper.
 </dictionary>
 </pre>
 
-As mentioned above element helpers can only influence the value of an expression. It is possible to use multiple expression helpers inside an expression. They can also be chained if necessary.
+As mentioned above element helpers can only influence the value of an expression. It is possible to use multiple expression helpers inside an expression. They can also be nested if necessary.
 
 h3. Expressions
 
