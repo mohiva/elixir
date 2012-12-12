@@ -44,7 +44,7 @@ The following example shows the structure of a simple Elixir document.
 </dictionary>
 </pre>
 
-The document is built with the follwing elements.
+The document is built with the following elements.
 
 h3. Namespaces
 
